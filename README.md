@@ -1,5 +1,7 @@
 # EventLoop Component
 
+[![Build Status](https://secure.travis-ci.org/reactphp/event-loop.png?branch=master)](http://travis-ci.org/reactphp/event-loop)
+
 Event loop abstraction layer that libraries can use for evented I/O.
 
 In order for async based libraries to be interoperable, they need to use the
@@ -33,7 +35,7 @@ All of the loops support these features:
 ## Usage
 
 Here is an async HTTP server built with just the event loop.
-
+```php
     $loop = React\EventLoop\Factory::create();
 
     $server = stream_socket_server('tcp://127.0.0.1:8080');
@@ -59,7 +61,7 @@ Here is an async HTTP server built with just the event loop.
     });
 
     $loop->run();
-
+```
 **Note:** The factory is just for convenience. It tries to pick the best
 available implementation. Libraries `SHOULD` allow the user to inject an
 instance of the loop. They `MAY` use the factory when the user did not supply
