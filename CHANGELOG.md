@@ -7,7 +7,7 @@
 
 ## 0.3.4 (2014-03-30)
 
-???
+* Changed StreamSelectLoop to use non-blocking behavior on tick() (@astephens25)
 
 ## 0.4.0 (2014-02-02)
 
@@ -45,11 +45,11 @@
 
 ## 0.2.0 (2012-09-10)
 
-???
+* Version bump
 
 ## 0.1.1 (2012-07-12)
 
-???
+* Version bump
 
 ## 0.1.0 (2012-07-11)
 
