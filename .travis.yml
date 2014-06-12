@@ -13,4 +13,4 @@ matrix:
 install: ./travis-init.sh
   
 script:
-  - phpunit --coverage-text
+  - php vendor/bin/phpunit --coverage-text
