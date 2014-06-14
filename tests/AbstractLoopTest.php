@@ -2,6 +2,8 @@
 
 namespace React\Tests\EventLoop;
 
+use React\EventLoop as l;
+
 abstract class AbstractLoopTest extends TestCase
 {
     protected $loop;
@@ -9,6 +11,7 @@ abstract class AbstractLoopTest extends TestCase
     public function setUp()
     {
         $this->loop = $this->createLoop();
+        l\register($this->loop);
     }
 
     abstract public function createLoop();
@@ -235,8 +238,7 @@ abstract class AbstractLoopTest extends TestCase
     {
         $called = false;
 
-        $callback = function ($loop) use (&$called) {
-            $this->assertSame($this->loop, $loop);
+        $callback = function () use (&$called) {
             $called = true;
         };
 
@@ -359,8 +361,7 @@ abstract class AbstractLoopTest extends TestCase
     {
         $called = false;
 
-        $callback = function ($loop) use (&$called) {
-            $this->assertSame($this->loop, $loop);
+        $callback = function () use (&$called) {
             $called = true;
         };
 

@@ -14,7 +14,8 @@
     "autoload": {
         "psr-4": {
             "React\\EventLoop\\": "src"
-        }
+        },
+        "files": ["src/functions.php"]
     },
     "extra": {
         "branch-alias": {

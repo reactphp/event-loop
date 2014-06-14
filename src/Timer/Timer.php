@@ -2,34 +2,27 @@
 
 namespace React\EventLoop\Timer;
 
-use React\EventLoop\LoopInterface;
+use React\EventLoop as l;
 
 class Timer implements TimerInterface
 {
     const MIN_INTERVAL = 0.000001;
 
-    protected $loop;
     protected $interval;
     protected $callback;
     protected $periodic;
     protected $data;
 
-    public function __construct(LoopInterface $loop, $interval, callable $callback, $periodic = false, $data = null)
+    public function __construct($interval, callable $callback, $periodic = false, $data = null)
     {
         if ($interval < self::MIN_INTERVAL) {
             $interval = self::MIN_INTERVAL;
         }
 
-        $this->loop = $loop;
         $this->interval = (float) $interval;
         $this->callback = $callback;
         $this->periodic = (bool) $periodic;
         $this->data = null;
-    }
-
-    public function getLoop()
-    {
-        return $this->loop;
     }
 
     public function getInterval()
@@ -59,11 +52,11 @@ class Timer implements TimerInterface
 
     public function isActive()
     {
-        return $this->loop->isTimerActive($this);
+        return l\loop()->isTimerActive($this);
     }
 
     public function cancel()
     {
-        $this->loop->cancelTimer($this);
+        l\loop()->cancelTimer($this);
     }
 }

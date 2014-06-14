@@ -2,20 +2,14 @@
 
 namespace React\EventLoop\Tick;
 
-use React\EventLoop\LoopInterface;
 use SplQueue;
 
 class NextTickQueue
 {
-    private $eventLoop;
     private $queue;
 
-    /**
-     * @param LoopInterface $eventLoop The event loop passed as the first parameter to callbacks.
-     */
-    public function __construct(LoopInterface $eventLoop)
+    public function __construct()
     {
-        $this->eventLoop = $eventLoop;
         $this->queue = new SplQueue();
     }
 
@@ -38,10 +32,7 @@ class NextTickQueue
     public function tick()
     {
         while (!$this->queue->isEmpty()) {
-            call_user_func(
-                $this->queue->dequeue(),
-                $this->eventLoop
-            );
+            call_user_func($this->queue->dequeue());
         }
     }
 

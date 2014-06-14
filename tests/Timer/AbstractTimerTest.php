@@ -4,6 +4,7 @@ namespace React\Tests\EventLoop\Timer;
 
 use React\Tests\EventLoop\TestCase;
 use React\EventLoop\Timer\Timers;
+use React\EventLoop as l;
 
 abstract class AbstractTimerTest extends TestCase
 {
@@ -14,6 +15,7 @@ abstract class AbstractTimerTest extends TestCase
         // usleep is intentionally high
 
         $loop = $this->createLoop();
+        l\register($loop);
 
         $loop->addTimer(0.001, $this->expectCallableOnce());
         usleep(1000);
@@ -23,6 +25,7 @@ abstract class AbstractTimerTest extends TestCase
     public function testAddPeriodicTimer()
     {
         $loop = $this->createLoop();
+        l\register($loop);
 
         $loop->addPeriodicTimer(0.001, $this->expectCallableExactly(3));
         usleep(1000);
@@ -36,6 +39,7 @@ abstract class AbstractTimerTest extends TestCase
     public function testAddPeriodicTimerWithCancel()
     {
         $loop = $this->createLoop();
+        l\register($loop);
 
         $timer = $loop->addPeriodicTimer(0.001, $this->expectCallableExactly(2));
 
@@ -55,6 +59,7 @@ abstract class AbstractTimerTest extends TestCase
         $i = 0;
 
         $loop = $this->createLoop();
+        l\register($loop);
 
         $loop->addPeriodicTimer(0.001, function ($timer) use (&$i) {
             $i++;
@@ -77,6 +82,7 @@ abstract class AbstractTimerTest extends TestCase
     public function testIsTimerActive()
     {
         $loop = $this->createLoop();
+        l\register($loop);
 
         $timer = $loop->addPeriodicTimer(0.001, function () {});
 
@@ -90,6 +96,7 @@ abstract class AbstractTimerTest extends TestCase
     public function testMinimumIntervalOneMicrosecond()
     {
         $loop = $this->createLoop();
+        l\register($loop);
 
         $timer = $loop->addTimer(0, function () {});
 

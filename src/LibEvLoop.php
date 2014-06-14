@@ -103,7 +103,7 @@ class LibEvLoop implements LoopInterface
      */
     public function addTimer($interval, callable $callback)
     {
-        $timer = new Timer($this, $interval, $callback, false);
+        $timer = new Timer($interval, $callback, false);
 
         $callback = function () use ($timer) {
             call_user_func($timer->getCallback(), $timer);
@@ -125,7 +125,7 @@ class LibEvLoop implements LoopInterface
      */
     public function addPeriodicTimer($interval, callable $callback)
     {
-        $timer = new Timer($this, $interval, $callback, true);
+        $timer = new Timer($interval, $callback, true);
 
         $callback = function () use ($timer) {
             call_user_func($timer->getCallback(), $timer);
