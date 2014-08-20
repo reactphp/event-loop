@@ -6,11 +6,6 @@ use React\EventLoop\ExtEventLoop;
 
 class ExtEventLoopTest extends AbstractLoopTest
 {
-    public function setUp()
-    {
-        $this->loop = $this->createLoop();
-    }
-
     public function createLoop($readStreamCompatible = false)
     {
         if ('Linux' === PHP_OS && !extension_loaded('posix')) {
