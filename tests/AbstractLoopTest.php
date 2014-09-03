@@ -355,6 +355,25 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->run();
     }
 
+    public function testPeriodTimerExecutes()
+    {
+        $count = 0;
+        $this->loop->addPeriodicTimer(
+            0.001,
+            function ($timer) use (&$count) {
+                echo 'tick';
+                $count++;
+                if($count === 3) {
+                    $timer->cancel();
+                }
+            }
+        );
+
+        $this->expectOutputString('tickticktick');
+
+        $this->loop->run();        
+    }
+
     public function testFutureTick()
     {
         $called = false;
