@@ -16,6 +16,7 @@ class ExtEvLoop implements LoopInterface
     private $timers;
     private $readEvents     = array();
     private $writeEvents    = array();
+
     private $running        = false;
 
     public function __construct()
@@ -58,7 +59,7 @@ class ExtEvLoop implements LoopInterface
     {
         $key = (int) $stream;
         if(isset($this->readEvents[$key])) {
-            $this->readEvents[$key]->stop();
+            $this->readEvents[$key]->stop();   
             unset($this->readEvents[$key]);
         }
     }
@@ -72,8 +73,8 @@ class ExtEvLoop implements LoopInterface
     {
         $key = (int) $stream;
         if(isset($this->writeEvents[$key])) {
-            $this->writeEvents[(int)$stream]->stop();
-            unset($this->writeEvents[(int)$stream]);
+            $this->writeEvents[$key]->stop();
+            unset($this->writeEvents[$key]);
         }
     }
 
@@ -147,7 +148,11 @@ class ExtEvLoop implements LoopInterface
         if (isset($this->timers[$timer])) {
             /* stop EvTimer */
             $this->timers[$timer]->stop();
-            $this->timers->detach($timer);
+
+            /* defer timer */
+            $this->nextTick(function() use ($timer) {
+                $this->timers->detach($timer);    
+            });
         }
     }
 
@@ -224,5 +229,21 @@ class ExtEvLoop implements LoopInterface
     public function stop()
     {
         $this->running = false;
+    }
+
+    public function __destruct()
+    {
+        // mannually stop all watchers
+        foreach($this->timers as $timer) {
+            $this->timers[$timer]->stop();            
+        }
+
+        foreach($this->readEvents as $event) {
+            $event->stop();
+        }
+
+        foreach($this->writeEvents as $event) {
+            $event->stop();
+        }
     }
 }

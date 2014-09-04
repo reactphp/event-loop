@@ -28,6 +28,7 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
     phpize
     ./configure
     make
+    # make test
     make install
     popd
     echo "extension=ev.so" >> "$(php -r 'echo php_ini_loaded_file();')"
