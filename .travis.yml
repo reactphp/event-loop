@@ -10,7 +10,10 @@ matrix:
   allow_failures:
     - php: hhvm
 
+before_script:
+    - sudo apt-get install gdb
+
 install: ./travis-init.sh
   
 script:
-  - phpunit --coverage-text
+    - phpunit --coverage-text
