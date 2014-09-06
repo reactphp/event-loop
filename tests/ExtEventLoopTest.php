@@ -6,7 +6,7 @@ use React\EventLoop\ExtEventLoop;
 
 class ExtEventLoopTest extends AbstractLoopTest
 {
-    public function createLoop()
+    public function createLoop($readStreamCompatible = false)
     {
         if ('Linux' === PHP_OS && !extension_loaded('posix')) {
             $this->markTestSkipped('libevent tests skipped on linux due to linux epoll issues.');
@@ -16,7 +16,13 @@ class ExtEventLoopTest extends AbstractLoopTest
             $this->markTestSkipped('ext-event tests skipped because ext-event is not installed.');
         }
 
-        return new ExtEventLoop();
+        $cfg = null;
+        if($readStreamCompatible) {
+            $cfg = new \EventConfig();
+            $cfg->requireFeatures(\EventConfig::FEATURE_FDS);
+        }
+
+        return new ExtEventLoop($cfg);
     }
 
     public function createStream()
@@ -55,5 +61,26 @@ class ExtEventLoopTest extends AbstractLoopTest
         }
 
         fwrite($stream, $content);
+    }
+
+    /**
+     * @group epoll-readable-error
+     */
+    public function testCanUseReadableStreamWithFeatureFds()
+    {
+        $this->loop = $this->createLoop(true);
+
+        $input = fopen('php://temp/maxmemory:0', 'r+');
+
+        fwrite($input, 'x');
+        ftruncate($input, 0);
+
+        $this->loop->addReadStream($input, $this->expectCallableExactly(2));
+
+        $this->writeToStream($input, "foo\n");
+        $this->loop->tick();
+
+        $this->writeToStream($input, "bar\n");
+        $this->loop->tick();
     }
 }
