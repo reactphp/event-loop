@@ -237,8 +237,8 @@ class LibEventLoop implements LoopInterface
     /**
      * Create a new ext-libevent event resource, or update the existing one.
      *
-     * @param stream  $stream
-     * @param integer $flag   EV_READ or EV_WRITE
+     * @param resource $stream
+     * @param integer  $flag   EV_READ or EV_WRITE
      */
     private function subscribeStreamEvent($stream, $flag)
     {
@@ -267,8 +267,8 @@ class LibEventLoop implements LoopInterface
      * Update the ext-libevent event resource for this stream to stop listening to
      * the given event type, or remove it entirely if it's no longer needed.
      *
-     * @param stream  $stream
-     * @param integer $flag   EV_READ or EV_WRITE
+     * @param resource $stream
+     * @param integer  $flag   EV_READ or EV_WRITE
      */
     private function unsubscribeStreamEvent($stream, $flag)
     {
