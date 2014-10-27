@@ -223,7 +223,7 @@ abstract class AbstractLoopTest extends TestCase
             }
         );
 
-        $this->loop->nextTick(
+        $this->loop->onNextTick(
             function () {
                 $this->loop->stop();
             }
@@ -265,7 +265,7 @@ abstract class AbstractLoopTest extends TestCase
             $called = true;
         };
 
-        $this->loop->nextTick($callback);
+        $this->loop->onNextTick($callback);
 
         $this->assertFalse($called);
 
@@ -284,7 +284,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->loop->enableWrite($stream);
 
-        $this->loop->nextTick(function () {
+        $this->loop->onNextTick(function () {
             echo 'next-tick' . PHP_EOL;
         });
 
@@ -303,8 +303,8 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->loop->enableWrite($stream);
 
-        $this->loop->nextTick(function () {
-            $this->loop->nextTick(function () {
+        $this->loop->onNextTick(function () {
+            $this->loop->onNextTick(function () {
                 echo 'next-tick' . PHP_EOL;
             });
         });
@@ -320,7 +320,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->loop->onWritable($stream, function () use ($stream) {
             $this->loop->remove($stream);
-            $this->loop->nextTick(function () {
+            $this->loop->onNextTick(function () {
                 echo 'next-tick' . PHP_EOL;
             });
         });
@@ -335,9 +335,9 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->futureTick(
+        $this->loop->onFutureTick(
             function () {
-                $this->loop->nextTick(
+                $this->loop->onNextTick(
                     function () {
                         echo 'next-tick' . PHP_EOL;
                     }
@@ -353,7 +353,7 @@ abstract class AbstractLoopTest extends TestCase
     public function testNextTickEventGeneratedByTimer()
     {
         $this->loop->addTimer(0.001, function () {
-            $this->loop->nextTick(function () {
+            $this->loop->onNextTick(function () {
                 echo 'next-tick' . PHP_EOL;
             });
         });
@@ -372,7 +372,7 @@ abstract class AbstractLoopTest extends TestCase
             $called = true;
         };
 
-        $this->loop->futureTick($callback);
+        $this->loop->onFutureTick($callback);
 
         $this->assertFalse($called);
 
@@ -394,7 +394,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->loop->enableWrite($stream);
 
-        $this->loop->futureTick(
+        $this->loop->onFutureTick(
             function () {
                 echo 'future-tick' . PHP_EOL;
             }
@@ -419,10 +419,10 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->loop->enableWrite($stream);
 
-        $this->loop->futureTick(
+        $this->loop->onFutureTick(
             function () {
                 echo 'future-tick-1' . PHP_EOL;
-                $this->loop->futureTick(
+                $this->loop->onFutureTick(
                     function () {
                         echo 'future-tick-2' . PHP_EOL;
                     }
@@ -443,7 +443,7 @@ abstract class AbstractLoopTest extends TestCase
             $stream,
             function () use ($stream) {
                 $this->loop->remove($stream);
-                $this->loop->futureTick(
+                $this->loop->onFutureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
                     }
@@ -462,9 +462,9 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->nextTick(
+        $this->loop->onNextTick(
             function () {
-                $this->loop->futureTick(
+                $this->loop->onFutureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
                     }
@@ -482,7 +482,7 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addTimer(
             0.001,
             function () {
-                $this->loop->futureTick(
+                $this->loop->onFutureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
                     }

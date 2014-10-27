@@ -107,7 +107,7 @@ interface LoopInterface
      *
      * @param callable $listener The callback to invoke.
      */
-    public function nextTick(callable $listener);
+    public function onNextTick(callable $listener);
 
     /**
      * Schedule a callback to be invoked on a future tick of the event loop.
@@ -116,7 +116,7 @@ interface LoopInterface
      *
      * @param callable $listener The callback to invoke.
      */
-    public function futureTick(callable $listener);
+    public function onFutureTick(callable $listener);
 
     /**
      * Perform a single iteration of the event loop.
