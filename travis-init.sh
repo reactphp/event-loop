@@ -12,8 +12,8 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
     echo "yes" | pecl install event
 
     # install 'libevent' PHP extension
-    curl http://pecl.php.net/get/libevent-0.0.5.tgz | tar -xz
-    pushd libevent-0.0.5
+    curl http://pecl.php.net/get/libevent-0.1.0.tgz | tar -xz
+    pushd libevent-0.1.0
     phpize
     ./configure
     make
