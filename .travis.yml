@@ -13,9 +13,6 @@ matrix:
     - php: hhvm-nightly
   fast_finish: true
 
-before_script:
-    - sudo apt-get install gdb
-
 install: ./travis-init.sh
 
 script:
