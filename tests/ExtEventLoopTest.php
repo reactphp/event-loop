@@ -17,7 +17,7 @@ class ExtEventLoopTest extends AbstractLoopTest
         }
 
         $cfg = null;
-        if($readStreamCompatible) {
+        if ($readStreamCompatible) {
             $cfg = new \EventConfig();
             $cfg->requireFeatures(\EventConfig::FEATURE_FDS);
         }

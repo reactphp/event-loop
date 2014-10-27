@@ -3,7 +3,6 @@
 namespace React\Tests\EventLoop\Timer;
 
 use React\Tests\EventLoop\TestCase;
-use React\EventLoop\Timer\Timers;
 
 abstract class AbstractTimerTest extends TestCase
 {
