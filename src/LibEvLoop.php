@@ -21,6 +21,8 @@ class LibEvLoop implements LoopInterface
     private $nextTickQueue;
     private $futureTickQueue;
     private $timerEvents;
+    private $readListeners = [];
+    private $writeListeners = [];
     private $readEvents = [];
     private $writeEvents = [];
     private $running;
@@ -36,10 +38,28 @@ class LibEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function addReadStream($stream, callable $listener)
+    public function onReadable($stream, callable $listener)
     {
-        $callback = function () use ($stream, $listener) {
-            call_user_func($listener, $stream, $this);
+        $key = (int) $stream;
+
+        if (isset($this->readListeners[$key])) {
+            throw new \RuntimeException(sprintf('Stream %s already has a read listener.', $key));
+        }
+
+        $this->readListeners[$key] = $listener;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function enableRead($stream)
+    {
+        $callback = function () use ($stream) {
+            $key = (int) $stream;
+
+            if (isset($this->readListeners[$key])) {
+                call_user_func($this->readListeners[$key], $stream, $this);
+            }
         };
 
         $event = new IOEvent($callback, $stream, IOEvent::READ);
@@ -51,22 +71,7 @@ class LibEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function addWriteStream($stream, callable $listener)
-    {
-        $callback = function () use ($stream, $listener) {
-            call_user_func($listener, $stream, $this);
-        };
-
-        $event = new IOEvent($callback, $stream, IOEvent::WRITE);
-        $this->loop->add($event);
-
-        $this->writeEvents[(int) $stream] = $event;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function removeReadStream($stream)
+    public function disableRead($stream)
     {
         $key = (int) $stream;
 
@@ -79,7 +84,40 @@ class LibEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function removeWriteStream($stream)
+    public function onWritable($stream, callable $listener)
+    {
+        $key = (int) $stream;
+
+        if (isset($this->writeListeners[$key])) {
+            throw new \RuntimeException(sprintf('Stream %s already has a write listener.', $key));
+        }
+
+        $this->writeListeners[$key] = $listener;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function enableWrite($stream)
+    {
+        $callback = function () use ($stream) {
+            $key = (int) $stream;
+
+            if (isset($this->writeListeners[$key])) {
+                call_user_func($this->writeListeners[$key], $stream, $this);
+            }
+        };
+
+        $event = new IOEvent($callback, $stream, IOEvent::WRITE);
+        $this->loop->add($event);
+
+        $this->writeEvents[(int) $stream] = $event;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableWrite($stream)
     {
         $key = (int) $stream;
 
@@ -92,10 +130,17 @@ class LibEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function removeStream($stream)
+    public function remove($stream)
     {
-        $this->removeReadStream($stream);
-        $this->removeWriteStream($stream);
+        $this->disableRead($stream);
+        $this->disableWrite($stream);
+
+        $key = (int) $stream;
+
+        unset(
+            $this->readListeners[$key],
+            $this->writeListeners[$key]
+        );
     }
 
     /**
@@ -160,7 +205,7 @@ class LibEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function nextTick(callable $listener)
+    public function onNextTick(callable $listener)
     {
         $this->nextTickQueue->add($listener);
     }
@@ -168,7 +213,7 @@ class LibEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function futureTick(callable $listener)
+    public function onFutureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
     }

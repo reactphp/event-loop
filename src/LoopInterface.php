@@ -12,7 +12,21 @@ interface LoopInterface
      * @param stream   $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
      */
-    public function addReadStream($stream, callable $listener);
+    public function onReadable($stream, callable $listener);
+
+    /**
+     * Enables readable notifications when a stream is ready to write.
+     *
+     * @param stream $stream The PHP stream resource to check.
+     */
+    public function enableRead($stream);
+
+    /**
+     * Disables readable notifications when a stream is ready to write.
+     *
+     * @param stream $stream The PHP stream resource to check.
+     */
+    public function disableRead($stream);
 
     /**
      * Register a listener to be notified when a stream is ready to write.
@@ -20,28 +34,28 @@ interface LoopInterface
      * @param stream   $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
      */
-    public function addWriteStream($stream, callable $listener);
+    public function onWritable($stream, callable $listener);
 
     /**
-     * Remove the read event listener for the given stream.
+     * Enables writable notifications when a stream is ready to write.
      *
-     * @param stream $stream The PHP stream resource.
+     * @param stream $stream The PHP stream resource to check.
      */
-    public function removeReadStream($stream);
+    public function enableWrite($stream);
 
     /**
-     * Remove the write event listener for the given stream.
+     * Disables writable notifications when a stream is ready to write.
      *
-     * @param stream $stream The PHP stream resource.
+     * @param stream $stream The PHP stream resource to check.
      */
-    public function removeWriteStream($stream);
+    public function disableWrite($stream);
 
     /**
      * Remove all listeners for the given stream.
      *
      * @param stream $stream The PHP stream resource.
      */
-    public function removeStream($stream);
+    public function remove($stream);
 
     /**
      * Enqueue a callback to be invoked once after the given interval.
@@ -93,7 +107,7 @@ interface LoopInterface
      *
      * @param callable $listener The callback to invoke.
      */
-    public function nextTick(callable $listener);
+    public function onNextTick(callable $listener);
 
     /**
      * Schedule a callback to be invoked on a future tick of the event loop.
@@ -102,7 +116,7 @@ interface LoopInterface
      *
      * @param callable $listener The callback to invoke.
      */
-    public function futureTick(callable $listener);
+    public function onFutureTick(callable $listener);
 
     /**
      * Perform a single iteration of the event loop.

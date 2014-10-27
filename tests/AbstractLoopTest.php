@@ -28,7 +28,8 @@ abstract class AbstractLoopTest extends TestCase
     {
         $input = $this->createStream();
 
-        $this->loop->addReadStream($input, $this->expectCallableExactly(2));
+        $this->loop->onReadable($input, $this->expectCallableExactly(2));
+        $this->loop->enableRead($input);
 
         $this->writeToStream($input, "foo\n");
         $this->loop->tick();
@@ -41,54 +42,92 @@ abstract class AbstractLoopTest extends TestCase
     {
         $input = $this->createStream();
 
-        $this->loop->addWriteStream($input, $this->expectCallableExactly(2));
+        $this->loop->onWritable($input, $this->expectCallableExactly(2));
+        $this->loop->enableWrite($input);
         $this->loop->tick();
         $this->loop->tick();
     }
 
-    public function testRemoveReadStreamInstantly()
+    public function testDisableReadStreamInstantly()
     {
         $input = $this->createStream();
 
-        $this->loop->addReadStream($input, $this->expectCallableNever());
-        $this->loop->removeReadStream($input);
+        $this->loop->onReadable($input, $this->expectCallableNever());
+        $this->loop->enableRead($input);
+        $this->loop->disableRead($input);
 
         $this->writeToStream($input, "bar\n");
         $this->loop->tick();
     }
 
-    public function testRemoveReadStreamAfterReading()
+    public function testDisableReadStreamAfterReading()
     {
         $input = $this->createStream();
 
-        $this->loop->addReadStream($input, $this->expectCallableOnce());
+        $this->loop->onReadable($input, $this->expectCallableOnce());
+        $this->loop->enableRead($input);
 
         $this->writeToStream($input, "foo\n");
         $this->loop->tick();
 
-        $this->loop->removeReadStream($input);
+        $this->loop->disableRead($input);
 
         $this->writeToStream($input, "bar\n");
         $this->loop->tick();
     }
 
-    public function testRemoveWriteStreamInstantly()
+    public function testDisableWriteStreamInstantly()
     {
         $input = $this->createStream();
 
-        $this->loop->addWriteStream($input, $this->expectCallableNever());
-        $this->loop->removeWriteStream($input);
+        $this->loop->onWritable($input, $this->expectCallableNever());
+        $this->loop->enableWrite($input);
+        $this->loop->disableWrite($input);
         $this->loop->tick();
     }
 
-    public function testRemoveWriteStreamAfterWriting()
+    public function testDisableWriteStreamAfterWriting()
     {
         $input = $this->createStream();
 
-        $this->loop->addWriteStream($input, $this->expectCallableOnce());
+        $this->loop->onWritable($input, $this->expectCallableOnce());
+        $this->loop->enableWrite($input);
         $this->loop->tick();
 
-        $this->loop->removeWriteStream($input);
+        $this->loop->disableWrite($input);
+        $this->loop->tick();
+    }
+
+    public function testDisableStreamForReadOnly()
+    {
+        $input = $this->createStream();
+
+        $this->loop->onReadable($input, $this->expectCallableNever());
+        $this->loop->enableRead($input);
+
+        $this->loop->onWritable($input, $this->expectCallableOnce());
+        $this->loop->enableWrite($input);
+
+        $this->loop->disableRead($input);
+
+        $this->writeToStream($input, "foo\n");
+        $this->loop->tick();
+    }
+
+    public function testDisableStreamForWriteOnly()
+    {
+        $input = $this->createStream();
+
+        $this->writeToStream($input, "foo\n");
+
+        $this->loop->onReadable($input, $this->expectCallableOnce());
+        $this->loop->enableRead($input);
+
+        $this->loop->onWritable($input, $this->expectCallableNever());
+        $this->loop->enableWrite($input);
+
+        $this->loop->disableWrite($input);
+
         $this->loop->tick();
     }
 
@@ -96,63 +135,46 @@ abstract class AbstractLoopTest extends TestCase
     {
         $input = $this->createStream();
 
-        $this->loop->addReadStream($input, $this->expectCallableNever());
-        $this->loop->addWriteStream($input, $this->expectCallableNever());
-        $this->loop->removeStream($input);
+        $this->loop->onReadable($input, $this->expectCallableNever());
+        $this->loop->onWritable($input, $this->expectCallableNever());
+        $this->loop->remove($input);
 
         $this->writeToStream($input, "bar\n");
         $this->loop->tick();
     }
 
-    public function testRemoveStreamForReadOnly()
+    public function testRemoveStreamAfterActivity()
     {
         $input = $this->createStream();
 
-        $this->loop->addReadStream($input, $this->expectCallableNever());
-        $this->loop->addWriteStream($input, $this->expectCallableOnce());
-        $this->loop->removeReadStream($input);
+        $this->loop->onReadable($input, $this->expectCallableOnce());
+        $this->loop->enableRead($input);
 
-        $this->writeToStream($input, "foo\n");
-        $this->loop->tick();
-    }
-
-    public function testRemoveStreamForWriteOnly()
-    {
-        $input = $this->createStream();
-
-        $this->writeToStream($input, "foo\n");
-
-        $this->loop->addReadStream($input, $this->expectCallableOnce());
-        $this->loop->addWriteStream($input, $this->expectCallableNever());
-        $this->loop->removeWriteStream($input);
-
-        $this->loop->tick();
-    }
-
-    public function testRemoveStream()
-    {
-        $input = $this->createStream();
-
-        $this->loop->addReadStream($input, $this->expectCallableOnce());
-        $this->loop->addWriteStream($input, $this->expectCallableOnce());
+        $this->loop->onWritable($input, $this->expectCallableOnce());
+        $this->loop->enableWrite($input);
 
         $this->writeToStream($input, "bar\n");
         $this->loop->tick();
 
-        $this->loop->removeStream($input);
+        $this->loop->remove($input);
 
         $this->writeToStream($input, "bar\n");
         $this->loop->tick();
     }
 
-    public function testRemoveInvalid()
+    public function testToggleAndRemoveInvalid()
     {
+        // Toggle read or write notifications and remove a valid stream from the
+        // event loop that was never added in the first place
         $stream = $this->createStream();
 
-        // remove a valid stream from the event loop that was never added in the first place
-        $this->loop->removeReadStream($stream);
-        $this->loop->removeWriteStream($stream);
-        $this->loop->removeStream($stream);
+        $this->loop->enableWrite($stream);
+        $this->loop->enableRead($stream);
+
+        $this->loop->disableWrite($stream);
+        $this->loop->disableRead($stream);
+
+        $this->loop->remove($stream);
     }
 
     /** @test */
@@ -167,10 +189,11 @@ abstract class AbstractLoopTest extends TestCase
         $input = $this->createStream();
 
         $loop = $this->loop;
-        $this->loop->addReadStream($input, function ($stream) use ($loop) {
-            $loop->removeStream($stream);
+        $this->loop->onReadable($input, function ($stream, $loop) {
+            $loop->remove($stream);
         });
 
+        $this->loop->enableRead($input);
         $this->writeToStream($input, "foo\n");
 
         $this->assertRunFasterThan(0.005);
@@ -181,11 +204,11 @@ abstract class AbstractLoopTest extends TestCase
     {
         $input = $this->createStream();
 
-        $loop = $this->loop;
-        $this->loop->addReadStream($input, function ($stream) use ($loop) {
+        $this->loop->onReadable($input, function ($stream, $loop) {
             $loop->stop();
         });
 
+        $this->loop->enableRead($input);
         $this->writeToStream($input, "foo\n");
 
         $this->assertRunFasterThan(0.005);
@@ -200,7 +223,7 @@ abstract class AbstractLoopTest extends TestCase
             }
         );
 
-        $this->loop->nextTick(
+        $this->loop->onNextTick(
             function () {
                 $this->loop->stop();
             }
@@ -215,20 +238,22 @@ abstract class AbstractLoopTest extends TestCase
         $stream1 = $this->createStream();
         $stream2 = $this->createStream();
 
-        $loop = $this->loop;
-        $loop->addReadStream($stream1, function ($stream) use ($loop, $stream2) {
+        $this->loop->onReadable($stream1, function ($stream, $loop) use ($stream2) {
             // stream1 is readable, remove stream2 as well => this will invalidate its callback
-            $loop->removeReadStream($stream);
-            $loop->removeReadStream($stream2);
+            $loop->remove($stream);
+            $loop->remove($stream2);
         });
 
         // this callback would have to be called as well, but the first stream already removed us
-        $loop->addReadStream($stream2, $this->expectCallableNever());
+        $this->loop->onReadable($stream2, $this->expectCallableNever());
+
+        $this->loop->enableRead($stream1);
+        $this->loop->enableRead($stream2);
 
         $this->writeToStream($stream1, "foo\n");
         $this->writeToStream($stream2, "foo\n");
 
-        $loop->run();
+        $this->loop->run();
     }
 
     public function testNextTick()
@@ -240,7 +265,7 @@ abstract class AbstractLoopTest extends TestCase
             $called = true;
         };
 
-        $this->loop->nextTick($callback);
+        $this->loop->onNextTick($callback);
 
         $this->assertFalse($called);
 
@@ -253,18 +278,15 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->addWriteStream(
-            $stream,
-            function () {
+        $this->loop->onWritable($stream, function () {
                 echo 'stream' . PHP_EOL;
-            }
-        );
+        });
 
-        $this->loop->nextTick(
-            function () {
-                echo 'next-tick' . PHP_EOL;
-            }
-        );
+        $this->loop->enableWrite($stream);
+
+        $this->loop->onNextTick(function () {
+            echo 'next-tick' . PHP_EOL;
+        });
 
         $this->expectOutputString('next-tick' . PHP_EOL . 'stream' . PHP_EOL);
 
@@ -275,22 +297,17 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->addWriteStream(
-            $stream,
-            function () {
-                echo 'stream' . PHP_EOL;
-            }
-        );
+        $this->loop->onWritable($stream, function () {
+            echo 'stream' . PHP_EOL;
+        });
 
-        $this->loop->nextTick(
-            function () {
-                $this->loop->nextTick(
-                    function () {
-                        echo 'next-tick' . PHP_EOL;
-                    }
-                );
-            }
-        );
+        $this->loop->enableWrite($stream);
+
+        $this->loop->onNextTick(function () {
+            $this->loop->onNextTick(function () {
+                echo 'next-tick' . PHP_EOL;
+            });
+        });
 
         $this->expectOutputString('next-tick' . PHP_EOL . 'stream' . PHP_EOL);
 
@@ -301,18 +318,14 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->addWriteStream(
-            $stream,
-            function () use ($stream) {
-                $this->loop->removeStream($stream);
-                $this->loop->nextTick(
-                    function () {
-                        echo 'next-tick' . PHP_EOL;
-                    }
-                );
-            }
-        );
+        $this->loop->onWritable($stream, function () use ($stream) {
+            $this->loop->remove($stream);
+            $this->loop->onNextTick(function () {
+                echo 'next-tick' . PHP_EOL;
+            });
+        });
 
+        $this->loop->enableWrite($stream);
         $this->expectOutputString('next-tick' . PHP_EOL);
 
         $this->loop->run();
@@ -322,9 +335,9 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->futureTick(
+        $this->loop->onFutureTick(
             function () {
-                $this->loop->nextTick(
+                $this->loop->onNextTick(
                     function () {
                         echo 'next-tick' . PHP_EOL;
                     }
@@ -339,16 +352,11 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testNextTickEventGeneratedByTimer()
     {
-        $this->loop->addTimer(
-            0.001,
-            function () {
-                $this->loop->nextTick(
-                    function () {
-                        echo 'next-tick' . PHP_EOL;
-                    }
-                );
-            }
-        );
+        $this->loop->addTimer(0.001, function () {
+            $this->loop->onNextTick(function () {
+                echo 'next-tick' . PHP_EOL;
+            });
+        });
 
         $this->expectOutputString('next-tick' . PHP_EOL);
 
@@ -364,7 +372,7 @@ abstract class AbstractLoopTest extends TestCase
             $called = true;
         };
 
-        $this->loop->futureTick($callback);
+        $this->loop->onFutureTick($callback);
 
         $this->assertFalse($called);
 
@@ -377,14 +385,16 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->addWriteStream(
+        $this->loop->onWritable(
             $stream,
             function () {
                 echo 'stream' . PHP_EOL;
             }
         );
 
-        $this->loop->futureTick(
+        $this->loop->enableWrite($stream);
+
+        $this->loop->onFutureTick(
             function () {
                 echo 'future-tick' . PHP_EOL;
             }
@@ -399,18 +409,20 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->addWriteStream(
+        $this->loop->onWritable(
             $stream,
             function () use ($stream) {
                 echo 'stream' . PHP_EOL;
-                $this->loop->removeWriteStream($stream);
+                $this->loop->remove($stream);
             }
         );
 
-        $this->loop->futureTick(
+        $this->loop->enableWrite($stream);
+
+        $this->loop->onFutureTick(
             function () {
                 echo 'future-tick-1' . PHP_EOL;
-                $this->loop->futureTick(
+                $this->loop->onFutureTick(
                     function () {
                         echo 'future-tick-2' . PHP_EOL;
                     }
@@ -427,17 +439,19 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->addWriteStream(
+        $this->loop->onWritable(
             $stream,
             function () use ($stream) {
-                $this->loop->removeStream($stream);
-                $this->loop->futureTick(
+                $this->loop->remove($stream);
+                $this->loop->onFutureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
                     }
                 );
             }
         );
+
+        $this->loop->enableWrite($stream);
 
         $this->expectOutputString('future-tick' . PHP_EOL);
 
@@ -448,9 +462,9 @@ abstract class AbstractLoopTest extends TestCase
     {
         $stream = $this->createStream();
 
-        $this->loop->nextTick(
+        $this->loop->onNextTick(
             function () {
-                $this->loop->futureTick(
+                $this->loop->onFutureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
                     }
@@ -468,7 +482,7 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addTimer(
             0.001,
             function () {
-                $this->loop->futureTick(
+                $this->loop->onFutureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
                     }

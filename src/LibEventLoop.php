@@ -43,59 +43,67 @@ class LibEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function addReadStream($stream, callable $listener)
-    {
-        $key = (int) $stream;
-
-        if (!isset($this->readListeners[$key])) {
-            $this->readListeners[$key] = $listener;
-            $this->subscribeStreamEvent($stream, EV_READ);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addWriteStream($stream, callable $listener)
-    {
-        $key = (int) $stream;
-
-        if (!isset($this->writeListeners[$key])) {
-            $this->writeListeners[$key] = $listener;
-            $this->subscribeStreamEvent($stream, EV_WRITE);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function removeReadStream($stream)
+    public function onReadable($stream, callable $listener)
     {
         $key = (int) $stream;
 
         if (isset($this->readListeners[$key])) {
-            unset($this->readListeners[$key]);
-            $this->unsubscribeStreamEvent($stream, EV_READ);
+            throw new \RuntimeException(sprintf('Stream %s already has a read listener.', $key));
         }
+
+        $this->readListeners[$key] = $listener;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function removeWriteStream($stream)
+    public function enableRead($stream)
+    {
+        $this->subscribeStreamEvent($stream, EV_READ);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableRead($stream)
+    {
+        $this->unsubscribeStreamEvent($stream, EV_READ);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onWritable($stream, callable $listener)
     {
         $key = (int) $stream;
 
         if (isset($this->writeListeners[$key])) {
-            unset($this->writeListeners[$key]);
-            $this->unsubscribeStreamEvent($stream, EV_WRITE);
+            throw new \RuntimeException(sprintf('Stream %s already has a write listener.', $key));
         }
+
+        $this->writeListeners[$key] = $listener;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function removeStream($stream)
+    public function enableWrite($stream)
+    {
+        $this->subscribeStreamEvent($stream, EV_WRITE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableWrite($stream)
+    {
+        $this->unsubscribeStreamEvent($stream, EV_WRITE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($stream)
     {
         $key = (int) $stream;
 
@@ -104,14 +112,14 @@ class LibEventLoop implements LoopInterface
 
             event_del($event);
             event_free($event);
-
-            unset(
-                $this->streamFlags[$key],
-                $this->streamEvents[$key],
-                $this->readListeners[$key],
-                $this->writeListeners[$key]
-            );
         }
+
+        unset(
+            $this->streamFlags[$key],
+            $this->streamEvents[$key],
+            $this->readListeners[$key],
+            $this->writeListeners[$key]
+        );
     }
 
     /**
@@ -164,7 +172,7 @@ class LibEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function nextTick(callable $listener)
+    public function onNextTick(callable $listener)
     {
         $this->nextTickQueue->add($listener);
     }
@@ -172,7 +180,7 @@ class LibEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function futureTick(callable $listener)
+    public function onFutureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
     }
@@ -277,7 +285,7 @@ class LibEventLoop implements LoopInterface
         $flags = $this->streamFlags[$key] &= ~$flag;
 
         if (0 === $flags) {
-            $this->removeStream($stream);
+            $this->remove($stream);
 
             return;
         }

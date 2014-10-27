@@ -34,62 +34,80 @@ class StreamSelectLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function addReadStream($stream, callable $listener)
+    public function onReadable($stream, callable $listener)
     {
         $key = (int) $stream;
 
-        if (!isset($this->readStreams[$key])) {
-            $this->readStreams[$key] = $stream;
-            $this->readListeners[$key] = $listener;
+        if (isset($this->readListeners[$key])) {
+            throw new \RuntimeException(sprintf('Stream %s already has a read listener.', $key));
         }
+
+        $this->readListeners[$key] = $listener;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addWriteStream($stream, callable $listener)
+    public function enableRead($stream)
     {
         $key = (int) $stream;
-
-        if (!isset($this->writeStreams[$key])) {
-            $this->writeStreams[$key] = $stream;
-            $this->writeListeners[$key] = $listener;
-        }
+        $this->readStreams[$key] = $stream;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function removeReadStream($stream)
+    public function disableRead($stream)
+    {
+        $key = (int) $stream;
+        unset($this->readStreams[$key]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onWritable($stream, callable $listener)
+    {
+        $key = (int) $stream;
+
+        if (isset($this->writeListeners[$key])) {
+            throw new \RuntimeException(sprintf('Stream %s already has a write listener.', $key));
+        }
+
+        $this->writeListeners[$key] = $listener;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function enableWrite($stream)
+    {
+        $key = (int) $stream;
+        $this->writeStreams[$key] = $stream;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableWrite($stream)
+    {
+        $key = (int) $stream;
+        unset($this->writeStreams[$key]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($stream)
     {
         $key = (int) $stream;
 
         unset(
             $this->readStreams[$key],
-            $this->readListeners[$key]
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function removeWriteStream($stream)
-    {
-        $key = (int) $stream;
-
-        unset(
+            $this->readListeners[$key],
             $this->writeStreams[$key],
             $this->writeListeners[$key]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function removeStream($stream)
-    {
-        $this->removeReadStream($stream);
-        $this->removeWriteStream($stream);
     }
 
     /**
@@ -135,7 +153,7 @@ class StreamSelectLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function nextTick(callable $listener)
+    public function onNextTick(callable $listener)
     {
         $this->nextTickQueue->add($listener);
     }
@@ -143,7 +161,7 @@ class StreamSelectLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function futureTick(callable $listener)
+    public function onFutureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
     }
