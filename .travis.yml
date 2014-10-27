@@ -11,6 +11,6 @@ matrix:
     - php: hhvm
 
 install: ./travis-init.sh
-  
+
 script:
   - phpunit --coverage-text
