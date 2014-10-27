@@ -42,59 +42,67 @@ class ExtEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function addReadStream($stream, callable $listener)
-    {
-        $key = (int) $stream;
-
-        if (!isset($this->readListeners[$key])) {
-            $this->readListeners[$key] = $listener;
-            $this->subscribeStreamEvent($stream, Event::READ);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addWriteStream($stream, callable $listener)
-    {
-        $key = (int) $stream;
-
-        if (!isset($this->writeListeners[$key])) {
-            $this->writeListeners[$key] = $listener;
-            $this->subscribeStreamEvent($stream, Event::WRITE);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function removeReadStream($stream)
+    public function onReadable($stream, callable $listener)
     {
         $key = (int) $stream;
 
         if (isset($this->readListeners[$key])) {
-            unset($this->readListeners[$key]);
-            $this->unsubscribeStreamEvent($stream, Event::READ);
+            throw new \RuntimeException(sprintf('Stream %s already has a read listener.', $key));
         }
+
+        $this->readListeners[$key] = $listener;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function removeWriteStream($stream)
+    public function enableRead($stream)
+    {
+        $this->subscribeStreamEvent($stream, Event::READ);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableRead($stream)
+    {
+        $this->unsubscribeStreamEvent($stream, Event::READ);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onWritable($stream, callable $listener)
     {
         $key = (int) $stream;
 
         if (isset($this->writeListeners[$key])) {
-            unset($this->writeListeners[$key]);
-            $this->unsubscribeStreamEvent($stream, Event::WRITE);
+            throw new \RuntimeException(sprintf('Stream %s already has a write listener.', $key));
         }
+
+        $this->writeListeners[$key] = $listener;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function removeStream($stream)
+    public function enableWrite($stream)
+    {
+        $this->subscribeStreamEvent($stream, Event::WRITE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableWrite($stream)
+    {
+        $this->unsubscribeStreamEvent($stream, Event::WRITE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($stream)
     {
         $key = (int) $stream;
 
@@ -273,7 +281,7 @@ class ExtEventLoop implements LoopInterface
         $flags = $this->streamFlags[$key] &= ~$flag;
 
         if (0 === $flags) {
-            $this->removeStream($stream);
+            $this->remove($stream);
 
             return;
         }
