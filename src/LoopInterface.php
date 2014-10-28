@@ -9,7 +9,7 @@ interface LoopInterface
     /**
      * Register a listener to be notified when a stream is ready to read.
      *
-     * @param stream   $stream   The PHP stream resource to check.
+     * @param resource $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
      */
     public function addReadStream($stream, callable $listener);
@@ -17,7 +17,7 @@ interface LoopInterface
     /**
      * Register a listener to be notified when a stream is ready to write.
      *
-     * @param stream   $stream   The PHP stream resource to check.
+     * @param resource $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
      */
     public function addWriteStream($stream, callable $listener);
@@ -25,21 +25,21 @@ interface LoopInterface
     /**
      * Remove the read event listener for the given stream.
      *
-     * @param stream $stream The PHP stream resource.
+     * @param resource $stream The PHP stream resource.
      */
     public function removeReadStream($stream);
 
     /**
      * Remove the write event listener for the given stream.
      *
-     * @param stream $stream The PHP stream resource.
+     * @param resource $stream The PHP stream resource.
      */
     public function removeWriteStream($stream);
 
     /**
      * Remove all listeners for the given stream.
      *
-     * @param stream $stream The PHP stream resource.
+     * @param resource $stream The PHP stream resource.
      */
     public function removeStream($stream);
 
@@ -49,8 +49,8 @@ interface LoopInterface
      * The execution order of timers scheduled to execute at the same time is
      * not guaranteed.
      *
-     * @param numeric  $interval The number of seconds to wait before execution.
-     * @param callable $callback The callback to invoke.
+     * @param int|float $interval The number of seconds to wait before execution.
+     * @param callable  $callback The callback to invoke.
      *
      * @return TimerInterface
      */
@@ -62,8 +62,8 @@ interface LoopInterface
      * The execution order of timers scheduled to execute at the same time is
      * not guaranteed.
      *
-     * @param numeric  $interval The number of seconds to wait before execution.
-     * @param callable $callback The callback to invoke.
+     * @param int|float $interval The number of seconds to wait before execution.
+     * @param callable  $callback The callback to invoke.
      *
      * @return TimerInterface
      */
