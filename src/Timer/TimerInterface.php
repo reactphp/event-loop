@@ -8,7 +8,7 @@ interface TimerInterface
 {
     /**
      * Get the loop with which this timer is associated
-
+     *
      * @return LoopInterface
      */
     public function getLoop();
