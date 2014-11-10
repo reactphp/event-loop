@@ -11,9 +11,6 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
     # install 'event' PHP extension
     echo "yes" | pecl install event
 
-    # install 'ev' PHP extension
-    echo "yes" | sudo pecl install ev
-
     # install 'libevent' PHP extension
     curl http://pecl.php.net/get/libevent-0.1.0.tgz | tar -xz
     pushd libevent-0.1.0
@@ -26,7 +23,7 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
 
     # install 'pecl-ev' PHP extension
     git clone http://bitbucket.org/osmanov/pecl-ev.git
-    # 0.2.10
+    # 0.2.12
     pushd pecl-ev
     phpize
     ./configure
