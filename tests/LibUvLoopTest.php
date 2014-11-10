@@ -476,7 +476,7 @@ class LibUvEventLoopTest extends AbstractLoopTest
         $this->loop->addWriteStream(
             $stream[0],
             function () use ($stream) {
-                $this->removeStream($stream[0]);
+                $this->loop->removeStream($stream[0]);
                 $this->loop->futureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
