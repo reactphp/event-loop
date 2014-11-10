@@ -38,8 +38,11 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
     popd
 
     #install 'php-uv'
+    git clone --recursive --branch libuv-1.0 --depth 1 https://github.com/steverhoades/php-uv
+    pushd php-uv
     phpize && ./configure --with-uv --enable-httpparser && make && sudo make install
-    echo "extension=uv.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+    echo "extension=uv.so" >> "$(php -r 'echo php_ini_loaded_file();')"
+    popd
 
 fi
 
