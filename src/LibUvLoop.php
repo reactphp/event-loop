@@ -152,7 +152,7 @@ class LibUvLoop implements LoopInterface
 
         $this->futureTickQueue->tick();
 
-        uv_run_once($this->loop);
+        uv_run($this->loop, \UV::RUN_ONCE);
     }
 
     /**
