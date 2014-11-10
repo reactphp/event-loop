@@ -13,6 +13,8 @@ class Factory
             return new LibEvLoop;
         } elseif (class_exists('EventBase', false)) {
             return new ExtEventLoop;
+        } elseif (function_exists('uv_default_loop')) {
+            return new LibUvLoop();
         }
 
         return new StreamSelectLoop();
