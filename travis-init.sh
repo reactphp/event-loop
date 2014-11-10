@@ -41,16 +41,6 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
     phpize && ./configure --with-uv --enable-httpparser && make && sudo make install
     echo "extension=uv.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
-    # install 'php-uv' PHP extension
-    git clone --recursive https://github.com/m4rw3r/php-libev
-    pushd php-libev
-    phpize
-    ./configure --with-libev
-    make
-    make install
-    popd
-    echo "extension=libev.so" >> "$(php -r 'echo php_ini_loaded_file();')"
-
 fi
 
 composer install --dev --prefer-source
