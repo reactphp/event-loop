@@ -34,7 +34,7 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
     # install 'libuv'
     git clone --recursive --branch v1.0.0-rc2 --depth 1 https://github.com/joyent/libuv
     pushd libuv
-    ./autogen.sh && ./configure && make && make install
+    ./autogen.sh && ./configure && make && sudo make install
     popd
 
     #install 'php-uv'
