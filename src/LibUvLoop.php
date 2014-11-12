@@ -18,6 +18,22 @@ class LibUvLoop implements LoopInterface
     private $nextTickQueue;
     private $futureTickQueue;
 
+    public $tasks = 0;
+
+    /**
+     * @todo FIXME - this is temporary to allow filesystem to work
+     * @param  string $name name of get param
+     * @return string
+     */
+    public function __get($name)
+    {
+        if($name === 'loop') {
+            return $this->loop;
+        }
+
+        return NULL;
+    }
+
     public function __construct()
     {
         $this->loop = uv_loop_new();
@@ -152,7 +168,33 @@ class LibUvLoop implements LoopInterface
 
         $this->futureTickQueue->tick();
 
-        uv_run($this->loop, \UV::RUN_ONCE);
+        $flags = \UV::RUN_ONCE;
+        if (!$this->running || !$this->nextTickQueue->isEmpty() || !$this->futureTickQueue->isEmpty()) {
+            $flags = \UV::RUN_NOWAIT;
+        } elseif (empty($this->events) && !$this->timers->count() && !$this->tasks) {
+            $this->running = false;
+            return;
+        }
+
+        uv_run($this->loop, $flags);
+    }
+
+    /**
+     * Wrap a task related callback, this will keep track of pending tasks
+     * and keep the event loop running accordingly.
+     *
+     * @param  callable $task   the callback you want executed when task completes
+     * @return callable         wrapper to task tracking
+     */
+    public function taskCallback($task)
+    {
+        $callback = function() use ($task) {
+            $this->tasks--;
+            call_user_func_array($task, func_get_args());
+        };
+        $this->tasks++;
+
+        return $callback;
     }
 
     /**
@@ -163,18 +205,7 @@ class LibUvLoop implements LoopInterface
         $this->running = true;
 
         while ($this->running) {
-            $this->nextTickQueue->tick();
-
-            $this->futureTickQueue->tick();
-
-            $flags = \UV::RUN_ONCE;
-            if (!$this->running || !$this->nextTickQueue->isEmpty() || !$this->futureTickQueue->isEmpty()) {
-                $flags = \UV::RUN_NOWAIT;
-            } elseif (empty($this->events) && !$this->timers->count()) {
-                break;
-            }
-
-            uv_run($this->loop, $flags);
+            $this->tick();
         }
     }
 
