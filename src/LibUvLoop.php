@@ -18,7 +18,7 @@ class LibUvLoop implements LoopInterface
     private $nextTickQueue;
     private $futureTickQueue;
 
-    public $tasks = 0;
+    private $tasks = 0;
 
     /**
      * @todo FIXME - this is temporary to allow filesystem to work
