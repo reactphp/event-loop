@@ -9,8 +9,6 @@ namespace React\EventLoop;
 use Event;
 use EventBase;
 use EventConfig as EventBaseConfig;
-use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
@@ -20,22 +18,12 @@ use SplObjectStorage;
  *
  * @package React\EventLoop
  */
-class ExtEventLoop implements LoopInterface
+class ExtEventLoop extends Loop implements LoopInterface
 {
     /**
      * @var \EventBase $eventBase
      */
     private $eventBase;
-
-    /**
-     * @var Tick\NextTickQueue $nextTickQueue
-     */
-    private $nextTickQueue;
-
-    /**
-     * @var Tick\FutureTickQueue $futureTickQueue
-     */
-    private $futureTickQueue;
 
     /**
      * @var callable $timerCallback
@@ -82,9 +70,9 @@ class ExtEventLoop implements LoopInterface
      */
     public function __construct(EventBaseConfig $config = null)
     {
+        parent::__construct();
+
         $this->eventBase = new EventBase($config);
-        $this->nextTickQueue = new NextTickQueue($this);
-        $this->futureTickQueue = new FutureTickQueue($this);
         $this->timerEvents = new SplObjectStorage();
 
         $this->createTimerCallback();

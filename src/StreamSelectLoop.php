@@ -6,8 +6,6 @@
  */
 namespace React\EventLoop;
 
-use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use React\EventLoop\Timer\Timers;
@@ -17,22 +15,12 @@ use React\EventLoop\Timer\Timers;
  *
  * @package React\EventLoop
  */
-class StreamSelectLoop implements LoopInterface
+class StreamSelectLoop extends Loop implements LoopInterface
 {
     /**
      * @const int MICROSECONDS_PER_SECOND
      */
     const MICROSECONDS_PER_SECOND = 1000000;
-
-    /**
-     * @var Tick\NextTickQueue $nextTickQueue
-     */
-    private $nextTickQueue;
-
-    /**
-     * @var Tick\FutureTickQueue $futureTickQueue
-     */
-    private $futureTickQueue;
 
     /**
      * @var Timer\Timers $timers
@@ -70,8 +58,8 @@ class StreamSelectLoop implements LoopInterface
      */
     public function __construct()
     {
-        $this->nextTickQueue = new NextTickQueue($this);
-        $this->futureTickQueue = new FutureTickQueue($this);
+        parent::__construct();
+
         $this->timers = new Timers();
     }
 

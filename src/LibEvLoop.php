@@ -9,8 +9,6 @@ namespace React\EventLoop;
 use libev\EventLoop;
 use libev\IOEvent;
 use libev\TimerEvent;
-use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
@@ -23,22 +21,12 @@ use SplObjectStorage;
  *
  * @package React\EventLoop
  */
-class LibEvLoop implements LoopInterface
+class LibEvLoop extends Loop implements LoopInterface
 {
     /**
      * @var \libev\EventLoop $loop
      */
     private $loop;
-
-    /**
-     * @var Tick\NextTickQueue $nextTickQueue
-     */
-    private $nextTickQueue;
-
-    /**
-     * @var Tick\FutureTickQueue $futureTickQueue
-     */
-    private $futureTickQueue;
 
     /**
      * @var \SplObjectStorage $timerEvents
@@ -66,9 +54,9 @@ class LibEvLoop implements LoopInterface
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->loop = new EventLoop();
-        $this->nextTickQueue = new NextTickQueue($this);
-        $this->futureTickQueue = new FutureTickQueue($this);
         $this->timerEvents = new SplObjectStorage();
     }
 
