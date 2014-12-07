@@ -18,11 +18,6 @@ use React\EventLoop\Timer\Timers;
 class StreamSelectLoop extends Loop implements LoopInterface
 {
     /**
-     * @const int MICROSECONDS_PER_SECOND
-     */
-    const MICROSECONDS_PER_SECOND = 1000000;
-
-    /**
      * @var Timer\Timers $timers
      */
     private $timers;

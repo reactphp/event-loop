@@ -17,6 +17,11 @@ use React\EventLoop\Tick\NextTickQueue;
 abstract class Loop
 {
     /**
+     * @const int MICROSECONDS_PER_SECOND
+     */
+    const MICROSECONDS_PER_SECOND = 1000000;
+
+    /**
      * @var Tick\NextTickQueue $nextTickQueue
      */
     protected $nextTickQueue;

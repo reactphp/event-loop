@@ -20,11 +20,6 @@ use SplObjectStorage;
 class LibEventLoop extends Loop implements LoopInterface
 {
     /**
-     * @const int MICROSECONDS_PER_SECOND
-     */
-    const MICROSECONDS_PER_SECOND = 1000000;
-
-    /**
      * @var bool|resource
      */
     private $eventBase;
