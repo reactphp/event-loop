@@ -32,6 +32,11 @@ abstract class Loop
     protected $futureTickQueue;
 
     /**
+     * @var bool $running
+     */
+    protected $running = false;
+
+    /**
      * Constructor
      *
      */
@@ -39,5 +44,13 @@ abstract class Loop
     {
         $this->nextTickQueue = new NextTickQueue($this);
         $this->futureTickQueue = new FutureTickQueue($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function stop()
+    {
+        $this->running = false;
     }
 }

@@ -60,11 +60,6 @@ class LibEventLoop extends Loop implements LoopInterface
     private $writeListeners = [];
 
     /**
-     * @var bool $running
-     */
-    private $running = false;
-
-    /**
      * Constructor
      *
      */
@@ -249,14 +244,6 @@ class LibEventLoop extends Loop implements LoopInterface
 
             event_base_loop($this->eventBase, $flags);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function stop()
-    {
-        $this->running = false;
     }
 
     /**

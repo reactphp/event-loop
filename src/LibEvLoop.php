@@ -44,11 +44,6 @@ class LibEvLoop extends Loop implements LoopInterface
     private $writeEvents = [];
 
     /**
-     * @var bool $running
-     */
-    private $running = false;
-
-    /**
      * Constructor
      *
      */
@@ -233,13 +228,5 @@ class LibEvLoop extends Loop implements LoopInterface
 
             $this->loop->run($flags);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function stop()
-    {
-        $this->running = false;
     }
 }

@@ -43,11 +43,6 @@ class StreamSelectLoop extends Loop implements LoopInterface
     private $writeListeners = [];
 
     /**
-     * @var bool $running
-     */
-    private $running = false;
-
-    /**
      * Constructor
      *
      */
@@ -227,14 +222,6 @@ class StreamSelectLoop extends Loop implements LoopInterface
 
             $this->waitForStreamActivity($timeout);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function stop()
-    {
-        $this->running = false;
     }
 
     /**

@@ -61,11 +61,6 @@ class ExtEventLoop extends Loop implements LoopInterface
     private $writeListeners = [];
 
     /**
-     * @var bool $running
-     */
-    private $running = false;
-
-    /**
      * @param \EventConfig $config
      */
     public function __construct(EventBaseConfig $config = null)
@@ -244,14 +239,6 @@ class ExtEventLoop extends Loop implements LoopInterface
             // @-suppression: https://github.com/reactphp/react/pull/234#discussion-diff-7759616R226
             @$this->eventBase->loop($flags);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function stop()
-    {
-        $this->running = false;
     }
 
     /**
