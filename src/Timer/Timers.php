@@ -1,32 +1,69 @@
 <?php
 
+/**
+ * Timers.php
+ *
+ */
 namespace React\EventLoop\Timer;
 
 use SplObjectStorage;
 use SplPriorityQueue;
 
+/**
+ * Class Timers
+ *
+ * @package React\EventLoop\Timer
+ */
 class Timers
 {
+    /**
+     * @var float $time Microtime
+     */
     private $time;
+
+    /**
+     * @var \SplObjectStorage $timers
+     */
     private $timers;
+
+    /**
+     * @var \SplPriorityQueue $scheduler
+     */
     private $scheduler;
 
+    /**
+     * Constructor
+     *
+     */
     public function __construct()
     {
         $this->timers = new SplObjectStorage();
         $this->scheduler = new SplPriorityQueue();
     }
 
+    /**
+     * Sets the time property to current microtime
+     *
+     * @return float $time
+     */
     public function updateTime()
     {
         return $this->time = microtime(true);
     }
 
+    /**
+     * Returns the time property, but updates when it doesn't have a value
+     *
+     * @return float $time
+     */
     public function getTime()
     {
         return $this->time ?: $this->updateTime();
     }
 
+    /**
+     * @param TimerInterface $timer
+     */
     public function add(TimerInterface $timer)
     {
         $interval = $timer->getInterval();
@@ -36,16 +73,29 @@ class Timers
         $this->scheduler->insert($timer, -$scheduledAt);
     }
 
+    /**
+     * @param TimerInterface $timer
+     * @see SplObjectStorage::contains
+     *
+     * @return bool
+     */
     public function contains(TimerInterface $timer)
     {
         return $this->timers->contains($timer);
     }
 
+    /**
+     * @param TimerInterface $timer
+     * @see SplObjectStorage::detach
+     */
     public function cancel(TimerInterface $timer)
     {
         $this->timers->detach($timer);
     }
 
+    /**
+     * @return TimerInterface|null $first
+     */
     public function getFirst()
     {
         while ($this->scheduler->count()) {
@@ -61,11 +111,17 @@ class Timers
         return null;
     }
 
+    /**
+     * @return bool $isEmpty
+     */
     public function isEmpty()
     {
         return count($this->timers) === 0;
     }
 
+    /**
+     * Tick
+     */
     public function tick()
     {
         $time = $this->updateTime();
