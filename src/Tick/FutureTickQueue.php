@@ -1,36 +1,18 @@
 <?php
 
+/**
+ * FutureTickQueue.php
+ *
+ */
 namespace React\EventLoop\Tick;
 
-use React\EventLoop\LoopInterface;
-use SplQueue;
-
-class FutureTickQueue
+/**
+ * Class FutureTickQueue
+ *
+ * @package React\EventLoop\Tick
+ */
+class FutureTickQueue extends TickQueue
 {
-    private $eventLoop;
-    private $queue;
-
-    /**
-     * @param LoopInterface $eventLoop The event loop passed as the first parameter to callbacks.
-     */
-    public function __construct(LoopInterface $eventLoop)
-    {
-        $this->eventLoop = $eventLoop;
-        $this->queue = new SplQueue();
-    }
-
-    /**
-     * Add a callback to be invoked on a future tick of the event loop.
-     *
-     * Callbacks are guaranteed to be executed in the order they are enqueued.
-     *
-     * @param callable $listener The callback to invoke.
-     */
-    public function add(callable $listener)
-    {
-        $this->queue->enqueue($listener);
-    }
-
     /**
      * Flush the callback queue.
      */
@@ -45,15 +27,5 @@ class FutureTickQueue
                 $this->eventLoop
             );
         }
-    }
-
-    /**
-     * Check if the next tick queue is empty.
-     *
-     * @return boolean
-     */
-    public function isEmpty()
-    {
-        return $this->queue->isEmpty();
     }
 }
