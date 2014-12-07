@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * ExtEventLoop.php
+ *
+ */
 namespace React\EventLoop;
 
 use Event;
@@ -13,21 +17,69 @@ use SplObjectStorage;
 
 /**
  * An ext-event based event-loop.
+ *
+ * @package React\EventLoop
  */
 class ExtEventLoop implements LoopInterface
 {
+    /**
+     * @var \EventBase $eventBase
+     */
     private $eventBase;
-    private $nextTickQueue;
-    private $futureTickQueue;
-    private $timerCallback;
-    private $timerEvents;
-    private $streamCallback;
-    private $streamEvents = [];
-    private $streamFlags = [];
-    private $readListeners = [];
-    private $writeListeners = [];
-    private $running;
 
+    /**
+     * @var Tick\NextTickQueue $nextTickQueue
+     */
+    private $nextTickQueue;
+
+    /**
+     * @var Tick\FutureTickQueue $futureTickQueue
+     */
+    private $futureTickQueue;
+
+    /**
+     * @var callable $timerCallback
+     */
+    private $timerCallback;
+
+    /**
+     * @var \SplObjectStorage $timerEvents
+     */
+    private $timerEvents;
+
+    /**
+     * @var callable $streamCallback
+     */
+    private $streamCallback;
+
+    /**
+     * @var array $streamEvents
+     */
+    private $streamEvents = [];
+
+    /**
+     * @var array $streamFlags
+     */
+    private $streamFlags = [];
+
+    /**
+     * @var array $readListeners
+     */
+    private $readListeners = [];
+
+    /**
+     * @var array $writeListeners
+     */
+    private $writeListeners = [];
+
+    /**
+     * @var bool $running
+     */
+    private $running = false;
+
+    /**
+     * @param \EventConfig $config
+     */
     public function __construct(EventBaseConfig $config = null)
     {
         $this->eventBase = new EventBase($config);

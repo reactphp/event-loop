@@ -1,9 +1,18 @@
 <?php
 
+/**
+ * LoopInterface.php
+ *
+ */
 namespace React\EventLoop;
 
 use React\EventLoop\Timer\TimerInterface;
 
+/**
+ * Interface LoopInterface
+ *
+ * @package React\EventLoop
+ */
 interface LoopInterface
 {
     /**

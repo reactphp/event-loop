@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * StreamSelectLoop.php
+ *
+ */
 namespace React\EventLoop;
 
 use React\EventLoop\Tick\FutureTickQueue;
@@ -10,20 +14,60 @@ use React\EventLoop\Timer\Timers;
 
 /**
  * A stream_select() based event-loop.
+ *
+ * @package React\EventLoop
  */
 class StreamSelectLoop implements LoopInterface
 {
+    /**
+     * @const int MICROSECONDS_PER_SECOND
+     */
     const MICROSECONDS_PER_SECOND = 1000000;
 
+    /**
+     * @var Tick\NextTickQueue $nextTickQueue
+     */
     private $nextTickQueue;
-    private $futureTickQueue;
-    private $timers;
-    private $readStreams = [];
-    private $readListeners = [];
-    private $writeStreams = [];
-    private $writeListeners = [];
-    private $running;
 
+    /**
+     * @var Tick\FutureTickQueue $futureTickQueue
+     */
+    private $futureTickQueue;
+
+    /**
+     * @var Timer\Timers $timers
+     */
+    private $timers;
+
+    /**
+     * @var array $readStreams
+     */
+    private $readStreams = [];
+
+    /**
+     * @var array $readListeners
+     */
+    private $readListeners = [];
+
+    /**
+     * @var array $writeStreams
+     */
+    private $writeStreams = [];
+
+    /**
+     * @var array $writeListeners
+     */
+    private $writeListeners = [];
+
+    /**
+     * @var bool $running
+     */
+    private $running = false;
+
+    /**
+     * Constructor
+     *
+     */
     public function __construct()
     {
         $this->nextTickQueue = new NextTickQueue($this);

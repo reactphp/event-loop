@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * LibEvLoop.php
+ *
+ */
 namespace React\EventLoop;
 
 use libev\EventLoop;
@@ -12,19 +16,54 @@ use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
 
 /**
+ * An ext-libev based event-loop.
+ *
  * @see https://github.com/m4rw3r/php-libev
  * @see https://gist.github.com/1688204
+ *
+ * @package React\EventLoop
  */
 class LibEvLoop implements LoopInterface
 {
+    /**
+     * @var \libev\EventLoop $loop
+     */
     private $loop;
-    private $nextTickQueue;
-    private $futureTickQueue;
-    private $timerEvents;
-    private $readEvents = [];
-    private $writeEvents = [];
-    private $running;
 
+    /**
+     * @var Tick\NextTickQueue $nextTickQueue
+     */
+    private $nextTickQueue;
+
+    /**
+     * @var Tick\FutureTickQueue $futureTickQueue
+     */
+    private $futureTickQueue;
+
+    /**
+     * @var \SplObjectStorage $timerEvents
+     */
+    private $timerEvents;
+
+    /**
+     * @var array $readEvents
+     */
+    private $readEvents = [];
+
+    /**
+     * @var array $writeEvents
+     */
+    private $writeEvents = [];
+
+    /**
+     * @var bool $running
+     */
+    private $running = false;
+
+    /**
+     * Constructor
+     *
+     */
     public function __construct()
     {
         $this->loop = new EventLoop();
