@@ -185,8 +185,6 @@ class StreamSelectLoop implements LoopInterface
                 $timeout = $scheduledAt - $this->timers->getTime();
                 if ($timeout < 0) {
                     $timeout = 0;
-                } else {
-                    $timeout *= self::MICROSECONDS_PER_SECOND;
                 }
 
             // The only possible event is stream activity, so wait forever ...
@@ -243,7 +241,7 @@ class StreamSelectLoop implements LoopInterface
      *
      * @param array        &$read   An array of read streams to select upon.
      * @param array        &$write  An array of write streams to select upon.
-     * @param integer|null $timeout Activity timeout in microseconds, or null to wait forever.
+     * @param integer|null $timeout Activity timeout in seconds, or null to wait forever.
      *
      * @return integer The total number of streams that are ready for read/write.
      */
@@ -252,7 +250,10 @@ class StreamSelectLoop implements LoopInterface
         if ($read || $write) {
             $except = null;
 
-            return stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+            $tv_sec = $timeout === null ?: floor($timeout);
+            // convert the fractional part of $timeout to microseconds
+            $tv_usec = $timeout === null ?: round(fmod($timeout, 1) * self::MICROSECONDS_PER_SECOND);
+            return stream_select($read, $write, $except, $tv_sec, $tv_usec);
         }
 
         usleep($timeout);
