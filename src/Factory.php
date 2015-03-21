@@ -11,6 +11,8 @@ class Factory
             return new LibEventLoop();
         } elseif (class_exists('libev\EventLoop', false)) {
             return new LibEvLoop;
+        } elseif (class_exists('EvLoop', false)) {
+            return new PeclEvLoop;
         } elseif (class_exists('EventBase', false)) {
             return new ExtEventLoop;
         }
