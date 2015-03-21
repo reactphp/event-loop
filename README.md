@@ -22,6 +22,10 @@ In addition to the interface there are some implementations provided:
   ([github](https://github.com/m4rw3r/php-libev)). It supports the same
   backends as libevent.
 
+* `PeclEvLoop`: This uses the `libev` pecl extension that is documented on
+  ([php.net](http://php.net/manual/en/book.ev.php)).  See
+  ([bitbucket](https://bitbucket.org/osmanov/pecl-ev/overview)) for source.
+
 * `ExtEventLoop`: This uses the `event` pecl extension. It supports the same
   backends as libevent.
 
