@@ -5,7 +5,7 @@ namespace React\EventLoop\Tick;
 use React\EventLoop\LoopInterface;
 use SplQueue;
 
-class NextTickQueue
+class TickQueue
 {
     private $eventLoop;
     private $queue;
@@ -20,10 +20,9 @@ class NextTickQueue
     }
 
     /**
-     * Add a callback to be invoked on the next tick of the event loop.
+     * Add a callback to be invoked on a tick of the event loop.
      *
-     * Callbacks are guaranteed to be executed in the order they are enqueued,
-     * before any timer or stream events.
+     * Callbacks are guaranteed to be executed in the order they are enqueued.
      *
      * @param callable $listener The callback to invoke.
      */
@@ -37,7 +36,10 @@ class NextTickQueue
      */
     public function tick()
     {
-        while (!$this->queue->isEmpty()) {
+        // Only invoke as many callbacks as were on the queue when tick() was called.
+        $count = $this->queue->count();
+
+        while ($count--) {
             call_user_func(
                 $this->queue->dequeue(),
                 $this->eventLoop

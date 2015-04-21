@@ -5,8 +5,7 @@ namespace React\EventLoop;
 use libev\EventLoop;
 use libev\IOEvent;
 use libev\TimerEvent;
-use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
+use React\EventLoop\Tick\TickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
@@ -28,8 +27,8 @@ class LibEvLoop implements LoopInterface
     public function __construct()
     {
         $this->loop = new EventLoop();
-        $this->nextTickQueue = new NextTickQueue($this);
-        $this->futureTickQueue = new FutureTickQueue($this);
+        $this->nextTickQueue = new TickQueue($this);
+        $this->futureTickQueue = new TickQueue($this);
         $this->timerEvents = new SplObjectStorage();
     }
 

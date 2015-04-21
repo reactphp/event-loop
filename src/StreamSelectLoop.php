@@ -2,8 +2,7 @@
 
 namespace React\EventLoop;
 
-use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
+use React\EventLoop\Tick\TickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use React\EventLoop\Timer\Timers;
@@ -26,8 +25,8 @@ class StreamSelectLoop implements LoopInterface
 
     public function __construct()
     {
-        $this->nextTickQueue = new NextTickQueue($this);
-        $this->futureTickQueue = new FutureTickQueue($this);
+        $this->nextTickQueue = new TickQueue($this);
+        $this->futureTickQueue = new TickQueue($this);
         $this->timers = new Timers();
     }
 
