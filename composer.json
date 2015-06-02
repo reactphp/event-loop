@@ -8,6 +8,7 @@
     },
     "suggest": {
         "ext-libevent": ">=0.1.0",
+        "ext-ev": ">=0.2.15",
         "ext-event": "~1.0",
         "ext-libev": "*"
     },
