@@ -200,7 +200,7 @@ abstract class AbstractLoopTest extends TestCase
             }
         );
 
-        $this->loop->nextTick(
+        $this->loop->futureTick(
             function () {
                 $this->loop->stop();
             }
@@ -231,126 +231,19 @@ abstract class AbstractLoopTest extends TestCase
         $loop->run();
     }
 
-    public function testNextTick()
+    public function testFutureTickEventGeneratedByFutureTick()
     {
-        $called = false;
-
-        $callback = function ($loop) use (&$called) {
-            $this->assertSame($this->loop, $loop);
-            $called = true;
-        };
-
-        $this->loop->nextTick($callback);
-
-        $this->assertFalse($called);
-
-        $this->loop->tick();
-
-        $this->assertTrue($called);
-    }
-
-    public function testNextTickFiresBeforeIO()
-    {
-        $stream = $this->createStream();
-
-        $this->loop->addWriteStream(
-            $stream,
-            function () {
-                echo 'stream' . PHP_EOL;
-            }
-        );
-
-        $this->loop->nextTick(
-            function () {
-                echo 'next-tick' . PHP_EOL;
-            }
-        );
-
-        $this->expectOutputString('next-tick' . PHP_EOL . 'stream' . PHP_EOL);
-
-        $this->loop->tick();
-    }
-
-    public function testRecursiveNextTick()
-    {
-        $stream = $this->createStream();
-
-        $this->loop->addWriteStream(
-            $stream,
-            function () {
-                echo 'stream' . PHP_EOL;
-            }
-        );
-
-        $this->loop->nextTick(
-            function () {
-                $this->loop->nextTick(
-                    function () {
-                        echo 'next-tick' . PHP_EOL;
-                    }
-                );
-            }
-        );
-
-        $this->expectOutputString('next-tick' . PHP_EOL . 'stream' . PHP_EOL);
-
-        $this->loop->tick();
-    }
-
-    public function testRunWaitsForNextTickEvents()
-    {
-        $stream = $this->createStream();
-
-        $this->loop->addWriteStream(
-            $stream,
-            function () use ($stream) {
-                $this->loop->removeStream($stream);
-                $this->loop->nextTick(
-                    function () {
-                        echo 'next-tick' . PHP_EOL;
-                    }
-                );
-            }
-        );
-
-        $this->expectOutputString('next-tick' . PHP_EOL);
-
-        $this->loop->run();
-    }
-
-    public function testNextTickEventGeneratedByFutureTick()
-    {
-        $stream = $this->createStream();
-
         $this->loop->futureTick(
             function () {
-                $this->loop->nextTick(
+                $this->loop->futureTick(
                     function () {
-                        echo 'next-tick' . PHP_EOL;
+                        echo 'future-tick' . PHP_EOL;
                     }
                 );
             }
         );
 
-        $this->expectOutputString('next-tick' . PHP_EOL);
-
-        $this->loop->run();
-    }
-
-    public function testNextTickEventGeneratedByTimer()
-    {
-        $this->loop->addTimer(
-            0.001,
-            function () {
-                $this->loop->nextTick(
-                    function () {
-                        echo 'next-tick' . PHP_EOL;
-                    }
-                );
-            }
-        );
-
-        $this->expectOutputString('next-tick' . PHP_EOL);
+        $this->expectOutputString('future-tick' . PHP_EOL);
 
         $this->loop->run();
     }
@@ -431,25 +324,6 @@ abstract class AbstractLoopTest extends TestCase
             $stream,
             function () use ($stream) {
                 $this->loop->removeStream($stream);
-                $this->loop->futureTick(
-                    function () {
-                        echo 'future-tick' . PHP_EOL;
-                    }
-                );
-            }
-        );
-
-        $this->expectOutputString('future-tick' . PHP_EOL);
-
-        $this->loop->run();
-    }
-
-    public function testFutureTickEventGeneratedByNextTick()
-    {
-        $stream = $this->createStream();
-
-        $this->loop->nextTick(
-            function () {
                 $this->loop->futureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;

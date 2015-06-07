@@ -5,7 +5,6 @@ namespace React\EventLoop;
 use Event;
 use EventBase;
 use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
@@ -18,7 +17,6 @@ class LibEventLoop implements LoopInterface
     const MICROSECONDS_PER_SECOND = 1000000;
 
     private $eventBase;
-    private $nextTickQueue;
     private $futureTickQueue;
     private $timerCallback;
     private $timerEvents;
@@ -32,7 +30,6 @@ class LibEventLoop implements LoopInterface
     public function __construct()
     {
         $this->eventBase = event_base_new();
-        $this->nextTickQueue = new NextTickQueue($this);
         $this->futureTickQueue = new FutureTickQueue($this);
         $this->timerEvents = new SplObjectStorage();
 
@@ -164,14 +161,6 @@ class LibEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function nextTick(callable $listener)
-    {
-        $this->nextTickQueue->add($listener);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function futureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
@@ -182,8 +171,6 @@ class LibEventLoop implements LoopInterface
      */
     public function tick()
     {
-        $this->nextTickQueue->tick();
-
         $this->futureTickQueue->tick();
 
         event_base_loop($this->eventBase, EVLOOP_ONCE | EVLOOP_NONBLOCK);
@@ -197,12 +184,10 @@ class LibEventLoop implements LoopInterface
         $this->running = true;
 
         while ($this->running) {
-            $this->nextTickQueue->tick();
-
             $this->futureTickQueue->tick();
 
             $flags = EVLOOP_ONCE;
-            if (!$this->running || !$this->nextTickQueue->isEmpty() || !$this->futureTickQueue->isEmpty()) {
+            if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= EVLOOP_NONBLOCK;
             } elseif (!$this->streamEvents && !$this->timerEvents->count()) {
                 break;

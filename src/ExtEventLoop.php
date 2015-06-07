@@ -6,7 +6,6 @@ use Event;
 use EventBase;
 use EventConfig as EventBaseConfig;
 use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
@@ -17,7 +16,6 @@ use SplObjectStorage;
 class ExtEventLoop implements LoopInterface
 {
     private $eventBase;
-    private $nextTickQueue;
     private $futureTickQueue;
     private $timerCallback;
     private $timerEvents;
@@ -31,7 +29,6 @@ class ExtEventLoop implements LoopInterface
     public function __construct(EventBaseConfig $config = null)
     {
         $this->eventBase = new EventBase($config);
-        $this->nextTickQueue = new NextTickQueue($this);
         $this->futureTickQueue = new FutureTickQueue($this);
         $this->timerEvents = new SplObjectStorage();
 
@@ -156,14 +153,6 @@ class ExtEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function nextTick(callable $listener)
-    {
-        $this->nextTickQueue->add($listener);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function futureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
@@ -174,8 +163,6 @@ class ExtEventLoop implements LoopInterface
      */
     public function tick()
     {
-        $this->nextTickQueue->tick();
-
         $this->futureTickQueue->tick();
 
         // @-suppression: https://github.com/reactphp/react/pull/234#discussion-diff-7759616R226
@@ -190,12 +177,10 @@ class ExtEventLoop implements LoopInterface
         $this->running = true;
 
         while ($this->running) {
-            $this->nextTickQueue->tick();
-
             $this->futureTickQueue->tick();
 
             $flags = EventBase::LOOP_ONCE;
-            if (!$this->running || !$this->nextTickQueue->isEmpty() || !$this->futureTickQueue->isEmpty()) {
+            if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= EventBase::LOOP_NONBLOCK;
             } elseif (!$this->streamEvents && !$this->timerEvents->count()) {
                 break;
