@@ -70,6 +70,20 @@ interface LoopInterface
     public function addPeriodicTimer($interval, callable $callback);
 
     /**
+     * This time simply fires at the wallclock time offset,
+     * and repeat every interval seconds
+     *
+     * The execution order of timers scheduled to execute at the same time is
+     * not guaranteed.
+     *
+     * @param $offset
+     * @param $interval
+     * @param callable $callback
+     * @return mixed
+     */
+    public function addWallClockTimer($offset, $interval, callable $callback);
+
+    /**
      * Cancel a pending timer.
      *
      * @param TimerInterface $timer The timer to cancel.

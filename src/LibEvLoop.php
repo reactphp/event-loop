@@ -141,6 +141,16 @@ class LibEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
+    public function addWallClockTimer($offset, $interval, callable $callback)
+    {
+        $this->addPeriodicTimer($interval, function () use ($offset, $callback) {
+            $this->addTimer(60 - time() % 60, $callback);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function cancelTimer(TimerInterface $timer)
     {
         if (isset($this->timerEvents[$timer])) {
