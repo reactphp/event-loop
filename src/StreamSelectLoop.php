@@ -15,14 +15,14 @@ class StreamSelectLoop implements LoopInterface
 {
     const MICROSECONDS_PER_SECOND = 1000000;
 
-    private $nextTickQueue;
-    private $futureTickQueue;
-    private $timers;
-    private $readStreams = [];
-    private $readListeners = [];
-    private $writeStreams = [];
-    private $writeListeners = [];
-    private $running;
+    protected $nextTickQueue;
+    protected $futureTickQueue;
+    protected $timers;
+    protected $readStreams = [];
+    protected $readListeners = [];
+    protected $writeStreams = [];
+    protected $writeListeners = [];
+    protected $running;
 
     public function __construct()
     {

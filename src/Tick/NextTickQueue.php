@@ -7,8 +7,8 @@ use SplQueue;
 
 class NextTickQueue
 {
-    private $eventLoop;
-    private $queue;
+    protected $eventLoop;
+    protected $queue;
 
     /**
      * @param LoopInterface $eventLoop The event loop passed as the first parameter to callbacks.
