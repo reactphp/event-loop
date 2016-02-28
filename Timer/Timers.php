@@ -8,6 +8,7 @@ use InvalidArgumentException;
 
 class Timers
 {
+    /** @deprecated unused, left here for BC only */
     const MIN_RESOLUTION = 0.001;
 
     private $time;
@@ -33,11 +34,6 @@ class Timers
     public function add(TimerInterface $timer)
     {
         $interval = $timer->getInterval();
-
-        if ($interval < self::MIN_RESOLUTION) {
-            throw new InvalidArgumentException('Timer events do not support sub-millisecond timeouts.');
-        }
-
         $scheduledAt = $interval + $this->getTime();
 
         $this->timers->attach($timer, $scheduledAt);

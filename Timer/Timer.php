@@ -7,6 +7,8 @@ use React\EventLoop\LoopInterface;
 
 class Timer implements TimerInterface
 {
+    const MIN_INTERVAL = 0.000001;
+
     protected $loop;
     protected $interval;
     protected $callback;
@@ -17,6 +19,10 @@ class Timer implements TimerInterface
     {
         if (false === is_callable($callback)) {
             throw new InvalidArgumentException('The callback argument must be a valid callable object');
+        }
+
+        if ($interval < self::MIN_INTERVAL) {
+            $interval = self::MIN_INTERVAL;
         }
 
         $this->loop = $loop;
