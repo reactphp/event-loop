@@ -93,10 +93,7 @@ class StreamSelectLoopTest extends AbstractLoopTest
         // spawn external process to send signal to current process id
         $this->forkSendSignal($signal);
 
-        // run loop with suppressed warnings
-        $oldReporting = error_reporting(E_ALL & ~E_WARNING);
         $this->loop->run();
-        error_reporting($oldReporting);
 
         $this->assertTrue($this->_signalHandled);
     }
