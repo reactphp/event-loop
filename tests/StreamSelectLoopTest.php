@@ -61,6 +61,10 @@ class StreamSelectLoopTest extends AbstractLoopTest
         // dispatch signal handler once before signal is sent and once after
         $this->loop->addTimer(0.01, function() { pcntl_signal_dispatch(); });
         $this->loop->addTimer(0.03, function() { pcntl_signal_dispatch(); });
+        if (defined('HHVM_VERSION')) {
+            // hhvm startup is slow so we need to add another handler much later
+            $this->loop->addTimer(0.5, function() { pcntl_signal_dispatch(); });
+        }
 
         $this->setUpSignalHandler($signal);
 
