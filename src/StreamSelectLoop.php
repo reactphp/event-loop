@@ -255,7 +255,7 @@ class StreamSelectLoop implements LoopInterface
             return stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
         }
 
-        usleep($timeout);
+        $timeout && usleep($timeout);
 
         return 0;
     }
