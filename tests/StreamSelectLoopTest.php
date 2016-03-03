@@ -10,7 +10,7 @@ class StreamSelectLoopTest extends AbstractLoopTest
     protected function tearDown()
     {
         parent::tearDown();
-        if (strncmp($this->getName(false), 'testSignal', 10) === 0) {
+        if (strncmp($this->getName(false), 'testSignal', 10) === 0 && extension_loaded('pcntl')) {
             $this->resetSignalHandlers();
         }
     }
@@ -54,6 +54,10 @@ class StreamSelectLoopTest extends AbstractLoopTest
      */
     public function testSignalInterruptNoStream($sigName, $signal)
     {
+        if (!extension_loaded('pcntl')) {
+            $this->markTestSkipped('"pcntl" extension is required to run this test.');
+        }
+
         // dispatch signal handler once before signal is sent and once after
         $this->loop->addTimer(0.01, function() { pcntl_signal_dispatch(); });
         $this->loop->addTimer(0.03, function() { pcntl_signal_dispatch(); });
@@ -72,6 +76,10 @@ class StreamSelectLoopTest extends AbstractLoopTest
      */
     public function testSignalInterruptWithStream($sigName, $signal)
     {
+        if (!extension_loaded('pcntl')) {
+            $this->markTestSkipped('"pcntl" extension is required to run this test.');
+        }
+
         // dispatch signal handler every 10ms
         $this->loop->addPeriodicTimer(0.01, function() { pcntl_signal_dispatch(); });
 
