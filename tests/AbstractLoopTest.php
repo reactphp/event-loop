@@ -4,6 +4,9 @@ namespace React\Tests\EventLoop;
 
 abstract class AbstractLoopTest extends TestCase
 {
+    /**
+     * @var \React\EventLoop\LoopInterface
+     */
     protected $loop;
 
     public function setUp()
