@@ -37,6 +37,17 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $this->assertGreaterThan(0.04, $interval);
     }
 
+    public function testStopShouldPreventRunFromBlocking($timeLimit = 0.005)
+    {
+        if (defined('HHVM_VERSION')) {
+            // HHVM is a bit slow, so give it more time
+            parent::testStopShouldPreventRunFromBlocking(0.5);
+        } else {
+            parent::testStopShouldPreventRunFromBlocking($timeLimit);
+        }
+    }
+
+
     public function signalProvider()
     {
         return [
