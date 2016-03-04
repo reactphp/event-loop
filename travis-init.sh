@@ -21,6 +21,18 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
     popd
     echo "extension=libevent.so" >> "$(php -r 'echo php_ini_loaded_file();')"
 
+    # install 'pecl-ev' PHP extension
+    git clone http://bitbucket.org/osmanov/pecl-ev.git
+    # 0.2.12
+    pushd pecl-ev
+    phpize
+    ./configure
+    make
+    # make test
+    make install
+    popd
+    echo "extension=ev.so" >> "$(php -r 'echo php_ini_loaded_file();')"
+
     # install 'libev' PHP extension
     git clone --recursive https://github.com/m4rw3r/php-libev
     pushd php-libev
