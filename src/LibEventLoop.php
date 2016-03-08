@@ -298,7 +298,7 @@ class LibEventLoop implements LoopInterface
      */
     private function createTimerCallback()
     {
-        $this->timerCallback = function ($_, $_, $timer) {
+        $this->timerCallback = function ($_, $__, $timer) {
             call_user_func($timer->getCallback(), $timer);
 
             // Timer already cancelled ...

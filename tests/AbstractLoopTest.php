@@ -176,7 +176,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->writeToStream($input, "foo\n");
 
-        $this->assertRunFasterThan(0.005);
+        $this->assertRunFasterThan(0.015);
     }
 
     /** @test */
@@ -194,7 +194,7 @@ abstract class AbstractLoopTest extends TestCase
         $this->assertRunFasterThan(0.005);
     }
 
-    public function testStopShouldPreventRunFromBlocking()
+    public function testStopShouldPreventRunFromBlocking($timeLimit = 0.005)
     {
         $this->loop->addTimer(
             1,
@@ -209,7 +209,7 @@ abstract class AbstractLoopTest extends TestCase
             }
         );
 
-        $this->assertRunFasterThan(0.005);
+        $this->assertRunFasterThan($timeLimit);
     }
 
     public function testIgnoreRemovedCallback()
