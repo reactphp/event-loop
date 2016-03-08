@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.2 (2016-03-07)
+
+* Bug fix: No longer error when signals sent to StreamSelectLoop
+* Support HHVM and PHP7 (@ondrejmirtes, @cebe)
+* Feature: Added support for EventConfig for ExtEventLoop (@steverhoades)
+* Bug fix: Fixed an issue loading loop extension libs via autoloader (@czarpino)
+
 ## 0.4.1 (2014-04-13)
 
 * Bug fix: null timeout in StreamSelectLoop causing 100% CPU usage (@clue)
