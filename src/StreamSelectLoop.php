@@ -159,7 +159,29 @@ class StreamSelectLoop implements LoopInterface
 
         $this->timers->tick();
 
-        $this->waitForStreamActivity(0);
+        // Next-tick or future-tick queues have pending callbacks ...
+        if (!$this->nextTickQueue->isEmpty() || !$this->futureTickQueue->isEmpty()) {
+            $timeout = 0;
+
+            // There is a pending timer, only block until it is due ...
+        } elseif ($scheduledAt = $this->timers->getFirst()) {
+            $timeout = $scheduledAt - $this->timers->getTime();
+            if ($timeout < 0) {
+                $timeout = 0;
+            } else {
+                $timeout *= self::MICROSECONDS_PER_SECOND;
+            }
+
+            // The only possible event is stream activity, so wait forever ...
+        } elseif ($this->readStreams || $this->writeStreams) {
+            $timeout = null;
+
+            // There's nothing left to do ...
+        } else {
+            return;
+        }
+
+        $this->waitForStreamActivity($timeout);
     }
 
     /**
