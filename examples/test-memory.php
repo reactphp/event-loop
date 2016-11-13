@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Usage, runs indefinetly with the loop from Factory::create: php test-memory.php
+ * Usage, runs for 6 seconds (anything lower than 5 seconds will be ignored): php test-memory.php 6
+ * Usage, runs with the stream select loop for 6 seconds: php test-memory.php 6 StreamSelect
+ */
+
 use React\EventLoop\Factory;
 use React\EventLoop\Timer\TimerInterface;
 
