@@ -29,6 +29,10 @@ class LibEventLoop implements LoopInterface
 
     public function __construct()
     {
+        if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
+            trigger_error('The libevent extension has not yet been updated for PHP 7, it is recommended you use a different loop', E_USER_WARNING);
+        }
+
         $this->eventBase = event_base_new();
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
