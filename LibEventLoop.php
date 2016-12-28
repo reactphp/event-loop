@@ -8,6 +8,7 @@ use React\EventLoop\Timer\TimerInterface;
 
 class LibEventLoop implements LoopInterface
 {
+    /** @deprecated unused, left here for BC only */
     const MIN_TIMER_RESOLUTION = 0.001;
 
     private $base;
@@ -150,10 +151,6 @@ class LibEventLoop implements LoopInterface
 
     protected function addTimerInternal($interval, $callback, $periodic = false)
     {
-        if ($interval < self::MIN_TIMER_RESOLUTION) {
-            throw new \InvalidArgumentException('Timer events do not support sub-millisecond timeouts.');
-        }
-
         $timer = new Timer($this, $interval, $callback, $periodic);
         $resource = event_new();
 
@@ -174,7 +171,7 @@ class LibEventLoop implements LoopInterface
 
         event_timer_set($resource, $callback);
         event_base_set($resource, $this->base);
-        event_add($resource, $interval * 1000000);
+        event_add($resource, $timer->getInterval() * 1000000);
 
         return $timer;
     }
