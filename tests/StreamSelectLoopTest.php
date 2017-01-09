@@ -88,7 +88,7 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $this->loop->addPeriodicTimer(0.01, function() { pcntl_signal_dispatch(); });
 
         // add stream to the loop
-        list($writeStream, $readStream) = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        list($writeStream, $readStream) = $this->createSocketPair();
         $this->loop->addReadStream($readStream, function($stream, $loop) {
             /** @var $loop LoopInterface */
             $read = fgets($stream);
