@@ -36,12 +36,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
     protected function createCallableMock()
     {
-        $stub = 'React\Tests\EventLoop\CallableStub';
-        
-        if (method_exists($this, 'createMock')) {
-            return $this->createMock($stub);
-        }
-        
-        return $this->getMock($stub);
+        return $this->getMockBuilder('React\Tests\EventLoop\CallableStub')->getMock();
     }
 }
