@@ -42,10 +42,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
             return $this->createMock($stub);
         }
         
-        if (method_exists($this, 'getMockBuilder')) {
-            return $this->getMockBuilder($stub)->getMock();
-        }
-        
         return $this->getMock($stub);
     }
 }
