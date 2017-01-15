@@ -10,4 +10,4 @@ php:
 install: ./travis-init.sh
 
 script:
-  - phpunit --coverage-text
+  - ./vendor/bin/phpunit --coverage-text
