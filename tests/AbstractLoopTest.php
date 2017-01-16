@@ -9,8 +9,12 @@ abstract class AbstractLoopTest extends TestCase
      */
     protected $loop;
 
+    private $tickTimeout;
+
     public function setUp()
     {
+        // HHVM is a bit slow, so give it more time
+        $this->tickTimeout = defined('HHVM_VERSION') ? 0.02 : 0.005;
         $this->loop = $this->createLoop();
     }
 
@@ -161,7 +165,7 @@ abstract class AbstractLoopTest extends TestCase
     /** @test */
     public function emptyRunShouldSimplyReturn()
     {
-        $this->assertRunFasterThan(0.005);
+        $this->assertRunFasterThan($this->tickTimeout);
     }
 
     /** @test */
@@ -176,7 +180,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->writeToStream($input, "foo\n");
 
-        $this->assertRunFasterThan(0.015);
+        $this->assertRunFasterThan($this->tickTimeout * 2);
     }
 
     /** @test */
@@ -191,10 +195,10 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->writeToStream($input, "foo\n");
 
-        $this->assertRunFasterThan(0.005);
+        $this->assertRunFasterThan($this->tickTimeout * 2);
     }
 
-    public function testStopShouldPreventRunFromBlocking($timeLimit = 0.005)
+    public function testStopShouldPreventRunFromBlocking()
     {
         $this->loop->addTimer(
             1,
@@ -209,7 +213,7 @@ abstract class AbstractLoopTest extends TestCase
             }
         );
 
-        $this->assertRunFasterThan($timeLimit);
+        $this->assertRunFasterThan($this->tickTimeout * 2);
     }
 
     public function testIgnoreRemovedCallback()
