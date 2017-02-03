@@ -14,6 +14,10 @@ addons:
     packages:
       - libevent-dev # Used by 'event' and 'libevent' PHP extensions
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 install:
   - ./travis-init.sh
   - composer install
