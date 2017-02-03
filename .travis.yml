@@ -7,7 +7,9 @@ php:
   - 7.0
   - hhvm
 
-install: ./travis-init.sh
+install:
+  - ./travis-init.sh
+  - composer install
 
 script:
   - ./vendor/bin/phpunit --coverage-text

@@ -36,5 +36,3 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
     fi
 
 fi
-
-composer install
