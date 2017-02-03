@@ -151,20 +151,6 @@ class StreamSelectLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function tick()
-    {
-        $this->nextTickQueue->tick();
-
-        $this->futureTickQueue->tick();
-
-        $this->timers->tick();
-
-        $this->waitForStreamActivity(0);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;

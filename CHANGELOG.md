@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 (xxxx-xx-xx)
+
+* BC break: Remove `LoopInterface::tick()` (@jsor, #72)
+
 ## 0.4.2 (2016-03-07)
 
 * Bug fix: No longer error when signals sent to StreamSelectLoop

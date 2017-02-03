@@ -172,19 +172,6 @@ class ExtEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function tick()
-    {
-        $this->nextTickQueue->tick();
-
-        $this->futureTickQueue->tick();
-
-        // @-suppression: https://github.com/reactphp/react/pull/234#discussion-diff-7759616R226
-        @$this->eventBase->loop(EventBase::LOOP_ONCE | EventBase::LOOP_NONBLOCK);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;

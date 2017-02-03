@@ -180,18 +180,6 @@ class LibEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function tick()
-    {
-        $this->nextTickQueue->tick();
-
-        $this->futureTickQueue->tick();
-
-        event_base_loop($this->eventBase, EVLOOP_ONCE | EVLOOP_NONBLOCK);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;
