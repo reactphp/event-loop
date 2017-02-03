@@ -5,9 +5,6 @@ set -o pipefail
 if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
       "$TRAVIS_PHP_VERSION" != "hhvm-nightly" ]]; then
 
-    # install "libevent" (used by 'event' and 'libevent' PHP extensions)
-    sudo apt-get install -y libevent-dev
-
     # install 'event' PHP extension
     echo "yes" | pecl install event
 

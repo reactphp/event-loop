@@ -7,6 +7,13 @@ php:
   - 7.0
   - hhvm
 
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - libevent-dev # Used by 'event' and 'libevent' PHP extensions
+
 install:
   - ./travis-init.sh
   - composer install
