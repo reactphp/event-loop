@@ -82,9 +82,9 @@ class ExtEventLoopTest extends AbstractLoopTest
         $this->loop->addReadStream($input, $this->expectCallableExactly(2));
 
         $this->writeToStream($input, "foo\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
 
         $this->writeToStream($input, "bar\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace React\Tests\EventLoop;
 
+use React\EventLoop\LoopInterface;
+
 class TestCase extends \PHPUnit_Framework_TestCase
 {
     protected function expectCallableExactly($amount)
@@ -37,5 +39,14 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected function createCallableMock()
     {
         return $this->getMockBuilder('React\Tests\EventLoop\CallableStub')->getMock();
+    }
+
+    protected function tickLoop(LoopInterface $loop)
+    {
+        $loop->futureTick(function () use ($loop) {
+            $loop->stop();
+        });
+
+        $loop->run();
     }
 }

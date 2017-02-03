@@ -38,10 +38,10 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addReadStream($input, $this->expectCallableExactly(2));
 
         $this->writeToStream($input, "foo\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
 
         $this->writeToStream($input, "bar\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testAddWriteStream()
@@ -49,8 +49,8 @@ abstract class AbstractLoopTest extends TestCase
         $input = $this->createStream();
 
         $this->loop->addWriteStream($input, $this->expectCallableExactly(2));
-        $this->loop->tick();
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
+        $this->tickLoop($this->loop);
     }
 
     public function testRemoveReadStreamInstantly()
@@ -61,7 +61,7 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->removeReadStream($input);
 
         $this->writeToStream($input, "bar\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRemoveReadStreamAfterReading()
@@ -71,12 +71,12 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addReadStream($input, $this->expectCallableOnce());
 
         $this->writeToStream($input, "foo\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
 
         $this->loop->removeReadStream($input);
 
         $this->writeToStream($input, "bar\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRemoveWriteStreamInstantly()
@@ -85,7 +85,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->loop->addWriteStream($input, $this->expectCallableNever());
         $this->loop->removeWriteStream($input);
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRemoveWriteStreamAfterWriting()
@@ -93,10 +93,10 @@ abstract class AbstractLoopTest extends TestCase
         $input = $this->createStream();
 
         $this->loop->addWriteStream($input, $this->expectCallableOnce());
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
 
         $this->loop->removeWriteStream($input);
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRemoveStreamInstantly()
@@ -108,7 +108,7 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->removeStream($input);
 
         $this->writeToStream($input, "bar\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRemoveStreamForReadOnly()
@@ -120,7 +120,7 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->removeReadStream($input);
 
         $this->writeToStream($input, "foo\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRemoveStreamForWriteOnly()
@@ -133,7 +133,7 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addWriteStream($input, $this->expectCallableNever());
         $this->loop->removeWriteStream($input);
 
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRemoveStream()
@@ -144,12 +144,12 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addWriteStream($input, $this->expectCallableOnce());
 
         $this->writeToStream($input, "bar\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
 
         $this->loop->removeStream($input);
 
         $this->writeToStream($input, "bar\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRemoveInvalid()
@@ -251,7 +251,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->assertFalse($called);
 
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
 
         $this->assertTrue($called);
     }
@@ -275,7 +275,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->expectOutputString('next-tick' . PHP_EOL . 'stream' . PHP_EOL);
 
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRecursiveNextTick()
@@ -301,7 +301,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->expectOutputString('next-tick' . PHP_EOL . 'stream' . PHP_EOL);
 
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRunWaitsForNextTickEvents()
@@ -375,7 +375,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->assertFalse($called);
 
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
 
         $this->assertTrue($called);
     }
@@ -399,7 +399,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $this->expectOutputString('future-tick' . PHP_EOL . 'stream' . PHP_EOL);
 
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 
     public function testRecursiveFutureTick()
