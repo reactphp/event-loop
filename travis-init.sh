@@ -37,4 +37,4 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
 
 fi
 
-composer install --dev --prefer-source
+composer install --prefer-source
