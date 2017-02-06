@@ -17,7 +17,7 @@ addons:
 
 cache:
   directories:
-    - $HOME/.composer/cache
+    - $HOME/.composer/cache/files
 
 install:
   - ./travis-init.sh
