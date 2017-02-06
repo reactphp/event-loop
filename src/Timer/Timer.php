@@ -1,17 +1,48 @@
 <?php
 
+/**
+ * Timer.php
+ *
+ */
 namespace React\EventLoop\Timer;
 
 use React\EventLoop\LoopInterface;
 
+/**
+ * Class Timer
+ *
+ * @package React\EventLoop\Timer
+ */
 class Timer implements TimerInterface
 {
+    /**
+     * @const float MIN_INTERVAL
+     */
     const MIN_INTERVAL = 0.000001;
 
+    /**
+     * @var \React\EventLoop\LoopInterface
+     */
     protected $loop;
+
+    /**
+     * @var float $interval
+     */
     protected $interval;
+
+    /**
+     * @var callable $callback
+     */
     protected $callback;
+
+    /**
+     * @var bool $periodic
+     */
     protected $periodic;
+
+    /**
+     * @var mixed $data
+     */
     protected $data;
 
     /**

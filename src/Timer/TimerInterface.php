@@ -1,9 +1,17 @@
 <?php
 
+/**
+ * TimerInterface.php
+ */
 namespace React\EventLoop\Timer;
 
 use React\EventLoop\LoopInterface;
 
+/**
+ * Interface TimerInterface
+ *
+ * @package React\EventLoop\Timer
+ */
 interface TimerInterface
 {
     /**

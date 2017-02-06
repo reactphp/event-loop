@@ -1,33 +1,55 @@
 <?php
 
+/**
+ * StreamSelectLoop.php
+ *
+ */
 namespace React\EventLoop;
 
-use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use React\EventLoop\Timer\Timers;
 
 /**
  * A stream_select() based event-loop.
+ *
+ * @package React\EventLoop
  */
-class StreamSelectLoop implements LoopInterface
+class StreamSelectLoop extends Loop implements LoopInterface
 {
-    const MICROSECONDS_PER_SECOND = 1000000;
-
-    private $nextTickQueue;
-    private $futureTickQueue;
+    /**
+     * @var Timer\Timers $timers
+     */
     private $timers;
-    private $readStreams = [];
-    private $readListeners = [];
-    private $writeStreams = [];
-    private $writeListeners = [];
-    private $running;
 
+    /**
+     * @var array $readStreams
+     */
+    private $readStreams = [];
+
+    /**
+     * @var array $readListeners
+     */
+    private $readListeners = [];
+
+    /**
+     * @var array $writeStreams
+     */
+    private $writeStreams = [];
+
+    /**
+     * @var array $writeListeners
+     */
+    private $writeListeners = [];
+
+    /**
+     * Constructor
+     *
+     */
     public function __construct()
     {
-        $this->nextTickQueue = new NextTickQueue($this);
-        $this->futureTickQueue = new FutureTickQueue($this);
+        parent::__construct();
+
         $this->timers = new Timers();
     }
 
@@ -186,14 +208,6 @@ class StreamSelectLoop implements LoopInterface
 
             $this->waitForStreamActivity($timeout);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function stop()
-    {
-        $this->running = false;
     }
 
     /**

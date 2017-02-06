@@ -1,39 +1,73 @@
 <?php
 
+/**
+ * LibEventLoop.php
+ *
+ */
 namespace React\EventLoop;
 
 use Event;
 use EventBase;
-use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
 
 /**
  * An ext-libevent based event-loop.
+ *
+ * @package React\EventLoop
  */
-class LibEventLoop implements LoopInterface
+class LibEventLoop extends Loop implements LoopInterface
 {
-    const MICROSECONDS_PER_SECOND = 1000000;
-
+    /**
+     * @var bool|resource
+     */
     private $eventBase;
-    private $nextTickQueue;
-    private $futureTickQueue;
-    private $timerCallback;
-    private $timerEvents;
-    private $streamCallback;
-    private $streamEvents = [];
-    private $streamFlags = [];
-    private $readListeners = [];
-    private $writeListeners = [];
-    private $running;
 
+    /**
+     * @var callable $timerCallback
+     */
+    private $timerCallback;
+
+    /**
+     * @var SplObjectStorage $timerEvents
+     */
+    private $timerEvents;
+
+    /**
+     * @var callable $streamCallback
+     */
+    private $streamCallback;
+
+    /**
+     * @var array $streamEvents
+     */
+    private $streamEvents = [];
+
+    /**
+     * @var array $streamFlags
+     */
+    private $streamFlags = [];
+
+    /**
+     * @var array $readListeners
+     */
+    private $readListeners = [];
+
+    /**
+     * @var array $writeListeners
+     */
+    private $writeListeners = [];
+
+    /**
+     * Constructor
+     *
+     */
     public function __construct()
     {
+        parent::__construct();
+
         $this->eventBase = event_base_new();
-        $this->nextTickQueue = new NextTickQueue($this);
-        $this->futureTickQueue = new FutureTickQueue($this);
         $this->timerEvents = new SplObjectStorage();
 
         $this->createTimerCallback();
@@ -198,14 +232,6 @@ class LibEventLoop implements LoopInterface
 
             event_base_loop($this->eventBase, $flags);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function stop()
-    {
-        $this->running = false;
     }
 
     /**

@@ -1,35 +1,57 @@
 <?php
 
+/**
+ * LibEvLoop.php
+ *
+ */
 namespace React\EventLoop;
 
 use libev\EventLoop;
 use libev\IOEvent;
 use libev\TimerEvent;
-use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
 
 /**
+ * An ext-libev based event-loop.
+ *
  * @see https://github.com/m4rw3r/php-libev
  * @see https://gist.github.com/1688204
+ *
+ * @package React\EventLoop
  */
-class LibEvLoop implements LoopInterface
+class LibEvLoop extends Loop implements LoopInterface
 {
+    /**
+     * @var \libev\EventLoop $loop
+     */
     private $loop;
-    private $nextTickQueue;
-    private $futureTickQueue;
-    private $timerEvents;
-    private $readEvents = [];
-    private $writeEvents = [];
-    private $running;
 
+    /**
+     * @var \SplObjectStorage $timerEvents
+     */
+    private $timerEvents;
+
+    /**
+     * @var array $readEvents
+     */
+    private $readEvents = [];
+
+    /**
+     * @var array $writeEvents
+     */
+    private $writeEvents = [];
+
+    /**
+     * Constructor
+     *
+     */
     public function __construct()
     {
+        parent::__construct();
+
         $this->loop = new EventLoop();
-        $this->nextTickQueue = new NextTickQueue($this);
-        $this->futureTickQueue = new FutureTickQueue($this);
         $this->timerEvents = new SplObjectStorage();
     }
 
@@ -194,13 +216,5 @@ class LibEvLoop implements LoopInterface
 
             $this->loop->run($flags);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function stop()
-    {
-        $this->running = false;
     }
 }

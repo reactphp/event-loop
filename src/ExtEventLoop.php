@@ -1,38 +1,73 @@
 <?php
 
+/**
+ * ExtEventLoop.php
+ *
+ */
 namespace React\EventLoop;
 
 use Event;
 use EventBase;
 use EventConfig as EventBaseConfig;
-use React\EventLoop\Tick\FutureTickQueue;
-use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
 
 /**
  * An ext-event based event-loop.
+ *
+ * @package React\EventLoop
  */
-class ExtEventLoop implements LoopInterface
+class ExtEventLoop extends Loop implements LoopInterface
 {
+    /**
+     * @var \EventBase $eventBase
+     */
     private $eventBase;
-    private $nextTickQueue;
-    private $futureTickQueue;
-    private $timerCallback;
-    private $timerEvents;
-    private $streamCallback;
-    private $streamEvents = [];
-    private $streamFlags = [];
-    private $readListeners = [];
-    private $writeListeners = [];
-    private $running;
 
+    /**
+     * @var callable $timerCallback
+     */
+    private $timerCallback;
+
+    /**
+     * @var \SplObjectStorage $timerEvents
+     */
+    private $timerEvents;
+
+    /**
+     * @var callable $streamCallback
+     */
+    private $streamCallback;
+
+    /**
+     * @var array $streamEvents
+     */
+    private $streamEvents = [];
+
+    /**
+     * @var array $streamFlags
+     */
+    private $streamFlags = [];
+
+    /**
+     * @var array $readListeners
+     */
+    private $readListeners = [];
+
+    /**
+     * @var array $writeListeners
+     */
+    private $writeListeners = [];
+
+    /**
+     * @param \EventConfig $config
+     */
     public function __construct(EventBaseConfig $config = null)
     {
+        parent::__construct();
+
         $this->eventBase = new EventBase($config);
-        $this->nextTickQueue = new NextTickQueue($this);
-        $this->futureTickQueue = new FutureTickQueue($this);
         $this->timerEvents = new SplObjectStorage();
 
         $this->createTimerCallback();
@@ -191,14 +226,6 @@ class ExtEventLoop implements LoopInterface
             // @-suppression: https://github.com/reactphp/react/pull/234#discussion-diff-7759616R226
             @$this->eventBase->loop($flags);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function stop()
-    {
-        $this->running = false;
     }
 
     /**

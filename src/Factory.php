@@ -1,9 +1,21 @@
 <?php
 
+/**
+ * Factory.php
+ *
+ */
 namespace React\EventLoop;
 
+/**
+ * Factory class to instantiate LoopInterface implementations based upon availability
+ *
+ * @package React\EventLoop
+ */
 class Factory
 {
+    /**
+     * @return LoopInterface $loop
+     */
     public static function create()
     {
         // @codeCoverageIgnoreStart
