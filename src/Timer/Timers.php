@@ -7,9 +7,9 @@ use SplPriorityQueue;
 
 class Timers
 {
-    private $time;
-    private $timers;
-    private $scheduler;
+    protected $time;
+    protected $timers;
+    protected $scheduler;
 
     public function __construct()
     {

@@ -17,17 +17,17 @@ class LibEventLoop implements LoopInterface
 {
     const MICROSECONDS_PER_SECOND = 1000000;
 
-    private $eventBase;
-    private $nextTickQueue;
-    private $futureTickQueue;
-    private $timerCallback;
-    private $timerEvents;
-    private $streamCallback;
-    private $streamEvents = [];
-    private $streamFlags = [];
-    private $readListeners = [];
-    private $writeListeners = [];
-    private $running;
+    protected $eventBase;
+    protected $nextTickQueue;
+    protected $futureTickQueue;
+    protected $timerCallback;
+    protected $timerEvents;
+    protected $streamCallback;
+    protected $streamEvents = [];
+    protected $streamFlags = [];
+    protected $readListeners = [];
+    protected $writeListeners = [];
+    protected $running;
 
     public function __construct()
     {

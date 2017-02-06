@@ -17,13 +17,13 @@ use SplObjectStorage;
  */
 class LibEvLoop implements LoopInterface
 {
-    private $loop;
-    private $nextTickQueue;
-    private $futureTickQueue;
-    private $timerEvents;
-    private $readEvents = [];
-    private $writeEvents = [];
-    private $running;
+    protected $loop;
+    protected $nextTickQueue;
+    protected $futureTickQueue;
+    protected $timerEvents;
+    protected $readEvents = [];
+    protected $writeEvents = [];
+    protected $running;
 
     public function __construct()
     {
