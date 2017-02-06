@@ -161,17 +161,6 @@ class ExtEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function tick()
-    {
-        $this->futureTickQueue->tick();
-
-        // @-suppression: https://github.com/reactphp/react/pull/234#discussion-diff-7759616R226
-        @$this->eventBase->loop(EventBase::LOOP_ONCE | EventBase::LOOP_NONBLOCK);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;
@@ -279,7 +268,7 @@ class ExtEventLoop implements LoopInterface
      */
     private function createTimerCallback()
     {
-        $this->timerCallback = function ($_, $_, $timer) {
+        $this->timerCallback = function ($_, $__, $timer) {
             call_user_func($timer->getCallback(), $timer);
 
             if (!$timer->isPeriodic() && $this->isTimerActive($timer)) {

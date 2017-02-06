@@ -95,11 +95,6 @@ interface LoopInterface
     public function futureTick(callable $listener);
 
     /**
-     * Perform a single iteration of the event loop.
-     */
-    public function tick();
-
-    /**
      * Run the event loop until there are no more tasks to perform.
      */
     public function run();

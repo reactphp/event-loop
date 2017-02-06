@@ -30,7 +30,7 @@ class Timers
     public function add(TimerInterface $timer)
     {
         $interval = $timer->getInterval();
-        $scheduledAt = $interval + $this->getTime();
+        $scheduledAt = $interval + microtime(true);
 
         $this->timers->attach($timer, $scheduledAt);
         $this->scheduler->insert($timer, -$scheduledAt);

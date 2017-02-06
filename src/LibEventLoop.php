@@ -169,16 +169,6 @@ class LibEventLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function tick()
-    {
-        $this->futureTickQueue->tick();
-
-        event_base_loop($this->eventBase, EVLOOP_ONCE | EVLOOP_NONBLOCK);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;
@@ -283,7 +273,7 @@ class LibEventLoop implements LoopInterface
      */
     private function createTimerCallback()
     {
-        $this->timerCallback = function ($_, $_, $timer) {
+        $this->timerCallback = function ($_, $__, $timer) {
             call_user_func($timer->getCallback(), $timer);
 
             // Timer already cancelled ...

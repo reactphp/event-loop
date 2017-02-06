@@ -6,6 +6,9 @@
     "require": {
         "php": ">=5.4.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8"
+    },
     "suggest": {
         "ext-libevent": ">=0.1.0",
         "ext-event": "~1.0",
@@ -14,11 +17,6 @@
     "autoload": {
         "psr-4": {
             "React\\EventLoop\\": "src"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.5-dev"
         }
     }
 }

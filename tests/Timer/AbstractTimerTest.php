@@ -16,7 +16,7 @@ abstract class AbstractTimerTest extends TestCase
 
         $loop->addTimer(0.001, $this->expectCallableOnce());
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
     }
 
     public function testAddPeriodicTimer()
@@ -25,11 +25,11 @@ abstract class AbstractTimerTest extends TestCase
 
         $loop->addPeriodicTimer(0.001, $this->expectCallableExactly(3));
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
     }
 
     public function testAddPeriodicTimerWithCancel()
@@ -39,14 +39,14 @@ abstract class AbstractTimerTest extends TestCase
         $timer = $loop->addPeriodicTimer(0.001, $this->expectCallableExactly(2));
 
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
 
         $timer->cancel();
 
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
     }
 
     public function testAddPeriodicTimerCancelsItself()
@@ -64,11 +64,11 @@ abstract class AbstractTimerTest extends TestCase
         });
 
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
         usleep(1000);
-        $loop->tick();
+        $this->tickLoop($loop);
 
         $this->assertSame(2, $i);
     }

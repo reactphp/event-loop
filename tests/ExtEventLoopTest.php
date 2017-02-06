@@ -68,6 +68,10 @@ class ExtEventLoopTest extends AbstractLoopTest
      */
     public function testCanUseReadableStreamWithFeatureFds()
     {
+        if (PHP_VERSION_ID > 70000) {
+            $this->markTestSkipped('Memory stream not supported');
+        }
+
         $this->loop = $this->createLoop(true);
 
         $input = fopen('php://temp/maxmemory:0', 'r+');
@@ -78,9 +82,9 @@ class ExtEventLoopTest extends AbstractLoopTest
         $this->loop->addReadStream($input, $this->expectCallableExactly(2));
 
         $this->writeToStream($input, "foo\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
 
         $this->writeToStream($input, "bar\n");
-        $this->loop->tick();
+        $this->tickLoop($this->loop);
     }
 }

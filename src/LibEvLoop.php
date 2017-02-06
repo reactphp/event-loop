@@ -165,16 +165,6 @@ class LibEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function tick()
-    {
-        $this->futureTickQueue->tick();
-
-        $this->loop->run(EventLoop::RUN_ONCE | EventLoop::RUN_NOWAIT);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;
