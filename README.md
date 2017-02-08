@@ -9,6 +9,10 @@ same event loop. This component provides a common `LoopInterface` that any
 library can target. This allows them to be used in the same loop, with one
 single `run` call that is controlled by the user.
 
+> The master branch contains the code for the upcoming 0.5 release.
+For the code of the current stable 0.4.x release, checkout the
+[0.4 branch](https://github.com/reactphp/event-loop/tree/0.4).
+
 In addition to the interface there are some implementations provided:
 
 * `StreamSelectLoop`: This is the only implementation which works out of the
