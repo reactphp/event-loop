@@ -4,7 +4,6 @@ platform:
   - x86
 clone_folder: c:\projects\php-project-workspace
 
-
 ## Build matrix with the different PHP versions we test against
 environment:
   matrix:
