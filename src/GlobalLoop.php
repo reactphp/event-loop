@@ -13,6 +13,8 @@ final class GlobalLoop
 
     private static $factory = ['React\EventLoop\Factory', 'create'];
 
+    private static $disableRunOnShutdown = false;
+
     public static function setFactory(callable $factory)
     {
         if (self::$loop) {
@@ -24,6 +26,11 @@ final class GlobalLoop
         self::$factory = $factory;
     }
 
+    public function disableRunOnShutdown()
+    {
+        self::$disableRunOnShutdown = true;
+    }
+
     /**
      * @return LoopInterface
      */
@@ -32,6 +39,14 @@ final class GlobalLoop
         if (self::$loop) {
             return self::$loop;
         }
+
+        register_shutdown_function(function () {
+            if (self::$disableRunOnShutdown || !self::$loop) {
+                return;
+            }
+
+            self::$loop->run();
+        });
 
         return self::$loop = self::create();
     }

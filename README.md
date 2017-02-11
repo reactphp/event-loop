@@ -61,6 +61,4 @@ Here is an async HTTP server built with just the event loop.
         $formatted = number_format($memory, 3).'K';
         echo "Current memory usage: {$formatted}\n";
     });
-
-    React\EventLoop\run();
 ```
