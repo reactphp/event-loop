@@ -121,23 +121,3 @@ function futureTick(callable $listener)
 
     $loop->futureTick($listener);
 }
-
-/**
- * Run the global event loop until there are no more tasks to perform.
- */
-function run()
-{
-    $loop = GlobalLoop::$loop ?: GlobalLoop::get();
-
-    $loop->run();
-}
-
-/**
- * Instruct the running global event loop to stop.
- */
-function stop()
-{
-    $loop = GlobalLoop::$loop ?: GlobalLoop::get();
-
-    $loop->stop();
-}

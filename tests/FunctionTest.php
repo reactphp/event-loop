@@ -118,22 +118,4 @@ class FunctionTest extends TestCase
 
         EventLoop\addPeriodicTimer($interval, $listener);
     }
-
-    public function testRun()
-    {
-        $this->globalLoop
-            ->expects($this->once())
-            ->method('run');
-
-        EventLoop\run();
-    }
-
-    public function testStop()
-    {
-        $this->globalLoop
-            ->expects($this->once())
-            ->method('stop');
-
-        EventLoop\stop();
-    }
 }
