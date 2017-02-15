@@ -201,8 +201,7 @@ class ExtEventLoop implements LoopInterface
                 break;
             }
 
-            // @-suppression: https://github.com/reactphp/react/pull/234#discussion-diff-7759616R226
-            @$this->eventBase->loop($flags);
+            $this->eventBase->loop($flags);
         }
     }
 
