@@ -12,6 +12,7 @@ final class GlobalLoop
     private static $factory;
 
     private static $didRun = false;
+    private static $disableRunOnShutdown = false;
 
     public static function setFactory(callable $factory = null)
     {
@@ -24,6 +25,11 @@ final class GlobalLoop
         self::$factory = $factory;
     }
 
+    public function disableRunOnShutdown()
+    {
+        self::$disableRunOnShutdown = true;
+    }
+
     /**
      * @return LoopInterface
      */
@@ -32,6 +38,14 @@ final class GlobalLoop
         if (self::$loop) {
             return self::$loop;
         }
+
+        register_shutdown_function(function () {
+            if (self::$disableRunOnShutdown || self::$didRun || !self::$loop) {
+                return;
+            }
+
+            self::$loop->run();
+        });
 
         self::$loop = self::create();
 
