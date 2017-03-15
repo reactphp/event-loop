@@ -7,7 +7,9 @@ class Factory
     public static function create()
     {
         // @codeCoverageIgnoreStart
-        if (function_exists('event_base_new')) {
+        if (class_exists('Ev', false)) {
+          return new ExtEvLoop;
+        } elseif (function_exists('event_base_new')) {
             return new LibEventLoop();
         } elseif (class_exists('libev\EventLoop', false)) {
             return new LibEvLoop;
