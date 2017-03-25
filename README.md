@@ -1,6 +1,6 @@
 # EventLoop Component
 
-[![Build Status](https://secure.travis-ci.org/reactphp/event-loop.png?branch=master)](http://travis-ci.org/reactphp/event-loop)
+[![Build Status](https://travis-ci.org/reactphp/event-loop.svg?branch=master)](https://travis-ci.org/reactphp/event-loop)
 [![Code Climate](https://codeclimate.com/github/reactphp/event-loop/badges/gpa.svg)](https://codeclimate.com/github/reactphp/event-loop)
 
 Event loop abstraction layer that libraries can use for evented I/O.
