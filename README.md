@@ -1,6 +1,7 @@
 # EventLoop Component
 
-[![Build Status](https://secure.travis-ci.org/reactphp/event-loop.png?branch=master)](http://travis-ci.org/reactphp/event-loop) [![Code Climate](https://codeclimate.com/github/reactphp/event-loop/badges/gpa.svg)](https://codeclimate.com/github/reactphp/event-loop)
+[![Build Status](https://secure.travis-ci.org/reactphp/event-loop.png?branch=master)](http://travis-ci.org/reactphp/event-loop)
+[![Code Climate](https://codeclimate.com/github/reactphp/event-loop/badges/gpa.svg)](https://codeclimate.com/github/reactphp/event-loop)
 
 Event loop abstraction layer that libraries can use for evented I/O.
 
@@ -39,33 +40,35 @@ All of the loops support these features:
 ## Usage
 
 Here is an async HTTP server built with just the event loop.
+
 ```php
-    $loop = React\EventLoop\Factory::create();
+$loop = React\EventLoop\Factory::create();
 
-    $server = stream_socket_server('tcp://127.0.0.1:8080');
-    stream_set_blocking($server, 0);
-    $loop->addReadStream($server, function ($server) use ($loop) {
-        $conn = stream_socket_accept($server);
-        $data = "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nHi\n";
-        $loop->addWriteStream($conn, function ($conn) use (&$data, $loop) {
-            $written = fwrite($conn, $data);
-            if ($written === strlen($data)) {
-                fclose($conn);
-                $loop->removeStream($conn);
-            } else {
-                $data = substr($data, $written);
-            }
-        });
+$server = stream_socket_server('tcp://127.0.0.1:8080');
+stream_set_blocking($server, 0);
+$loop->addReadStream($server, function ($server) use ($loop) {
+    $conn = stream_socket_accept($server);
+    $data = "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nHi\n";
+    $loop->addWriteStream($conn, function ($conn) use (&$data, $loop) {
+        $written = fwrite($conn, $data);
+        if ($written === strlen($data)) {
+            fclose($conn);
+            $loop->removeStream($conn);
+        } else {
+            $data = substr($data, $written);
+        }
     });
+});
 
-    $loop->addPeriodicTimer(5, function () {
-        $memory = memory_get_usage() / 1024;
-        $formatted = number_format($memory, 3).'K';
-        echo "Current memory usage: {$formatted}\n";
-    });
+$loop->addPeriodicTimer(5, function () {
+    $memory = memory_get_usage() / 1024;
+    $formatted = number_format($memory, 3).'K';
+    echo "Current memory usage: {$formatted}\n";
+});
 
-    $loop->run();
+$loop->run();
 ```
+
 **Note:** The factory is just for convenience. It tries to pick the best
 available implementation. Libraries `SHOULD` allow the user to inject an
 instance of the loop. They `MAY` use the factory when the user did not supply
