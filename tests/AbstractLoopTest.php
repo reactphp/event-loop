@@ -47,11 +47,35 @@ abstract class AbstractLoopTest extends TestCase
         $this->tickLoop($this->loop);
     }
 
+    public function testAddReadStreamIgnoresSecondCallable()
+    {
+        list ($input, $output) = $this->createSocketPair();
+
+        $this->loop->addReadStream($input, $this->expectCallableExactly(2));
+        $this->loop->addReadStream($input, $this->expectCallableNever());
+
+        fwrite($output, "foo\n");
+        $this->tickLoop($this->loop);
+
+        fwrite($output, "bar\n");
+        $this->tickLoop($this->loop);
+    }
+
     public function testAddWriteStream()
     {
         list ($input) = $this->createSocketPair();
 
         $this->loop->addWriteStream($input, $this->expectCallableExactly(2));
+        $this->tickLoop($this->loop);
+        $this->tickLoop($this->loop);
+    }
+
+    public function testAddWriteStreamIgnoresSecondCallable()
+    {
+        list ($input) = $this->createSocketPair();
+
+        $this->loop->addWriteStream($input, $this->expectCallableExactly(2));
+        $this->loop->addWriteStream($input, $this->expectCallableNever());
         $this->tickLoop($this->loop);
         $this->tickLoop($this->loop);
     }
