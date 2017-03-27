@@ -5,6 +5,11 @@
 
 Event loop abstraction layer that libraries can use for evented I/O.
 
+In order for async based libraries to be interoperable, they need to use the
+same event loop. This component provides a common `LoopInterface` that any
+library can target. This allows them to be used in the same loop, with one
+single `run()` call that is controlled by the user.
+
 > The master branch contains the code for the upcoming 0.5 release.
 For the code of the current stable 0.4.x release, checkout the
 [0.4 branch](https://github.com/reactphp/event-loop/tree/0.4).
@@ -53,10 +58,8 @@ $loop->run();
 
 ## Usage
 
-In order for async based libraries to be interoperable, they need to use the
-same event loop. This component provides a common `LoopInterface` that any
-library can target. This allows them to be used in the same loop, with one
-single `run()` call that is controlled by the user.
+Typical applications use a single event loop which is created at the beginning
+and run at the end of the program.
 
 ```php
 // [1]
