@@ -186,7 +186,11 @@ class StreamSelectLoop implements LoopInterface
                 if ($timeout < 0) {
                     $timeout = 0;
                 } else {
-                    $timeout *= self::MICROSECONDS_PER_SECOND;
+                    /*
+                     * round() needed to correct float error:
+                     * https://github.com/reactphp/event-loop/issues/48
+                     */
+                    $timeout = round($timeout * self::MICROSECONDS_PER_SECOND);
                 }
 
             // The only possible event is stream activity, so wait forever ...
