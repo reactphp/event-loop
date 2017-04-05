@@ -39,7 +39,7 @@ class FutureTickQueue
         // Only invoke as many callbacks as were on the queue when tick() was called.
         $count = $this->queue->count();
 
-        while ($count--) {
+        while ($count-- && $this->queue->count()) {
             call_user_func(
                 $this->queue->dequeue(),
                 $this->eventLoop
