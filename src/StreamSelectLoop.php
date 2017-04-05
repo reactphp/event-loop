@@ -13,6 +13,8 @@ use React\EventLoop\Timer\Timers;
 class StreamSelectLoop implements LoopInterface
 {
     const MICROSECONDS_PER_SECOND = 1000000;
+    const NANOSECONDS_PER_SECOND = 1000000000;
+    const NANOSECONDS_PER_MICROSECOND = 1000;
 
     private $futureTickQueue;
     private $timers;
@@ -217,6 +219,61 @@ class StreamSelectLoop implements LoopInterface
                 call_user_func($this->writeListeners[$key], $stream, $this);
             }
         }
+    }
+
+    /**
+     * Returns integer amount of seconds in $time or null.
+     *
+     * @param float|null $time – time in seconds
+     *
+     * @return int|null
+     */
+    static private function getSeconds($time)
+    {
+        /*
+         * Workaround for PHP int overflow:
+         * (float)PHP_INT_MAX == PHP_INT_MAX => true
+         * (int)(float)PHP_INT_MAX == PHP_INT_MAX => false
+         * (int)(float)PHP_INT_MAX == PHP_INT_MIN => true
+         */
+        if ($time == PHP_INT_MAX) {
+            return PHP_INT_MAX;
+        }
+        return $time === null ? null : intval(floor($time));
+    }
+
+    /**
+     * Returns integer amount of microseconds in $time or null.
+     *
+     * @param float|null $time – time in seconds
+     *
+     * @return int|null
+     */
+    static private function getMicroseconds($time)
+    {
+        if ($time === null) {
+            return null;
+        }
+        $fractional = fmod($time, 1);
+        $microseconds = round($fractional * self::MICROSECONDS_PER_SECOND);
+
+        return intval($microseconds);
+    }
+
+    /**
+     * Returns integer amount of nanoseconds in $time or null.
+     * The precision is 1 microsecond.
+     *
+     * @param float|null $time – time in seconds
+     *
+     * @return int|null
+     */
+    static private function getNanoseconds($time)
+    {
+        if ($time === null) {
+            return null;
+        }
+        return intval(self::getMicroseconds($time) * self::NANOSECONDS_PER_MICROSECOND);
     }
 
     /**
