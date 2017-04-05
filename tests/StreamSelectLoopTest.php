@@ -176,4 +176,23 @@ class StreamSelectLoopTest extends AbstractLoopTest
 
         $loop->run();
     }
+
+    /**
+     * https://github.com/reactphp/event-loop/issues/19
+     *
+     * Tests that timer with PHP_INT_MAX seconds interval will work.
+     */
+    public function testIntOverflowTimerInterval()
+    {
+        /** @var StreamSelectLoop|\PHPUnit_Framework_MockObject_MockObject $loop */
+        $loop = $this->getMock('React\EventLoop\StreamSelectLoop', ['sleep']);
+        $loop->expects($this->once())
+            ->method('sleep')
+            ->with(PHP_INT_MAX, 0)
+            ->willReturnCallback(function() use (&$loop) {
+                $loop->stop();
+            });
+        $loop->addTimer(PHP_INT_MAX, function(){});
+        $loop->run();
+    }
 }
