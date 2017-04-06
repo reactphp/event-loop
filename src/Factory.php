@@ -9,6 +9,8 @@ class Factory
         // @codeCoverageIgnoreStart
         if (function_exists('event_base_new')) {
             return new LibEventLoop();
+        } elseif (class_exists('\EvLoop', false)) {
+            return new ExtEvLoop;
         } elseif (class_exists('libev\EventLoop', false)) {
             return new LibEvLoop;
         } elseif (class_exists('EventBase', false)) {

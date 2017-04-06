@@ -7,6 +7,7 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
 
     # install 'event' PHP extension
     echo "yes" | pecl install event
+    echo "no" | pecl install ev
 
     # install 'libevent' PHP extension (does not support php 7)
     if [[ "$TRAVIS_PHP_VERSION" != "7.0" &&
