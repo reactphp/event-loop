@@ -222,4 +222,20 @@ class PeclEvLoop implements LoopInterface
     {
         $this->running = false;
     }
+
+    public function __destruct()
+    {
+        /** @var TimerInterface $timer */
+        foreach($this->timers as $timer) {
+            $this->cancelTimer($timer);
+        }
+
+        foreach($this->readStreams as $key => $stream) {
+            $this->removeReadStream($key);
+        }
+
+        foreach($this->writeStreams as $key => $stream) {
+            $this->removeWriteStream($key);
+        }
+    }
 }
