@@ -33,13 +33,27 @@ class PeclEvLoop implements LoopInterface
      */
     public function addReadStream($stream, callable $listener)
     {
-        $callback = function () use ($stream, $listener) {
+        $key = (int) $stream;
+
+        if (isset($this->readStreams[$key])) {
+            return;
+        }
+
+        $callback = $this->getStreamListenerClosure($stream, $listener);
+        $event = $this->loop->io($stream, Ev::READ, $callback);
+        $this->readStreams[$key] = $event;
+    }
+
+    /**
+     * @param resource $stream
+     * @param callable $listener
+     *
+     * @return \Closure
+     */
+    private function getStreamListenerClosure($stream, callable $listener) {
+        return function () use ($stream, $listener) {
             call_user_func($listener, $stream, $this);
         };
-
-        $event = $this->loop->io($stream, Ev::READ, $callback);
-
-        $this->readStreams[(int) $stream] = $event;
     }
 
     /**
@@ -47,13 +61,15 @@ class PeclEvLoop implements LoopInterface
      */
     public function addWriteStream($stream, callable $listener)
     {
-        $callback = function () use ($stream, $listener) {
-            call_user_func($listener, $stream, $this);
-        };
+        $key = (int) $stream;
 
+        if (isset($this->writeStreams[$key])) {
+            return;
+        }
+
+        $callback = $this->getStreamListenerClosure($stream, $listener);
         $event = $this->loop->io($stream, Ev::WRITE, $callback);
-
-        $this->writeStreams[(int) $stream] = $event;
+        $this->writeStreams[$key] = $event;
     }
 
     /**
