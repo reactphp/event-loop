@@ -4,9 +4,6 @@ namespace React\EventLoop;
 
 use Ev;
 use EvLoop;
-use EvIo;
-use EvTimer;
-use EvPeriodic;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Tick\NextTickQueue;
 use React\EventLoop\Timer\Timer;
