@@ -28,7 +28,7 @@ class PeclEvLoop implements LoopInterface
 
     public function __construct()
     {
-        $this->loop             = EvLoop::defaultLoop();
+        $this->loop             = new EvLoop();
         $this->nextTickQueue    = new NextTickQueue($this);
         $this->futureTickQueue  = new FutureTickQueue($this);
         $this->timerEvents      = new SplObjectStorage();
