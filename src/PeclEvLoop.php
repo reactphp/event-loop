@@ -142,7 +142,7 @@ class PeclEvLoop implements LoopInterface
     public function cancelTimer(TimerInterface $timer)
     {
         if (isset($this->timerEvents[$timer])) {
-            $event = $this->timerEvents->get($timer);
+            $event = $this->timerEvents[$timer];
             $event->stop();
             $this->timerEvents->detach($timer);
         }
