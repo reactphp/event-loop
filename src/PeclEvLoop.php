@@ -79,10 +79,12 @@ class PeclEvLoop implements LoopInterface
     {
         $key = (int) $stream;
 
-        if (isset($this->readStreams[$key])) {
-            $this->readStreams[$key]->stop();
-            unset($this->readStreams[$key]);
+        if (!isset($this->readStreams[$key])) {
+            return;
         }
+
+        $this->readStreams[$key]->stop();
+        unset($this->readStreams[$key]);
     }
 
     /**
@@ -92,10 +94,12 @@ class PeclEvLoop implements LoopInterface
     {
         $key = (int) $stream;
 
-        if (isset($this->writeStreams[$key])) {
-            $this->writeStreams[$key]->stop();
-            unset($this->writeStreams[$key]);
+        if (!isset($this->writeStreams[$key])) {
+            return;
         }
+
+        $this->writeStreams[$key]->stop();
+        unset($this->writeStreams[$key]);
     }
 
     /**
@@ -151,11 +155,13 @@ class PeclEvLoop implements LoopInterface
      */
     public function cancelTimer(TimerInterface $timer)
     {
-        if (isset($this->timers[$timer])) {
-            $event = $this->timers[$timer];
-            $event->stop();
-            $this->timers->detach($timer);
+        if (!isset($this->timers[$timer])) {
+            return;
         }
+
+        $event = $this->timers[$timer];
+        $event->stop();
+        $this->timers->detach($timer);
     }
 
     /**
