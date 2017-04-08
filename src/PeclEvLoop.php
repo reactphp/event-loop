@@ -200,10 +200,14 @@ class PeclEvLoop implements LoopInterface
         while ($this->running) {
             $this->futureTickQueue->tick();
 
+            $hasPendingCallbacks = !$this->futureTickQueue->isEmpty();
+            $wasJustStopped = !$this->running;
+            $nothingLeftToDo = !$this->readStreams && !$this->writeStreams && !$this->timers->count();
+
             $flags = Ev::RUN_ONCE;
-            if (!$this->running || !$this->futureTickQueue->isEmpty()) {
+            if ($wasJustStopped || $hasPendingCallbacks) {
                 $flags |= Ev::RUN_NOWAIT;
-            } elseif (!$this->readStreams && !$this->writeStreams && !$this->timers->count()) {
+            } elseif ($nothingLeftToDo) {
                 break;
             }
 
