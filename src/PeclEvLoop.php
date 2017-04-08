@@ -16,16 +16,16 @@ class PeclEvLoop implements LoopInterface
 {
     private $loop;
     private $futureTickQueue;
-    private $timerEvents;
-    private $readEvents = [];
-    private $writeEvents = [];
+    private $timers;
+    private $readStreams = [];
+    private $writeStreams = [];
     private $running;
 
     public function __construct()
     {
         $this->loop             = new EvLoop();
         $this->futureTickQueue  = new FutureTickQueue($this);
-        $this->timerEvents      = new SplObjectStorage();
+        $this->timers           = new SplObjectStorage();
     }
 
     /**
@@ -39,7 +39,7 @@ class PeclEvLoop implements LoopInterface
 
         $event = $this->loop->io($stream, Ev::READ, $callback);
 
-        $this->readEvents[(int) $stream] = $event;
+        $this->readStreams[(int) $stream] = $event;
     }
 
     /**
@@ -53,7 +53,7 @@ class PeclEvLoop implements LoopInterface
 
         $event = $this->loop->io($stream, Ev::WRITE, $callback);
 
-        $this->writeEvents[(int) $stream] = $event;
+        $this->writeStreams[(int) $stream] = $event;
     }
 
     /**
@@ -63,9 +63,9 @@ class PeclEvLoop implements LoopInterface
     {
         $key = (int) $stream;
 
-        if (isset($this->readEvents[$key])) {
-            $this->readEvents[$key]->stop();
-            unset($this->readEvents[$key]);
+        if (isset($this->readStreams[$key])) {
+            $this->readStreams[$key]->stop();
+            unset($this->readStreams[$key]);
         }
     }
 
@@ -76,9 +76,9 @@ class PeclEvLoop implements LoopInterface
     {
         $key = (int) $stream;
 
-        if (isset($this->writeEvents[$key])) {
-            $this->writeEvents[$key]->stop();
-            unset($this->writeEvents[$key]);
+        if (isset($this->writeStreams[$key])) {
+            $this->writeStreams[$key]->stop();
+            unset($this->writeStreams[$key]);
         }
     }
 
@@ -107,7 +107,7 @@ class PeclEvLoop implements LoopInterface
         };
 
         $event = $this->loop->timer($timer->getInterval(), 0.0, $callback);
-        $this->timerEvents->attach($timer, $event);
+        $this->timers->attach($timer, $event);
 
         return $timer;
     }
@@ -125,7 +125,7 @@ class PeclEvLoop implements LoopInterface
 
         //reschedule callback should be NULL to utilize $offset and $interval params
         $event = $this->loop->periodic($interval, $interval, NULL, $callback);
-        $this->timerEvents->attach($timer, $event);
+        $this->timers->attach($timer, $event);
 
         return $timer;
     }
@@ -135,10 +135,10 @@ class PeclEvLoop implements LoopInterface
      */
     public function cancelTimer(TimerInterface $timer)
     {
-        if (isset($this->timerEvents[$timer])) {
-            $event = $this->timerEvents[$timer];
+        if (isset($this->timers[$timer])) {
+            $event = $this->timers[$timer];
             $event->stop();
-            $this->timerEvents->detach($timer);
+            $this->timers->detach($timer);
         }
     }
 
@@ -147,7 +147,7 @@ class PeclEvLoop implements LoopInterface
      */
     public function isTimerActive(TimerInterface $timer)
     {
-        return $this->timerEvents->contains($timer);
+        return $this->timers->contains($timer);
     }
 
     /**
@@ -181,7 +181,7 @@ class PeclEvLoop implements LoopInterface
             $flags = Ev::RUN_ONCE;
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= Ev::RUN_NOWAIT;
-            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count()) {
+            } elseif (!$this->readStreams && !$this->writeStreams && !$this->timers->count()) {
                 break;
             }
 
