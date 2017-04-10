@@ -213,18 +213,14 @@ class StreamSelectLoop implements LoopInterface
     }
 
     /**
-     * Returns integer amount of seconds in $time or null.
+     * Returns integer amount of seconds in $time.
      *
-     * @param float|null $time – time in seconds
+     * @param float $time – time in seconds
      *
-     * @return int|null
+     * @return int
      */
     private static function getSeconds($time)
     {
-        if ($time === null) {
-            return null;
-        }
-
         /*
          * Workaround for PHP int overflow:
          * (float)PHP_INT_MAX == PHP_INT_MAX => true
@@ -239,17 +235,14 @@ class StreamSelectLoop implements LoopInterface
     }
 
     /**
-     * Returns integer amount of microseconds in $time or null.
+     * Returns integer amount of microseconds in $time.
      *
-     * @param float|null $time – time in seconds
+     * @param float $time – time in seconds
      *
-     * @return int|null
+     * @return int
      */
     private static function getMicroseconds($time)
     {
-        if ($time === null) {
-            return null;
-        }
         $fractional = fmod($time, 1);
         $microseconds = round($fractional * self::MICROSECONDS_PER_SECOND);
 
@@ -257,19 +250,15 @@ class StreamSelectLoop implements LoopInterface
     }
 
     /**
-     * Returns integer amount of nanoseconds in $time or null.
+     * Returns integer amount of nanoseconds in $time.
      * The precision is 1 microsecond.
      *
-     * @param float|null $time – time in seconds
+     * @param float $time – time in seconds
      *
-     * @return int|null
+     * @return int
      */
     private static function getNanoseconds($time)
     {
-        if ($time === null) {
-            return null;
-        }
-
         return intval(self::getMicroseconds($time) * self::NANOSECONDS_PER_MICROSECOND);
     }
 
@@ -286,9 +275,9 @@ class StreamSelectLoop implements LoopInterface
      */
     protected function streamSelect(array &$read, array &$write, $timeout)
     {
-        $seconds = self::getSeconds($timeout);
-        $microseconds = self::getMicroseconds($timeout);
-        $nanoseconds = self::getNanoseconds($timeout);
+        $seconds = $timeout === null ? null : self::getSeconds($timeout);
+        $microseconds = $timeout === null ? 0 : self::getMicroseconds($timeout);
+        $nanoseconds = $timeout === null ? 0 : self::getNanoseconds($timeout);
 
         if ($read || $write) {
             $except = [];
@@ -296,7 +285,9 @@ class StreamSelectLoop implements LoopInterface
             return $this->doSelectStream($read, $write, $except, $seconds, $microseconds);
         }
 
-        $this->sleep($seconds, $nanoseconds);
+        if ($timeout !== null) {
+            $this->sleep($seconds, $nanoseconds);
+        }
 
         return 0;
     }
@@ -308,11 +299,11 @@ class StreamSelectLoop implements LoopInterface
      * @param array $write
      * @param array $except
      * @param int|null $seconds
-     * @param int|null $microseconds
+     * @param int $microseconds
      *
      * @return int
      */
-    protected function doSelectStream(array &$read, array &$write, array &$except, $seconds, $microseconds = null)
+    protected function doSelectStream(array &$read, array &$write, array &$except, $seconds, $microseconds)
     {
         // suppress warnings that occur, when stream_select is interrupted by a signal
         return @stream_select($read, $write, $except, $seconds, $microseconds);
@@ -321,14 +312,11 @@ class StreamSelectLoop implements LoopInterface
     /**
      * Sleeps for $seconds and $nanoseconds.
      *
-     * @param int|null $seconds
-     * @param int|null $nanoseconds
+     * @param int $seconds
+     * @param int $nanoseconds
      */
     protected function sleep($seconds, $nanoseconds = 0)
     {
-        if ($seconds === null || $nanoseconds === null) {
-            return;
-        }
         if ($seconds > 0 || $nanoseconds > 0) {
             time_nanosleep($seconds, $nanoseconds);
         }
