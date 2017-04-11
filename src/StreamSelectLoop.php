@@ -281,16 +281,16 @@ class StreamSelectLoop implements LoopInterface
     protected function streamSelect(array &$read, array &$write, $timeout)
     {
         $seconds = $timeout === null ? null : self::getSeconds($timeout);
-        $microseconds = $timeout === null ? 0 : self::getMicroseconds($timeout);
-        $nanoseconds = $timeout === null ? 0 : self::getNanoseconds($timeout);
 
         if ($read || $write) {
             $except = [];
+            $microseconds = $timeout === null ? 0 : self::getMicroseconds($timeout);
 
             return $this->doSelectStream($read, $write, $except, $seconds, $microseconds);
         }
 
         if ($timeout !== null) {
+            $nanoseconds = self::getNanoseconds($timeout);
             $this->sleep($seconds, $nanoseconds);
         }
 
