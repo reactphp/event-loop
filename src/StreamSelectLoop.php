@@ -222,10 +222,15 @@ class StreamSelectLoop implements LoopInterface
     private static function getSeconds($time)
     {
         /*
-         * Workaround for PHP int overflow:
-         * (float)PHP_INT_MAX == PHP_INT_MAX => true
-         * (int)(float)PHP_INT_MAX == PHP_INT_MAX => false
-         * (int)(float)PHP_INT_MAX == PHP_INT_MIN => true
+         * intval(floor($time)) will produce int overflow
+         * if $time is (float)PHP_INT_MAX:
+         * (float)PHP_INT_MAX      == PHP_INT_MAX  //true
+         * (int)(float)PHP_INT_MAX == PHP_INT_MAX  //false
+         * (int)(float)PHP_INT_MAX == PHP_INT_MIN  //true
+         * -----------------------------------------------
+         * Loose comparision is intentional, cause $time
+         * is float and
+         * (float)PHP_INT_MAX !== PHP_INT_MAX
          */
         if ($time == PHP_INT_MAX) {
             return PHP_INT_MAX;
