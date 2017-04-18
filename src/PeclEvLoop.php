@@ -183,16 +183,6 @@ class PeclEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function tick()
-    {
-        $this->futureTickQueue->tick();
-
-        $this->loop->run(Ev::RUN_ONCE | Ev::RUN_NOWAIT);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;
