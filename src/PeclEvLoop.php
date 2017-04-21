@@ -28,9 +28,6 @@ class PeclEvLoop implements LoopInterface
         $this->timers           = new SplObjectStorage();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addReadStream($stream, callable $listener)
     {
         $key = (int) $stream;
@@ -56,9 +53,6 @@ class PeclEvLoop implements LoopInterface
         };
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addWriteStream($stream, callable $listener)
     {
         $key = (int) $stream;
@@ -72,9 +66,6 @@ class PeclEvLoop implements LoopInterface
         $this->writeStreams[$key] = $event;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeReadStream($stream)
     {
         $key = (int) $stream;
@@ -87,9 +78,6 @@ class PeclEvLoop implements LoopInterface
         unset($this->readStreams[$key]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeWriteStream($stream)
     {
         $key = (int) $stream;
@@ -102,18 +90,12 @@ class PeclEvLoop implements LoopInterface
         unset($this->writeStreams[$key]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeStream($stream)
     {
         $this->removeReadStream($stream);
         $this->removeWriteStream($stream);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addTimer($interval, callable $callback)
     {
         $timer = new Timer($this, $interval, $callback, false);
@@ -132,9 +114,6 @@ class PeclEvLoop implements LoopInterface
         return $timer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addPeriodicTimer($interval, callable $callback)
     {
         $timer = new Timer($this, $interval, $callback, true);
@@ -150,9 +129,6 @@ class PeclEvLoop implements LoopInterface
         return $timer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cancelTimer(TimerInterface $timer)
     {
         if (!isset($this->timers[$timer])) {
@@ -164,25 +140,16 @@ class PeclEvLoop implements LoopInterface
         $this->timers->detach($timer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isTimerActive(TimerInterface $timer)
     {
         return $this->timers->contains($timer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function futureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;
@@ -205,9 +172,6 @@ class PeclEvLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function stop()
     {
         $this->running = false;
