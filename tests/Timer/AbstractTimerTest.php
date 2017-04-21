@@ -2,10 +2,15 @@
 
 namespace React\Tests\EventLoop\Timer;
 
+use React\EventLoop\LoopInterface;
+use React\EventLoop\Timer\Timer;
 use React\Tests\EventLoop\TestCase;
 
 abstract class AbstractTimerTest extends TestCase
 {
+    /**
+     * @return LoopInterface
+     */
     abstract public function createLoop();
 
     public function testAddTimer()
@@ -93,5 +98,14 @@ abstract class AbstractTimerTest extends TestCase
         $timer = $loop->addTimer(0, function () {});
 
         $this->assertEquals(0.000001, $timer->getInterval());
+    }
+
+    public function testCancelNonexistentTimer()
+    {
+        $loop = $this->createLoop();
+
+        $timer = new Timer($loop, 1, function(){});
+
+        $loop->cancelTimer($timer);
     }
 }
