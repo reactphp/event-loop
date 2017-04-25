@@ -88,7 +88,15 @@ interface LoopInterface
     /**
      * Schedule a callback to be invoked on a future tick of the event loop.
      *
-     * Callbacks are guaranteed to be executed in the order they are enqueued.
+     * This works very much similar to timers with an interval of zero seconds,
+     * but does not require the overhead of scheduling a timer queue.
+     *
+     * Unlike timers, callbacks are guaranteed to be executed in the order they
+     * are enqueued.
+     * Also, once a callback is enqueued, there's no way to cancel this operation.
+     *
+     * This is often used to break down bigger tasks into smaller steps (a form of
+     * cooperative multitasking).
      *
      * @param callable $listener The callback to invoke.
      */

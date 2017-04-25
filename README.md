@@ -114,7 +114,34 @@ All of the loops support these features:
 * File descriptor polling
 * One-off timers
 * Periodic timers
-* Deferred execution of callbacks
+* Deferred execution on future loop tick
+
+### futureTick()
+
+The `futureTick(callable $listener): void` method can be used to
+schedule a callback to be invoked on a future tick of the event loop.
+
+This works very much similar to timers with an interval of zero seconds,
+but does not require the overhead of scheduling a timer queue.
+
+Unlike timers, callbacks are guaranteed to be executed in the order they
+are enqueued.
+Also, once a callback is enqueued, there's no way to cancel this operation.
+
+This is often used to break down bigger tasks into smaller steps (a form of
+cooperative multitasking).
+
+```php
+$loop->futureTick(function () {
+    echo 'b';
+});
+$loop->futureTick(function () {
+    echo 'c';
+});
+echo 'a';
+```
+
+See also [example #3](examples).
 
 ## Install
 
