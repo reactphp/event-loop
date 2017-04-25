@@ -56,6 +56,8 @@ $loop->addPeriodicTimer(5, function () {
 $loop->run();
 ```
 
+See also the [examples](examples).
+
 ## Usage
 
 Typical applications use a single event loop which is created at the beginning
