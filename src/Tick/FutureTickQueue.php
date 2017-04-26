@@ -4,7 +4,15 @@ namespace React\EventLoop\Tick;
 
 use SplQueue;
 
-class FutureTickQueue
+/**
+ * A tick queue implementation that can hold multiple callback functions
+ *
+ * This class should only be used internally, see LoopInterface instead.
+ *
+ * @see LoopInterface
+ * @internal
+ */
+final class FutureTickQueue
 {
     private $queue;
 
