@@ -28,20 +28,6 @@ interface TimerInterface
     public function getCallback();
 
     /**
-     * Set arbitrary data associated with timer
-     *
-     * @param mixed $data
-     */
-    public function setData($data);
-
-    /**
-     * Get arbitrary data associated with timer
-     *
-     * @return mixed
-     */
-    public function getData();
-
-    /**
      * Determine whether the time is periodic
      *
      * @return bool

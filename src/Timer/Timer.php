@@ -12,7 +12,6 @@ class Timer implements TimerInterface
     protected $interval;
     protected $callback;
     protected $periodic;
-    protected $data;
 
     /**
      * Constructor initializes the fields of the Timer
@@ -21,9 +20,8 @@ class Timer implements TimerInterface
      * @param float         $interval The interval after which this timer will execute, in seconds
      * @param callable      $callback The callback that will be executed when this timer elapses
      * @param bool          $periodic Whether the time is periodic
-     * @param mixed         $data     Arbitrary data associated with timer
      */
-    public function __construct(LoopInterface $loop, $interval, callable $callback, $periodic = false, $data = null)
+    public function __construct(LoopInterface $loop, $interval, callable $callback, $periodic = false)
     {
         if ($interval < self::MIN_INTERVAL) {
             $interval = self::MIN_INTERVAL;
@@ -33,7 +31,6 @@ class Timer implements TimerInterface
         $this->interval = (float) $interval;
         $this->callback = $callback;
         $this->periodic = (bool) $periodic;
-        $this->data = null;
     }
 
     /**
@@ -58,22 +55,6 @@ class Timer implements TimerInterface
     public function getCallback()
     {
         return $this->callback;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 
     /**
