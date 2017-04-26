@@ -94,7 +94,7 @@ class StreamSelectLoop implements LoopInterface
      */
     public function addTimer($interval, callable $callback)
     {
-        $timer = new Timer($this, $interval, $callback, false);
+        $timer = new Timer($interval, $callback, false);
 
         $this->timers->add($timer);
 
@@ -106,7 +106,7 @@ class StreamSelectLoop implements LoopInterface
      */
     public function addPeriodicTimer($interval, callable $callback)
     {
-        $timer = new Timer($this, $interval, $callback, true);
+        $timer = new Timer($interval, $callback, true);
 
         $this->timers->add($timer);
 

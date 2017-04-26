@@ -2,17 +2,8 @@
 
 namespace React\EventLoop\Timer;
 
-use React\EventLoop\LoopInterface;
-
 interface TimerInterface
 {
-    /**
-     * Get the loop with which this timer is associated
-     *
-     * @return LoopInterface
-     */
-    public function getLoop();
-
     /**
      * Get the interval after which this timer will execute, in seconds
      *
