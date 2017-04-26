@@ -64,20 +64,4 @@ class Timer implements TimerInterface
     {
         return $this->periodic;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isActive()
-    {
-        return $this->loop->isTimerActive($this);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function cancel()
-    {
-        $this->loop->cancelTimer($this);
-    }
 }

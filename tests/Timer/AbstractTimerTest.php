@@ -43,7 +43,7 @@ abstract class AbstractTimerTest extends TestCase
         usleep(1000);
         $this->tickLoop($loop);
 
-        $timer->cancel();
+        $loop->cancelTimer($timer);
 
         usleep(1000);
         $this->tickLoop($loop);
@@ -55,11 +55,11 @@ abstract class AbstractTimerTest extends TestCase
 
         $loop = $this->createLoop();
 
-        $loop->addPeriodicTimer(0.001, function ($timer) use (&$i) {
+        $loop->addPeriodicTimer(0.001, function ($timer) use (&$i, $loop) {
             $i++;
 
             if ($i == 2) {
-                $timer->cancel();
+                $loop->cancelTimer($timer);
             }
         });
 
@@ -81,7 +81,7 @@ abstract class AbstractTimerTest extends TestCase
 
         $this->assertTrue($loop->isTimerActive($timer));
 
-        $timer->cancel();
+        $loop->cancelTimer($timer);
 
         $this->assertFalse($loop->isTimerActive($timer));
     }

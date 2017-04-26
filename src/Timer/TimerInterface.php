@@ -33,16 +33,4 @@ interface TimerInterface
      * @return bool
      */
     public function isPeriodic();
-
-    /**
-     * Determine whether the time is active
-     *
-     * @return bool
-     */
-    public function isActive();
-
-    /**
-     * Cancel this timer
-     */
-    public function cancel();
 }
