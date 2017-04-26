@@ -126,12 +126,33 @@ schedule a callback to be invoked on a future tick of the event loop.
 This works very much similar to timers with an interval of zero seconds,
 but does not require the overhead of scheduling a timer queue.
 
-Unlike timers, callbacks are guaranteed to be executed in the order they
-are enqueued.
+The tick callback function MUST be able to accept zero parameters.
+
+The tick callback function MUST NOT throw an `Exception`.
+The return value of the tick callback function will be ignored and has
+no effect, so for performance reasons you're recommended to not return
+any excessive data structures.
+
+If you want to access any variables within your callback function, you
+can bind arbitrary data to a callback closure like this:
+
+```php
+function hello(LoopInterface $loop, $name)
+{
+    $loop->futureTick(function () use ($name) {
+        echo "hello $name\n";
+    });
+}
+
+hello('Tester');
+```
+
+Unlike timers, tick callbacks are guaranteed to be executed in the order
+they are enqueued.
 Also, once a callback is enqueued, there's no way to cancel this operation.
 
-This is often used to break down bigger tasks into smaller steps (a form of
-cooperative multitasking).
+This is often used to break down bigger tasks into smaller steps (a form
+of cooperative multitasking).
 
 ```php
 $loop->futureTick(function () {

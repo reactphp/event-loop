@@ -30,7 +30,7 @@ class LibEventLoop implements LoopInterface
     public function __construct()
     {
         $this->eventBase = event_base_new();
-        $this->futureTickQueue = new FutureTickQueue($this);
+        $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
 
         $this->createTimerCallback();

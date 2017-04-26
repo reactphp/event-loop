@@ -29,7 +29,7 @@ class ExtEventLoop implements LoopInterface
     public function __construct(EventBaseConfig $config = null)
     {
         $this->eventBase = new EventBase($config);
-        $this->futureTickQueue = new FutureTickQueue($this);
+        $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
 
         $this->createTimerCallback();
