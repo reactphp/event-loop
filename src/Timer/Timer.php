@@ -2,13 +2,21 @@
 
 namespace React\EventLoop\Timer;
 
-class Timer implements TimerInterface
+/**
+ * The actual connection implementation for TimerInterface
+ *
+ * This class should only be used internally, see TimerInterface instead.
+ *
+ * @see TimerInterface
+ * @internal
+ */
+final class Timer implements TimerInterface
 {
     const MIN_INTERVAL = 0.000001;
 
-    protected $interval;
-    protected $callback;
-    protected $periodic;
+    private $interval;
+    private $callback;
+    private $periodic;
 
     /**
      * Constructor initializes the fields of the Timer
