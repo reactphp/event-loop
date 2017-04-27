@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.3 (2017-04-27)
+
+* Bug fix: Bugfix in the usage sample code #57 (@dandelionred) 
+* Improvement: Remove branch-alias definition #53 (@WyriHaximus)
+* Improvement: StreamSelectLoop: Use fresh time so Timers added during stream events are accurate #51 (@andrewminerd)
+* Improvement: Avoid deprecation warnings in test suite due to deprecation of getMock() in PHPUnit #68 (@martinschroeder)
+* Improvement: Add PHPUnit 4.8 to require-dev #69 (@shaunbramley)
+* Improvement: Increase test timeouts for HHVM and unify timeout handling #70 (@clue)
+* Improvement: Travis improvements (backported from #74) #75 (@clue)
+* Improvement: Test suite now uses socket pairs instead of memory streams #66 (@martinschroeder)
+* Improvement: StreamSelectLoop: Test suite uses signal constant names in data provider #67 (@martinschroeder)
+* Improvement: ExtEventLoop: No longer suppress all errors #65 (@mamciek)
+* Improvement: Readme cleanup #89 (@jsor)
+* Improvement: Restructure and improve README #90 (@jsor)
+* Bug fix: StreamSelectLoop: Fix erroneous zero-time sleep (backport to 0.4) #94 (@jsor)
+
 ## 0.4.2 (2016-03-07)
 
 * Bug fix: No longer error when signals sent to StreamSelectLoop
