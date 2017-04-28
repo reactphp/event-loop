@@ -5,7 +5,15 @@ namespace React\EventLoop\Timer;
 use SplObjectStorage;
 use SplPriorityQueue;
 
-class Timers
+/**
+ * A scheduler implementation that can hold multiple timer instances
+ *
+ * This class should only be used internally, see TimerInterface instead.
+ *
+ * @see TimerInterface
+ * @internal
+ */
+final class Timers
 {
     private $time;
     private $timers;
