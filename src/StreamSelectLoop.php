@@ -24,7 +24,7 @@ class StreamSelectLoop implements LoopInterface
 
     public function __construct()
     {
-        $this->futureTickQueue = new FutureTickQueue($this);
+        $this->futureTickQueue = new FutureTickQueue();
         $this->timers = new Timers();
     }
 

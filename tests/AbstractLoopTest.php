@@ -296,8 +296,7 @@ abstract class AbstractLoopTest extends TestCase
     {
         $called = false;
 
-        $callback = function ($loop) use (&$called) {
-            $this->assertSame($this->loop, $loop);
+        $callback = function () use (&$called) {
             $called = true;
         };
 

@@ -11,7 +11,7 @@ $tick = function () use (&$tick, &$ticks, $loop) {
     if ($ticks > 0) {
         --$ticks;
         //$loop->addTimer(0, $tick);
-        $loop->nextTick($tick);
+        $loop->futureTick($tick);
     } else {
         echo 'done';
     }
