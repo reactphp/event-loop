@@ -398,6 +398,96 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->run();
     }
 
+    public function testSignal()
+    {
+        if (!function_exists('posix_kill') || !function_exists('posix_getpid')) {
+            $this->markTestSkipped('Signal test skipped because functions "posix_kill" and "posix_getpid" are missing.');
+        }
+
+        $called = false;
+        $calledShouldNot = true;
+
+        $timer = $this->loop->addPeriodicTimer(1, function () {});
+
+        $this->loop->addSignal(SIGUSR2, $func2 = function () use (&$calledShouldNot) {
+            $calledShouldNot = false;
+        });
+
+        $this->loop->addSignal(SIGUSR1, $func1 = function () use (&$func1, &$func2, &$called, $timer) {
+            $called = true;
+            $this->loop->removeSignal(SIGUSR1, $func1);
+            $this->loop->removeSignal(SIGUSR2, $func2);
+            $this->loop->cancelTimer($timer);
+        });
+
+        $this->loop->futureTick(function () {
+            posix_kill(posix_getpid(), SIGUSR1);
+        });
+
+        $this->loop->run();
+
+        $this->assertTrue($called);
+        $this->assertTrue($calledShouldNot);
+    }
+
+    public function testSignalMultipleUsagesForTheSameListener()
+    {
+        $funcCallCount = 0;
+        $func = function () use (&$funcCallCount) {
+            $funcCallCount++;
+        };
+        $this->loop->addTimer(1, function () {});
+
+        $this->loop->addSignal(SIGUSR1, $func);
+        $this->loop->addSignal(SIGUSR1, $func);
+
+        $this->loop->addTimer(0.4, function () {
+            posix_kill(posix_getpid(), SIGUSR1);
+        });
+        $this->loop->addTimer(0.9, function () use (&$func) {
+            $this->loop->removeSignal(SIGUSR1, $func);
+        });
+
+        $this->loop->run();
+
+        $this->assertSame(1, $funcCallCount);
+    }
+
+    public function testSignalsKeepTheLoopRunning()
+    {
+        $function = function () {};
+        $this->loop->addSignal(SIGUSR1, $function);
+        $this->loop->addTimer(1.5, function () use ($function) {
+            $this->loop->removeSignal(SIGUSR1, $function);
+            $this->loop->stop();
+        });
+
+        $this->assertRunSlowerThan(1.5);
+    }
+
+    public function testSignalsKeepTheLoopRunningAndRemovingItStopsTheLoop()
+    {
+        $function = function () {};
+        $this->loop->addSignal(SIGUSR1, $function);
+        $this->loop->addTimer(1.5, function () use ($function) {
+            $this->loop->removeSignal(SIGUSR1, $function);
+        });
+
+        $this->assertRunFasterThan(1.6);
+    }
+
+    private function assertRunSlowerThan($minInterval)
+    {
+        $start = microtime(true);
+
+        $this->loop->run();
+
+        $end = microtime(true);
+        $interval = $end - $start;
+
+        $this->assertLessThan($interval, $minInterval);
+    }
+
     private function assertRunFasterThan($maxInterval)
     {
         $start = microtime(true);

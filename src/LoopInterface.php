@@ -327,6 +327,41 @@ interface LoopInterface
     public function futureTick(callable $listener);
 
     /**
+     * Registers a signal listener with the loop, which
+     * on it's turn registers it with a signal handler
+     * suitable for the loop implementation.
+     *
+     * A listener can only be added once, any attempts
+     * to add it again will be ignored.
+     *
+     * See also [example #4](examples).
+     *
+     * @param int $signal
+     * @param callable $listener
+     *
+     * @throws \BadMethodCallException when signals
+     * aren't supported by the loop, e.g. when required
+     * extensions are missing.
+     *
+     * @return void
+     */
+    public function addSignal($signal, callable $listener);
+
+    /**
+     * Removed previous registered signal listener from
+     * the loop, which on it's turn removes it from the
+     * underlying signal handler.
+     *
+     * See also [example #4](examples).
+     *
+     * @param int $signal
+     * @param callable $listener
+     *
+     * @return void
+     */
+    public function removeSignal($signal, callable $listener);
+
+    /**
      * Run the event loop until there are no more tasks to perform.
      */
     public function run();

@@ -2,6 +2,7 @@
 
 namespace React\EventLoop;
 
+use React\EventLoop\Signal\Pcntl;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
@@ -21,11 +22,32 @@ class StreamSelectLoop implements LoopInterface
     private $writeStreams = [];
     private $writeListeners = [];
     private $running;
+    private $pcntl = false;
+    private $signals;
 
     public function __construct()
     {
         $this->futureTickQueue = new FutureTickQueue();
         $this->timers = new Timers();
+        $this->pcntl = extension_loaded('pcntl');
+        $this->signals = new SignalsHandler(
+            $this,
+            function ($signal) {
+                \pcntl_signal($signal, $f = function ($signal) use (&$f) {
+                    $this->signals->call($signal);
+                    // Ensure there are two copies of the callable around until it has been executed.
+                    // For more information see: https://bugs.php.net/bug.php?id=62452
+                    // Only an issue for PHP 5, this hack can be removed once PHP 5 suppose has been dropped.
+                    $g = $f;
+                    $f = $g;
+                });
+            },
+            function ($signal) {
+                if ($this->signals->count($signal) === 0) {
+                    \pcntl_signal($signal, SIG_DFL);
+                }
+            }
+        );
     }
 
     /**
@@ -140,6 +162,26 @@ class StreamSelectLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
+    public function addSignal($signal, callable $listener)
+    {
+        if ($this->pcntl === false) {
+            throw new \BadMethodCallException('Event loop feature "signals" isn\'t supported by the "StreamSelectLoop"');
+        }
+
+        $this->signals->add($signal, $listener);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeSignal($signal, callable $listener)
+    {
+        $this->signals->remove($signal, $listener);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function run()
     {
         $this->running = true;
@@ -196,6 +238,9 @@ class StreamSelectLoop implements LoopInterface
         $write = $this->writeStreams;
 
         $available = $this->streamSelect($read, $write, $timeout);
+        if ($this->pcntl) {
+            \pcntl_signal_dispatch();
+        }
         if (false === $available) {
             // if a system call has been interrupted,
             // we cannot rely on it's outcome
@@ -242,5 +287,21 @@ class StreamSelectLoop implements LoopInterface
         $timeout && usleep($timeout);
 
         return 0;
+    }
+
+    /**
+     * Iterate over signal listeners for the given signal
+     * and call each of them with the signal as first
+     * argument.
+     *
+     * @param int $signal
+     *
+     * @return void
+     */
+    private function handleSignal($signal)
+    {
+        foreach ($this->signals[$signal] as $listener) {
+            \call_user_func($listener, $signal);
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace React\EventLoop;
 
 use libev\EventLoop;
 use libev\IOEvent;
+use libev\SignalEvent;
 use libev\TimerEvent;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
@@ -22,12 +23,35 @@ class LibEvLoop implements LoopInterface
     private $readEvents = [];
     private $writeEvents = [];
     private $running;
+    private $signals;
+    private $signalEvents = [];
 
     public function __construct()
     {
         $this->loop = new EventLoop();
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
+
+        $this->signals = new SignalsHandler(
+            $this,
+            function ($signal) {
+                $this->signalEvents[$signal] = new SignalEvent($f = function () use ($signal, &$f) {
+                    $this->signals->call($signal);
+                    // Ensure there are two copies of the callable around until it has been executed.
+                    // For more information see: https://bugs.php.net/bug.php?id=62452
+                    // Only an issue for PHP 5, this hack can be removed once PHP 5 suppose has been dropped.
+                    $g = $f;
+                    $f = $g;
+                }, $signal);
+                $this->loop->add($this->signalEvents[$signal]);
+            },
+            function ($signal) {
+                if ($this->signals->count($signal) === 0) {
+                    $this->loop->remove($this->signalEvents[$signal]);
+                    unset($this->signalEvents[$signal]);
+                }
+            }
+        );
     }
 
     /**
@@ -168,6 +192,22 @@ class LibEvLoop implements LoopInterface
     public function futureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addSignal($signal, callable $listener)
+    {
+        $this->signals->add($signal, $listener);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeSignal($signal, callable $listener)
+    {
+        $this->signals->remove($signal, $listener);
     }
 
     /**
