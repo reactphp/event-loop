@@ -11,7 +11,7 @@ use React\EventLoop\Factory;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\Timer\TimerInterface;
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $args = getopt('t:l:r:');
 $t  = isset($args['t']) ? (int)$args['t'] : 0;
