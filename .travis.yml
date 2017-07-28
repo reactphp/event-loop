@@ -32,6 +32,11 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
+before_install:
+  - sudo add-apt-repository ppa:ondrej/php -y
+  - sudo apt-get update -q
+  - sudo apt-get install libuv1-dev || true
+
 install:
   - ./travis-init.sh
   - composer install

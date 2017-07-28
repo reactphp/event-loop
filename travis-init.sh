@@ -42,4 +42,11 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
         echo "extension=libev.so" >> "$(php -r 'echo php_ini_loaded_file();')"
     fi
 
+    # install 'libuv' PHP extension (does not support php 5)
+    if [[ "$TRAVIS_PHP_VERSION" = "7.0" ||
+          "$TRAVIS_PHP_VERSION" = "7.1" ||
+          "$TRAVIS_PHP_VERSION" = "7.2" ]]; then
+        echo "yes" | pecl install uv-beta
+    fi
+
 fi
