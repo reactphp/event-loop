@@ -22,6 +22,7 @@ For the code of the current stable 0.4.x release, checkout the
 * [Install](#install)
 * [Tests](#tests)
 * [License](#license)
+* [More](#more)
 
 ## Quickstart example
 
@@ -293,6 +294,11 @@ See also [example #3](examples).
 
 ### addReadStream()
 
+> Advanced! Note that this low-level API is considered advanced usage.
+  Most use cases should probably use the higher-level
+  [readable Stream API](https://github.com/reactphp/stream#readablestreaminterface)
+  instead.
+
 The `addReadStream(resource $stream, callable $callback): void` method can be used to
 register a listener to be notified when a stream is ready to read.
 
@@ -330,6 +336,11 @@ The execution order of listeners when multiple streams become ready at
 the same time is not guaranteed.
 
 ### addWriteStream()
+
+> Advanced! Note that this low-level API is considered advanced usage.
+  Most use cases should probably use the higher-level
+  [writable Stream API](https://github.com/reactphp/stream#writablestreaminterface)
+  instead.
 
 The `addWriteStream(resource $stream, callable $callback): void` method can be used to
 register a listener to be notified when a stream is ready to write.
@@ -420,3 +431,11 @@ $ php vendor/bin/phpunit
 ## License
 
 MIT, see [LICENSE file](LICENSE).
+
+## More
+
+* See our [Stream component](https://github.com/reactphp/stream) for more
+  information on how streams are used in real-world applications.
+* See our [users wiki](https://github.com/reactphp/react/wiki/Users) and the
+  [dependents on Packagist](https://packagist.org/packages/react/event-loop/dependents)
+  for a list of packages that use the EventLoop in real-world applications.

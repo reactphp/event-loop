@@ -7,7 +7,12 @@ use React\EventLoop\Timer\TimerInterface;
 interface LoopInterface
 {
     /**
-     * Register a listener to be notified when a stream is ready to read.
+     * [Advanced] Register a listener to be notified when a stream is ready to read.
+     *
+     * Note that this low-level API is considered advanced usage.
+     * Most use cases should probably use the higher-level
+     * [readable Stream API](https://github.com/reactphp/stream#readablestreaminterface)
+     * instead.
      *
      * The first parameter MUST be a valid stream resource that supports
      * checking whether it is ready to read by this loop implementation.
@@ -49,7 +54,12 @@ interface LoopInterface
     public function addReadStream($stream, callable $listener);
 
     /**
-     * Register a listener to be notified when a stream is ready to write.
+     * [Advanced] Register a listener to be notified when a stream is ready to write.
+     *
+     * Note that this low-level API is considered advanced usage.
+     * Most use cases should probably use the higher-level
+     * [writable Stream API](https://github.com/reactphp/stream#writablestreaminterface)
+     * instead.
      *
      * The first parameter MUST be a valid stream resource that supports
      * checking whether it is ready to write by this loop implementation.
