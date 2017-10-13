@@ -40,7 +40,7 @@ class LibEvLoop implements LoopInterface
         }
 
         $callback = function () use ($stream, $listener) {
-            call_user_func($listener, $stream, $this);
+            call_user_func($listener, $stream);
         };
 
         $event = new IOEvent($callback, $stream, IOEvent::READ);
@@ -59,7 +59,7 @@ class LibEvLoop implements LoopInterface
         }
 
         $callback = function () use ($stream, $listener) {
-            call_user_func($listener, $stream, $this);
+            call_user_func($listener, $stream);
         };
 
         $event = new IOEvent($callback, $stream, IOEvent::WRITE);

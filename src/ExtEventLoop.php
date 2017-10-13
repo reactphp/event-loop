@@ -289,11 +289,11 @@ class ExtEventLoop implements LoopInterface
             $key = (int) $stream;
 
             if (Event::READ === (Event::READ & $flags) && isset($this->readListeners[$key])) {
-                call_user_func($this->readListeners[$key], $stream, $this);
+                call_user_func($this->readListeners[$key], $stream);
             }
 
             if (Event::WRITE === (Event::WRITE & $flags) && isset($this->writeListeners[$key])) {
-                call_user_func($this->writeListeners[$key], $stream, $this);
+                call_user_func($this->writeListeners[$key], $stream);
             }
         };
     }
