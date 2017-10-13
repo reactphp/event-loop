@@ -358,15 +358,24 @@ the same time is not guaranteed.
 The `removeReadStream(resource $stream): void` method can be used to
 remove the read event listener for the given stream.
 
+Removing a stream from the loop that has already been removed or trying
+to remove a stream that was never added or is invalid has no effect.
+
 ### removeWriteStream()
 
 The `removeWriteStream(resource $stream): void` method can be used to
 remove the write event listener for the given stream.
 
+Removing a stream from the loop that has already been removed or trying
+to remove a stream that was never added or is invalid has no effect.
+
 ### removeStream()
 
 The `removeStream(resource $stream): void` method can be used to
 remove all listeners for the given stream.
+
+Removing a stream from the loop that has already been removed or trying
+to remove a stream that was never added or is invalid has no effect.
 
 ## Install
 

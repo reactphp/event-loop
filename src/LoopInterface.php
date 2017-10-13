@@ -77,6 +77,9 @@ interface LoopInterface
     /**
      * Remove the read event listener for the given stream.
      *
+     * Removing a stream from the loop that has already been removed or trying
+     * to remove a stream that was never added or is invalid has no effect.
+     *
      * @param resource $stream The PHP stream resource.
      */
     public function removeReadStream($stream);
@@ -84,12 +87,18 @@ interface LoopInterface
     /**
      * Remove the write event listener for the given stream.
      *
+     * Removing a stream from the loop that has already been removed or trying
+     * to remove a stream that was never added or is invalid has no effect.
+     *
      * @param resource $stream The PHP stream resource.
      */
     public function removeWriteStream($stream);
 
     /**
      * Remove all listeners for the given stream.
+     *
+     * Removing a stream from the loop that has already been removed or trying
+     * to remove a stream that was never added or is invalid has no effect.
      *
      * @param resource $stream The PHP stream resource.
      */
