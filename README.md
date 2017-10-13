@@ -291,6 +291,83 @@ echo 'a';
 
 See also [example #3](examples).
 
+### addReadStream()
+
+The `addReadStream(resource $stream, callable $callback): void` method can be used to
+register a listener to be notified when a stream is ready to read.
+
+The listener callback function MUST be able to accept a single parameter,
+the stream resource added by this method or you MAY use a function which
+has no parameters at all.
+
+The listener callback function MUST NOT throw an `Exception`.
+The return value of the listener callback function will be ignored and has
+no effect, so for performance reasons you're recommended to not return
+any excessive data structures.
+
+If you want to access any variables within your callback function, you
+can bind arbitrary data to a callback closure like this:
+
+```php
+$loop->addReadStream($stream, function ($stream) use ($name) {
+    echo $name . ' said: ' . fread($stream);
+});
+```
+
+See also [example #11](examples).
+
+You can invoke [`removeReadStream()`](#removereadstream) to remove the
+read event listener for this stream.
+
+The execution order of listeners when multiple streams become ready at
+the same time is not guaranteed.
+
+### addWriteStream()
+
+The `addWriteStream(resource $stream, callable $callback): void` method can be used to
+register a listener to be notified when a stream is ready to write.
+
+The listener callback function MUST be able to accept a single parameter,
+the stream resource added by this method or you MAY use a function which
+has no parameters at all.
+
+The listener callback function MUST NOT throw an `Exception`.
+The return value of the listener callback function will be ignored and has
+no effect, so for performance reasons you're recommended to not return
+any excessive data structures.
+
+If you want to access any variables within your callback function, you
+can bind arbitrary data to a callback closure like this:
+
+```php
+$loop->addWriteStream($stream, function ($stream) use ($name) {
+    fwrite($stream, 'Hello ' . $name);
+});
+```
+
+See also [example #12](examples).
+
+You can invoke [`removeWriteStream()`](#removewritestream) to remove the
+write event listener for this stream.
+
+The execution order of listeners when multiple streams become ready at
+the same time is not guaranteed.
+
+### removeReadStream()
+
+The `removeReadStream(resource $stream): void` method can be used to
+remove the read event listener for the given stream.
+
+### removeWriteStream()
+
+The `removeWriteStream(resource $stream): void` method can be used to
+remove the write event listener for the given stream.
+
+### removeStream()
+
+The `removeStream(resource $stream): void` method can be used to
+remove all listeners for the given stream.
+
 ## Install
 
 The recommended way to install this library is [through Composer](http://getcomposer.org).
