@@ -296,6 +296,13 @@ See also [example #3](examples).
 The `addReadStream(resource $stream, callable $callback): void` method can be used to
 register a listener to be notified when a stream is ready to read.
 
+The first parameter MUST be a valid stream resource that supports
+checking whether it is ready to read by this loop implementation.
+A single stream resource MUST NOT be added more than once.
+Instead, either call [`removeReadStream()`](#removereadstream) first or
+react to this event with a single listener and then dispatch from this
+listener.
+
 The listener callback function MUST be able to accept a single parameter,
 the stream resource added by this method or you MAY use a function which
 has no parameters at all.
@@ -326,6 +333,13 @@ the same time is not guaranteed.
 
 The `addWriteStream(resource $stream, callable $callback): void` method can be used to
 register a listener to be notified when a stream is ready to write.
+
+The first parameter MUST be a valid stream resource that supports
+checking whether it is ready to write by this loop implementation.
+A single stream resource MUST NOT be added more than once.
+Instead, either call [`removeWriteStream()`](#removewritestream) first or
+react to this event with a single listener and then dispatch from this
+listener.
 
 The listener callback function MUST be able to accept a single parameter,
 the stream resource added by this method or you MAY use a function which

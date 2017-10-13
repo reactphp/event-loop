@@ -9,6 +9,13 @@ interface LoopInterface
     /**
      * Register a listener to be notified when a stream is ready to read.
      *
+     * The first parameter MUST be a valid stream resource that supports
+     * checking whether it is ready to read by this loop implementation.
+     * A single stream resource MUST NOT be added more than once.
+     * Instead, either call [`removeReadStream()`](#removereadstream) first or
+     * react to this event with a single listener and then dispatch from this
+     * listener.
+     *
      * The listener callback function MUST be able to accept a single parameter,
      * the stream resource added by this method or you MAY use a function which
      * has no parameters at all.
@@ -37,11 +44,19 @@ interface LoopInterface
      *
      * @param resource $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
+     * @see self::removeReadStream()
      */
     public function addReadStream($stream, callable $listener);
 
     /**
      * Register a listener to be notified when a stream is ready to write.
+     *
+     * The first parameter MUST be a valid stream resource that supports
+     * checking whether it is ready to write by this loop implementation.
+     * A single stream resource MUST NOT be added more than once.
+     * Instead, either call [`removeWriteStream()`](#removewritestream) first or
+     * react to this event with a single listener and then dispatch from this
+     * listener.
      *
      * The listener callback function MUST be able to accept a single parameter,
      * the stream resource added by this method or you MAY use a function which
@@ -71,6 +86,7 @@ interface LoopInterface
      *
      * @param resource $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
+     * @see self::removeWriteStream()
      */
     public function addWriteStream($stream, callable $listener);
 
