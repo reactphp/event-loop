@@ -206,7 +206,7 @@ class StreamSelectLoop implements LoopInterface
             $key = (int) $stream;
 
             if (isset($this->readListeners[$key])) {
-                call_user_func($this->readListeners[$key], $stream, $this);
+                call_user_func($this->readListeners[$key], $stream);
             }
         }
 
@@ -214,7 +214,7 @@ class StreamSelectLoop implements LoopInterface
             $key = (int) $stream;
 
             if (isset($this->writeListeners[$key])) {
-                call_user_func($this->writeListeners[$key], $stream, $this);
+                call_user_func($this->writeListeners[$key], $stream);
             }
         }
     }

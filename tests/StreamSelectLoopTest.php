@@ -94,11 +94,11 @@ class StreamSelectLoopTest extends AbstractLoopTest
 
         // add stream to the loop
         list($writeStream, $readStream) = $this->createSocketPair();
-        $this->loop->addReadStream($readStream, function($stream, $loop) {
+        $this->loop->addReadStream($readStream, function ($stream) {
             /** @var $loop LoopInterface */
             $read = fgets($stream);
             if ($read === "end loop\n") {
-                $loop->stop();
+                $this->loop->stop();
             }
         });
         $this->loop->addTimer(0.1, function() use ($writeStream) {

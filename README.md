@@ -22,6 +22,7 @@ For the code of the current stable 0.4.x release, checkout the
 * [Install](#install)
 * [Tests](#tests)
 * [License](#license)
+* [More](#more)
 
 ## Quickstart example
 
@@ -291,6 +292,116 @@ echo 'a';
 
 See also [example #3](examples).
 
+### addReadStream()
+
+> Advanced! Note that this low-level API is considered advanced usage.
+  Most use cases should probably use the higher-level
+  [readable Stream API](https://github.com/reactphp/stream#readablestreaminterface)
+  instead.
+
+The `addReadStream(resource $stream, callable $callback): void` method can be used to
+register a listener to be notified when a stream is ready to read.
+
+The first parameter MUST be a valid stream resource that supports
+checking whether it is ready to read by this loop implementation.
+A single stream resource MUST NOT be added more than once.
+Instead, either call [`removeReadStream()`](#removereadstream) first or
+react to this event with a single listener and then dispatch from this
+listener.
+
+The listener callback function MUST be able to accept a single parameter,
+the stream resource added by this method or you MAY use a function which
+has no parameters at all.
+
+The listener callback function MUST NOT throw an `Exception`.
+The return value of the listener callback function will be ignored and has
+no effect, so for performance reasons you're recommended to not return
+any excessive data structures.
+
+If you want to access any variables within your callback function, you
+can bind arbitrary data to a callback closure like this:
+
+```php
+$loop->addReadStream($stream, function ($stream) use ($name) {
+    echo $name . ' said: ' . fread($stream);
+});
+```
+
+See also [example #11](examples).
+
+You can invoke [`removeReadStream()`](#removereadstream) to remove the
+read event listener for this stream.
+
+The execution order of listeners when multiple streams become ready at
+the same time is not guaranteed.
+
+### addWriteStream()
+
+> Advanced! Note that this low-level API is considered advanced usage.
+  Most use cases should probably use the higher-level
+  [writable Stream API](https://github.com/reactphp/stream#writablestreaminterface)
+  instead.
+
+The `addWriteStream(resource $stream, callable $callback): void` method can be used to
+register a listener to be notified when a stream is ready to write.
+
+The first parameter MUST be a valid stream resource that supports
+checking whether it is ready to write by this loop implementation.
+A single stream resource MUST NOT be added more than once.
+Instead, either call [`removeWriteStream()`](#removewritestream) first or
+react to this event with a single listener and then dispatch from this
+listener.
+
+The listener callback function MUST be able to accept a single parameter,
+the stream resource added by this method or you MAY use a function which
+has no parameters at all.
+
+The listener callback function MUST NOT throw an `Exception`.
+The return value of the listener callback function will be ignored and has
+no effect, so for performance reasons you're recommended to not return
+any excessive data structures.
+
+If you want to access any variables within your callback function, you
+can bind arbitrary data to a callback closure like this:
+
+```php
+$loop->addWriteStream($stream, function ($stream) use ($name) {
+    fwrite($stream, 'Hello ' . $name);
+});
+```
+
+See also [example #12](examples).
+
+You can invoke [`removeWriteStream()`](#removewritestream) to remove the
+write event listener for this stream.
+
+The execution order of listeners when multiple streams become ready at
+the same time is not guaranteed.
+
+### removeReadStream()
+
+The `removeReadStream(resource $stream): void` method can be used to
+remove the read event listener for the given stream.
+
+Removing a stream from the loop that has already been removed or trying
+to remove a stream that was never added or is invalid has no effect.
+
+### removeWriteStream()
+
+The `removeWriteStream(resource $stream): void` method can be used to
+remove the write event listener for the given stream.
+
+Removing a stream from the loop that has already been removed or trying
+to remove a stream that was never added or is invalid has no effect.
+
+### removeStream()
+
+The `removeStream(resource $stream): void` method can be used to
+remove all listeners for the given stream.
+
+Removing a stream from the loop that has already been removed or trying
+to remove a stream that was never added or is invalid has no effect.
+
 ## Install
 
 The recommended way to install this library is [through Composer](http://getcomposer.org).
@@ -320,3 +431,11 @@ $ php vendor/bin/phpunit
 ## License
 
 MIT, see [LICENSE file](LICENSE).
+
+## More
+
+* See our [Stream component](https://github.com/reactphp/stream) for more
+  information on how streams are used in real-world applications.
+* See our [users wiki](https://github.com/reactphp/react/wiki/Users) and the
+  [dependents on Packagist](https://packagist.org/packages/react/event-loop/dependents)
+  for a list of packages that use the EventLoop in real-world applications.

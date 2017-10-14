@@ -7,23 +7,104 @@ use React\EventLoop\Timer\TimerInterface;
 interface LoopInterface
 {
     /**
-     * Register a listener to be notified when a stream is ready to read.
+     * [Advanced] Register a listener to be notified when a stream is ready to read.
+     *
+     * Note that this low-level API is considered advanced usage.
+     * Most use cases should probably use the higher-level
+     * [readable Stream API](https://github.com/reactphp/stream#readablestreaminterface)
+     * instead.
+     *
+     * The first parameter MUST be a valid stream resource that supports
+     * checking whether it is ready to read by this loop implementation.
+     * A single stream resource MUST NOT be added more than once.
+     * Instead, either call [`removeReadStream()`](#removereadstream) first or
+     * react to this event with a single listener and then dispatch from this
+     * listener.
+     *
+     * The listener callback function MUST be able to accept a single parameter,
+     * the stream resource added by this method or you MAY use a function which
+     * has no parameters at all.
+     *
+     * The listener callback function MUST NOT throw an `Exception`.
+     * The return value of the listener callback function will be ignored and has
+     * no effect, so for performance reasons you're recommended to not return
+     * any excessive data structures.
+     *
+     * If you want to access any variables within your callback function, you
+     * can bind arbitrary data to a callback closure like this:
+     *
+     * ```php
+     * $loop->addReadStream($stream, function ($stream) use ($name) {
+     *     echo $name . ' said: ' . fread($stream);
+     * });
+     * ```
+     *
+     * See also [example #11](examples).
+     *
+     * You can invoke [`removeReadStream()`](#removereadstream) to remove the
+     * read event listener for this stream.
+     *
+     * The execution order of listeners when multiple streams become ready at
+     * the same time is not guaranteed.
      *
      * @param resource $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
+     * @see self::removeReadStream()
      */
     public function addReadStream($stream, callable $listener);
 
     /**
-     * Register a listener to be notified when a stream is ready to write.
+     * [Advanced] Register a listener to be notified when a stream is ready to write.
+     *
+     * Note that this low-level API is considered advanced usage.
+     * Most use cases should probably use the higher-level
+     * [writable Stream API](https://github.com/reactphp/stream#writablestreaminterface)
+     * instead.
+     *
+     * The first parameter MUST be a valid stream resource that supports
+     * checking whether it is ready to write by this loop implementation.
+     * A single stream resource MUST NOT be added more than once.
+     * Instead, either call [`removeWriteStream()`](#removewritestream) first or
+     * react to this event with a single listener and then dispatch from this
+     * listener.
+     *
+     * The listener callback function MUST be able to accept a single parameter,
+     * the stream resource added by this method or you MAY use a function which
+     * has no parameters at all.
+     *
+     * The listener callback function MUST NOT throw an `Exception`.
+     * The return value of the listener callback function will be ignored and has
+     * no effect, so for performance reasons you're recommended to not return
+     * any excessive data structures.
+     *
+     * If you want to access any variables within your callback function, you
+     * can bind arbitrary data to a callback closure like this:
+     *
+     * ```php
+     * $loop->addWriteStream($stream, function ($stream) use ($name) {
+     *     fwrite($stream, 'Hello ' . $name);
+     * });
+     * ```
+     *
+     * See also [example #12](examples).
+     *
+     * You can invoke [`removeWriteStream()`](#removewritestream) to remove the
+     * write event listener for this stream.
+     *
+     * The execution order of listeners when multiple streams become ready at
+     * the same time is not guaranteed.
      *
      * @param resource $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
+     * @see self::removeWriteStream()
      */
     public function addWriteStream($stream, callable $listener);
 
     /**
      * Remove the read event listener for the given stream.
+     *
+     * Removing a stream from the loop that has already been removed or trying
+     * to remove a stream that was never added or is invalid has no effect.
      *
      * @param resource $stream The PHP stream resource.
      */
@@ -32,12 +113,18 @@ interface LoopInterface
     /**
      * Remove the write event listener for the given stream.
      *
+     * Removing a stream from the loop that has already been removed or trying
+     * to remove a stream that was never added or is invalid has no effect.
+     *
      * @param resource $stream The PHP stream resource.
      */
     public function removeWriteStream($stream);
 
     /**
      * Remove all listeners for the given stream.
+     *
+     * Removing a stream from the loop that has already been removed or trying
+     * to remove a stream that was never added or is invalid has no effect.
      *
      * @param resource $stream The PHP stream resource.
      */

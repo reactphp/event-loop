@@ -307,11 +307,11 @@ class LibEventLoop implements LoopInterface
             $key = (int) $stream;
 
             if (EV_READ === (EV_READ & $flags) && isset($this->readListeners[$key])) {
-                call_user_func($this->readListeners[$key], $stream, $this);
+                call_user_func($this->readListeners[$key], $stream);
             }
 
             if (EV_WRITE === (EV_WRITE & $flags) && isset($this->writeListeners[$key])) {
-                call_user_func($this->writeListeners[$key], $stream, $this);
+                call_user_func($this->writeListeners[$key], $stream);
             }
         };
     }
