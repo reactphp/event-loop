@@ -13,6 +13,8 @@ use React\EventLoop\Timer\Timers;
 class StreamSelectLoop implements LoopInterface
 {
     const MICROSECONDS_PER_SECOND = 1000000;
+    const NANOSECONDS_PER_SECOND = 1000000000;
+    const NANOSECONDS_PER_MICROSECOND = 1000;
 
     private $futureTickQueue;
     private $timers;
@@ -152,20 +154,9 @@ class StreamSelectLoop implements LoopInterface
             // Future-tick queue has pending callbacks ...
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $timeout = 0;
-
             // There is a pending timer, only block until it is due ...
             } elseif ($scheduledAt = $this->timers->getFirst()) {
-                $timeout = $scheduledAt - $this->timers->getTime();
-                if ($timeout < 0) {
-                    $timeout = 0;
-                } else {
-                    /*
-                     * round() needed to correct float error:
-                     * https://github.com/reactphp/event-loop/issues/48
-                     */
-                    $timeout = round($timeout * self::MICROSECONDS_PER_SECOND);
-                }
-
+                $timeout = max($scheduledAt - $this->timers->getTime(), 0);
             // The only possible event is stream activity, so wait forever ...
             } elseif ($this->readStreams || $this->writeStreams) {
                 $timeout = null;
@@ -189,6 +180,8 @@ class StreamSelectLoop implements LoopInterface
 
     /**
      * Wait/check for stream activity, or until the next timer is due.
+     *
+     * @param float $timeout
      */
     private function waitForStreamActivity($timeout)
     {
@@ -220,27 +213,117 @@ class StreamSelectLoop implements LoopInterface
     }
 
     /**
+     * Returns integer amount of seconds in $time.
+     *
+     * @param float $time – time in seconds
+     *
+     * @return int
+     */
+    private static function getSeconds($time)
+    {
+        /*
+         * intval(floor($time)) will produce int overflow
+         * if $time is (float)PHP_INT_MAX:
+         * (float)PHP_INT_MAX      == PHP_INT_MAX  //true
+         * (int)(float)PHP_INT_MAX == PHP_INT_MAX  //false
+         * (int)(float)PHP_INT_MAX == PHP_INT_MIN  //true
+         * -----------------------------------------------
+         * Loose comparision is intentional, cause $time
+         * is float and
+         * (float)PHP_INT_MAX !== PHP_INT_MAX
+         */
+        if ($time == PHP_INT_MAX) {
+            return PHP_INT_MAX;
+        }
+
+        return intval(floor($time));
+    }
+
+    /**
+     * Returns integer amount of microseconds in $time.
+     *
+     * @param float $time – time in seconds
+     *
+     * @return int
+     */
+    private static function getMicroseconds($time)
+    {
+        $fractional = fmod($time, 1);
+        $microseconds = round($fractional * self::MICROSECONDS_PER_SECOND);
+
+        return intval($microseconds);
+    }
+
+    /**
+     * Returns integer amount of nanoseconds in $time.
+     * The precision is 1 microsecond.
+     *
+     * @param float $time – time in seconds
+     *
+     * @return int
+     */
+    private static function getNanoseconds($time)
+    {
+        return intval(self::getMicroseconds($time) * self::NANOSECONDS_PER_MICROSECOND);
+    }
+
+    /**
      * Emulate a stream_select() implementation that does not break when passed
      * empty stream arrays.
      *
      * @param array        &$read   An array of read streams to select upon.
      * @param array        &$write  An array of write streams to select upon.
-     * @param integer|null $timeout Activity timeout in microseconds, or null to wait forever.
+     * @param float|null   $timeout Activity timeout in seconds, or null to wait forever.
      *
      * @return integer|false The total number of streams that are ready for read/write.
      * Can return false if stream_select() is interrupted by a signal.
      */
     protected function streamSelect(array &$read, array &$write, $timeout)
     {
-        if ($read || $write) {
-            $except = null;
+        $seconds = $timeout === null ? null : self::getSeconds($timeout);
 
-            // suppress warnings that occur, when stream_select is interrupted by a signal
-            return @stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+        if ($read || $write) {
+            $except = [];
+            $microseconds = $timeout === null ? 0 : self::getMicroseconds($timeout);
+
+            return $this->doSelectStream($read, $write, $except, $seconds, $microseconds);
         }
 
-        $timeout && usleep($timeout);
+        if ($timeout !== null) {
+            $nanoseconds = self::getNanoseconds($timeout);
+            $this->sleep($seconds, $nanoseconds);
+        }
 
         return 0;
+    }
+
+    /**
+     * Proxy for built-in stream_select method.
+     *
+     * @param array $read
+     * @param array $write
+     * @param array $except
+     * @param int|null $seconds
+     * @param int $microseconds
+     *
+     * @return int
+     */
+    protected function doSelectStream(array &$read, array &$write, array &$except, $seconds, $microseconds)
+    {
+        // suppress warnings that occur, when stream_select is interrupted by a signal
+        return @stream_select($read, $write, $except, $seconds, $microseconds);
+    }
+
+    /**
+     * Sleeps for $seconds and $nanoseconds.
+     *
+     * @param int $seconds
+     * @param int $nanoseconds
+     */
+    protected function sleep($seconds, $nanoseconds = 0)
+    {
+        if ($seconds > 0 || $nanoseconds > 0) {
+            time_nanosleep($seconds, $nanoseconds);
+        }
     }
 }
