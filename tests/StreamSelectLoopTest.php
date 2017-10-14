@@ -47,8 +47,6 @@ class StreamSelectLoopTest extends AbstractLoopTest
         ];
     }
 
-    private $_signalHandled = false;
-
     /**
      * Test signal interrupt when no stream is attached to the loop
      * @dataProvider signalProvider
@@ -59,20 +57,24 @@ class StreamSelectLoopTest extends AbstractLoopTest
             $this->markTestSkipped('"pcntl" extension is required to run this test.');
         }
 
-        // dispatch signal handler once before signal is sent and once after
-        $this->loop->addTimer(0.01, function() { pcntl_signal_dispatch(); });
-        $this->loop->addTimer(0.03, function() { pcntl_signal_dispatch(); });
-        if (defined('HHVM_VERSION')) {
-            // hhvm startup is slow so we need to add another handler much later
-            $this->loop->addTimer(0.5, function() { pcntl_signal_dispatch(); });
-        }
+        // dispatch signal handler every 10ms for 0.1s
+        $check = $this->loop->addPeriodicTimer(0.01, function() {
+            pcntl_signal_dispatch();
+        });
+        $this->loop->addTimer(0.1, function () use ($check) {
+            $this->loop->cancelTimer($check);
+        });
 
-        $this->setUpSignalHandler($signal);
+        $handled = false;
+        $this->assertTrue(pcntl_signal(constant($signal), function () use (&$handled) {
+            $handled = true;
+        }));
 
         // spawn external process to send signal to current process id
         $this->forkSendSignal($signal);
+
         $this->loop->run();
-        $this->assertTrue($this->_signalHandled);
+        $this->assertTrue($handled);
     }
 
     /**
@@ -86,7 +88,9 @@ class StreamSelectLoopTest extends AbstractLoopTest
         }
 
         // dispatch signal handler every 10ms
-        $this->loop->addPeriodicTimer(0.01, function() { pcntl_signal_dispatch(); });
+        $this->loop->addPeriodicTimer(0.01, function() {
+            pcntl_signal_dispatch();
+        });
 
         // add stream to the loop
         list($writeStream, $readStream) = $this->createSocketPair();
@@ -97,27 +101,21 @@ class StreamSelectLoopTest extends AbstractLoopTest
                 $loop->stop();
             }
         });
-        $this->loop->addTimer(0.05, function() use ($writeStream) {
+        $this->loop->addTimer(0.1, function() use ($writeStream) {
             fwrite($writeStream, "end loop\n");
         });
 
-        $this->setUpSignalHandler($signal);
+        $handled = false;
+        $this->assertTrue(pcntl_signal(constant($signal), function () use (&$handled) {
+            $handled = true;
+        }));
 
         // spawn external process to send signal to current process id
         $this->forkSendSignal($signal);
 
         $this->loop->run();
 
-        $this->assertTrue($this->_signalHandled);
-    }
-
-    /**
-     * add signal handler for signal
-     */
-    protected function setUpSignalHandler($signal)
-    {
-        $this->_signalHandled = false;
-        $this->assertTrue(pcntl_signal(constant($signal), function() { $this->_signalHandled = true; }));
+        $this->assertTrue($handled);
     }
 
     /**
