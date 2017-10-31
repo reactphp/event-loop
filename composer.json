@@ -10,9 +10,9 @@
         "phpunit/phpunit": "~4.8"
     },
     "suggest": {
-        "ext-libevent": ">=0.1.0",
-        "ext-event": "~1.0",
-        "ext-libev": "*"
+        "ext-libevent": ">=0.1.0 for LibEventLoop",
+        "ext-event": "~1.0 for ExtEventLoop",
+        "ext-libev": "for LibEvLoop"
     },
     "autoload": {
         "psr-4": {
