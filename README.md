@@ -292,6 +292,49 @@ echo 'a';
 
 See also [example #3](examples).
 
+### addSignal()
+
+The `addSignal(int $signal, callable $listener): void` method can be used to
+be notified about OS signals. This is useful to catch user interrupt signals or 
+shutdown signals from tools like `supervisor` or `systemd`.
+
+The listener callback function MUST be able to accept a single parameter,
+the signal added by this method or you MAY use a function which
+has no parameters at all.
+
+The listener callback function MUST NOT throw an `Exception`.
+The return value of the listener callback function will be ignored and has
+no effect, so for performance reasons you're recommended to not return
+any excessive data structures.
+
+```php
+$listener = function (int $signal) {
+    echo 'Caught user iterrupt signal', PHP_EOL;
+};
+$loop->addSignal(SIGINT, $listener);
+```
+
+See also [example #4](examples).
+
+**Note: A listener can only be added once to the same signal, any attempts to add it 
+more then once will be ignored.**
+
+**Note: Signaling is only available on Unix-like platform, Windows isn't supported due 
+to limitations from underlying signal handlers.**
+
+### removeSignal()
+
+The `removeSignal(int $signal, callable $listener): void` removes a previously added 
+signal listener.
+
+Any attempts to remove listeners that aren't registerred will be ignored.
+
+```php
+$loop->removeSignal(SIGINT, $listener);
+```
+
+See also [example #4](examples).
+
 ### addReadStream()
 
 > Advanced! Note that this low-level API is considered advanced usage.
