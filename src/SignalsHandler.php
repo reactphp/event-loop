@@ -15,7 +15,7 @@ final class SignalsHandler
     private $on;
     private $off;
 
-    public function __construct(LoopInterface $loop, callable $on, callable $off)
+    public function __construct(LoopInterface $loop, $on, $off)
     {
         $this->loop = $loop;
         $this->on = $on;
@@ -30,7 +30,7 @@ final class SignalsHandler
         }
     }
 
-    public function add($signal, callable $listener)
+    public function add($signal, $listener)
     {
         if (count($this->signals) == 0 && $this->timer === null) {
             /**
@@ -53,7 +53,7 @@ final class SignalsHandler
         $this->signals[$signal][] = $listener;
     }
 
-    public function remove($signal, callable $listener)
+    public function remove($signal, $listener)
     {
         if (!isset($this->signals[$signal])) {
             return;

@@ -90,7 +90,7 @@ final class StreamSelectLoop implements LoopInterface
         );
     }
 
-    public function addReadStream($stream, callable $listener)
+    public function addReadStream($stream, $listener)
     {
         $key = (int) $stream;
 
@@ -100,7 +100,7 @@ final class StreamSelectLoop implements LoopInterface
         }
     }
 
-    public function addWriteStream($stream, callable $listener)
+    public function addWriteStream($stream, $listener)
     {
         $key = (int) $stream;
 
@@ -130,7 +130,7 @@ final class StreamSelectLoop implements LoopInterface
         );
     }
 
-    public function addTimer($interval, callable $callback)
+    public function addTimer($interval, $callback)
     {
         $timer = new Timer($interval, $callback, false);
 
@@ -139,7 +139,7 @@ final class StreamSelectLoop implements LoopInterface
         return $timer;
     }
 
-    public function addPeriodicTimer($interval, callable $callback)
+    public function addPeriodicTimer($interval, $callback)
     {
         $timer = new Timer($interval, $callback, true);
 
@@ -153,12 +153,12 @@ final class StreamSelectLoop implements LoopInterface
         $this->timers->cancel($timer);
     }
 
-    public function futureTick(callable $listener)
+    public function futureTick($listener)
     {
         $this->futureTickQueue->add($listener);
     }
 
-    public function addSignal($signal, callable $listener)
+    public function addSignal($signal, $listener)
     {
         if ($this->pcntl === false) {
             throw new \BadMethodCallException('Event loop feature "signals" isn\'t supported by the "StreamSelectLoop"');
@@ -167,7 +167,7 @@ final class StreamSelectLoop implements LoopInterface
         $this->signals->add($signal, $listener);
     }
 
-    public function removeSignal($signal, callable $listener)
+    public function removeSignal($signal, $listener)
     {
         $this->signals->remove($signal, $listener);
     }

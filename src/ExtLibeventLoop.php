@@ -85,7 +85,7 @@ final class ExtLibeventLoop implements LoopInterface
         $this->createStreamCallback();
     }
 
-    public function addReadStream($stream, callable $listener)
+    public function addReadStream($stream, $listener)
     {
         $key = (int) $stream;
 
@@ -95,7 +95,7 @@ final class ExtLibeventLoop implements LoopInterface
         }
     }
 
-    public function addWriteStream($stream, callable $listener)
+    public function addWriteStream($stream, $listener)
     {
         $key = (int) $stream;
 
@@ -144,7 +144,7 @@ final class ExtLibeventLoop implements LoopInterface
         }
     }
 
-    public function addTimer($interval, callable $callback)
+    public function addTimer($interval, $callback)
     {
         $timer = new Timer($interval, $callback, false);
 
@@ -153,7 +153,7 @@ final class ExtLibeventLoop implements LoopInterface
         return $timer;
     }
 
-    public function addPeriodicTimer($interval, callable $callback)
+    public function addPeriodicTimer($interval, $callback)
     {
         $timer = new Timer($interval, $callback, true);
 
@@ -174,17 +174,17 @@ final class ExtLibeventLoop implements LoopInterface
         }
     }
 
-    public function futureTick(callable $listener)
+    public function futureTick($listener)
     {
         $this->futureTickQueue->add($listener);
     }
 
-    public function addSignal($signal, callable $listener)
+    public function addSignal($signal, $listener)
     {
         $this->signals->add($signal, $listener);
     }
 
-    public function removeSignal($signal, callable $listener)
+    public function removeSignal($signal, $listener)
     {
         $this->signals->remove($signal, $listener);
     }

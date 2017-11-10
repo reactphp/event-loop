@@ -28,7 +28,7 @@ final class FutureTickQueue
      *
      * @param callable $listener The callback to invoke.
      */
-    public function add(callable $listener)
+    public function add($listener)
     {
         $this->queue->enqueue($listener);
     }
