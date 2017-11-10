@@ -4,7 +4,6 @@ namespace React\EventLoop;
 
 use Event;
 use EventBase;
-use React\EventLoop\Signal\Pcntl;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\TimerInterface;
@@ -64,9 +63,6 @@ class LibEventLoop implements LoopInterface
         $this->createStreamCallback();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addReadStream($stream, callable $listener)
     {
         $key = (int) $stream;
@@ -77,9 +73,6 @@ class LibEventLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addWriteStream($stream, callable $listener)
     {
         $key = (int) $stream;
@@ -90,9 +83,6 @@ class LibEventLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeReadStream($stream)
     {
         $key = (int) $stream;
@@ -103,9 +93,6 @@ class LibEventLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeWriteStream($stream)
     {
         $key = (int) $stream;
@@ -135,9 +122,6 @@ class LibEventLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addTimer($interval, callable $callback)
     {
         $timer = new Timer($interval, $callback, false);
@@ -147,9 +131,6 @@ class LibEventLoop implements LoopInterface
         return $timer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addPeriodicTimer($interval, callable $callback)
     {
         $timer = new Timer($interval, $callback, true);
@@ -159,9 +140,6 @@ class LibEventLoop implements LoopInterface
         return $timer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cancelTimer(TimerInterface $timer)
     {
         if ($this->isTimerActive($timer)) {
@@ -174,41 +152,26 @@ class LibEventLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isTimerActive(TimerInterface $timer)
     {
         return $this->timerEvents->contains($timer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function futureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addSignal($signal, callable $listener)
     {
         $this->signals->add($signal, $listener);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeSignal($signal, callable $listener)
     {
         $this->signals->remove($signal, $listener);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;
@@ -227,9 +190,6 @@ class LibEventLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function stop()
     {
         $this->running = false;
