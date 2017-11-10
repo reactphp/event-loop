@@ -121,16 +121,6 @@ interface LoopInterface
     public function removeWriteStream($stream);
 
     /**
-     * Remove all listeners for the given stream.
-     *
-     * Removing a stream from the loop that has already been removed or trying
-     * to remove a stream that was never added or is invalid has no effect.
-     *
-     * @param resource $stream The PHP stream resource.
-     */
-    public function removeStream($stream);
-
-    /**
      * Enqueue a callback to be invoked once after the given interval.
      *
      * The timer callback function MUST be able to accept a single parameter,

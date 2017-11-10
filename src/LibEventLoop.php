@@ -116,10 +116,7 @@ class LibEventLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeStream($stream)
+    private function removeStream($stream)
     {
         $key = (int) $stream;
 
