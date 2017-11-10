@@ -94,6 +94,23 @@ $loop->run();
    purposes.
 3. The loop is run with a single `$loop->run()` call at the end of the program.
 
+## Factory
+
+The `Factory` class exists as a convenient way to pick the best available
+[loop implementation)(#loop-implementation).
+
+The `create(): LoopInterface` method can be used to create a new loop
+instance:
+
+```php
+$loop = React\EventLoop\Factory::create();
+```
+
+This method always returns an instance implementing `LoopInterface`,
+the actual loop implementation is an implementation detail.
+
+This method should usually only be called once at the beginning of the program.
+
 ## Loop implementations
 
 In addition to the interface there are the following implementations provided:

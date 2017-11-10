@@ -2,8 +2,25 @@
 
 namespace React\EventLoop;
 
+/**
+ * The `Factory` class exists as a convenient way to pick the best available loop implementation.
+ */
 class Factory
 {
+    /**
+     * Creates a new loop instance
+     *
+     * ```php
+     * $loop = React\EventLoop\Factory::create();
+     * ```
+     *
+     * This method always returns an instance implementing `LoopInterface`,
+     * the actual loop implementation is an implementation detail.
+     *
+     * This method should usually only be called once at the beginning of the program.
+     *
+     * @return LoopInterface
+     */
     public static function create()
     {
         // @codeCoverageIgnoreStart
