@@ -126,18 +126,6 @@ abstract class AbstractLoopTest extends TestCase
         $this->tickLoop($this->loop);
     }
 
-    public function testRemoveStreamInstantly()
-    {
-        list ($input, $output) = $this->createSocketPair();
-
-        $this->loop->addReadStream($input, $this->expectCallableNever());
-        $this->loop->addWriteStream($input, $this->expectCallableNever());
-        $this->loop->removeStream($input);
-
-        fwrite($output, "bar\n");
-        $this->tickLoop($this->loop);
-    }
-
     public function testRemoveStreamForReadOnly()
     {
         list ($input, $output) = $this->createSocketPair();
@@ -163,22 +151,6 @@ abstract class AbstractLoopTest extends TestCase
         $this->tickLoop($this->loop);
     }
 
-    public function testRemoveStream()
-    {
-        list ($input, $output) = $this->createSocketPair();
-
-        $this->loop->addReadStream($input, $this->expectCallableOnce());
-        $this->loop->addWriteStream($input, $this->expectCallableOnce());
-
-        fwrite($output, "bar\n");
-        $this->tickLoop($this->loop);
-
-        $this->loop->removeStream($input);
-
-        fwrite($output, "bar\n");
-        $this->tickLoop($this->loop);
-    }
-
     public function testRemoveInvalid()
     {
         list ($stream) = $this->createSocketPair();
@@ -186,7 +158,6 @@ abstract class AbstractLoopTest extends TestCase
         // remove a valid stream from the event loop that was never added in the first place
         $this->loop->removeReadStream($stream);
         $this->loop->removeWriteStream($stream);
-        $this->loop->removeStream($stream);
     }
 
     /** @test */
@@ -202,7 +173,7 @@ abstract class AbstractLoopTest extends TestCase
 
         $loop = $this->loop;
         $this->loop->addReadStream($input, function ($stream) use ($loop) {
-            $loop->removeStream($stream);
+            $loop->removeReadStream($stream);
         });
 
         fwrite($output, "foo\n");
@@ -366,7 +337,7 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addWriteStream(
             $stream,
             function () use ($stream) {
-                $this->loop->removeStream($stream);
+                $this->loop->removeWriteStream($stream);
                 $this->loop->futureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;

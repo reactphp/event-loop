@@ -97,15 +97,6 @@ class LibEvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function removeStream($stream)
-    {
-        $this->removeReadStream($stream);
-        $this->removeWriteStream($stream);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function addTimer($interval, callable $callback)
     {
         $timer = new Timer( $interval, $callback, false);

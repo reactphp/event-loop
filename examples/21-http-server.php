@@ -14,7 +14,7 @@ $loop->addReadStream($server, function ($server) use ($loop) {
         $written = fwrite($conn, $data);
         if ($written === strlen($data)) {
             fclose($conn);
-            $loop->removeStream($conn);
+            $loop->removeWriteStream($conn);
         } else {
             $data = substr($data, $written);
         }
