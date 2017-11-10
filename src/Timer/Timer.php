@@ -36,25 +36,16 @@ final class Timer implements TimerInterface
         $this->periodic = (bool) $periodic;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getInterval()
     {
         return $this->interval;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCallback()
     {
         return $this->callback;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isPeriodic()
     {
         return $this->periodic;

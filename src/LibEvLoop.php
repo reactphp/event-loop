@@ -54,9 +54,6 @@ class LibEvLoop implements LoopInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addReadStream($stream, callable $listener)
     {
         if (isset($this->readEvents[(int) $stream])) {
@@ -73,9 +70,6 @@ class LibEvLoop implements LoopInterface
         $this->readEvents[(int) $stream] = $event;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addWriteStream($stream, callable $listener)
     {
         if (isset($this->writeEvents[(int) $stream])) {
@@ -92,9 +86,6 @@ class LibEvLoop implements LoopInterface
         $this->writeEvents[(int) $stream] = $event;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeReadStream($stream)
     {
         $key = (int) $stream;
@@ -105,9 +96,6 @@ class LibEvLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeWriteStream($stream)
     {
         $key = (int) $stream;
@@ -118,9 +106,6 @@ class LibEvLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addTimer($interval, callable $callback)
     {
         $timer = new Timer( $interval, $callback, false);
@@ -140,9 +125,6 @@ class LibEvLoop implements LoopInterface
         return $timer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addPeriodicTimer($interval, callable $callback)
     {
         $timer = new Timer($interval, $callback, true);
@@ -158,9 +140,6 @@ class LibEvLoop implements LoopInterface
         return $timer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cancelTimer(TimerInterface $timer)
     {
         if (isset($this->timerEvents[$timer])) {
@@ -169,41 +148,26 @@ class LibEvLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isTimerActive(TimerInterface $timer)
     {
         return $this->timerEvents->contains($timer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function futureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addSignal($signal, callable $listener)
     {
         $this->signals->add($signal, $listener);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeSignal($signal, callable $listener)
     {
         $this->signals->remove($signal, $listener);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function run()
     {
         $this->running = true;
@@ -222,9 +186,6 @@ class LibEvLoop implements LoopInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function stop()
     {
         $this->running = false;
