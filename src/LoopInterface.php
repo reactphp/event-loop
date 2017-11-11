@@ -152,14 +152,14 @@ interface LoopInterface
      * can bind arbitrary data to a callback closure like this:
      *
      * ```php
-     * function hello(LoopInterface $loop, $name)
+     * function hello($name, LoopInterface $loop)
      * {
      *     $loop->addTimer(1.0, function () use ($name) {
      *         echo "hello $name\n";
      *     });
      * }
      *
-     * hello('Tester');
+     * hello('Tester', $loop);
      * ```
      *
      * The execution order of timers scheduled to execute at the same time is
@@ -205,7 +205,7 @@ interface LoopInterface
      * arbitrary data to a callback closure like this:
      *
      * ```php
-     * function hello(LoopInterface $loop, $name)
+     * function hello($name, LoopInterface $loop)
      * {
      *     $n = 3;
      *     $loop->addPeriodicTimer(1.0, function ($timer) use ($name, $loop, &$n) {
@@ -218,7 +218,7 @@ interface LoopInterface
      *     });
      * }
      *
-     * hello('Tester');
+     * hello('Tester', $loop);
      * ```
      *
      * The execution order of timers scheduled to execute at the same time is
@@ -237,12 +237,12 @@ interface LoopInterface
      * See also [`addPeriodicTimer()`](#addperiodictimer) and [example #2](examples).
      *
      * You can use the [`isTimerActive()`](#istimeractive) method to check if
-     * this timer is still "active". After a timer is successfully canceled,
+     * this timer is still "active". After a timer is successfully cancelled,
      * it is no longer considered "active".
      *
      * Calling this method on a timer instance that has not been added to this
      * loop instance or on a timer that is not "active" (or has already been
-     * canceled) has no effect.
+     * cancelled) has no effect.
      *
      * @param TimerInterface $timer The timer to cancel.
      *
@@ -255,7 +255,7 @@ interface LoopInterface
      *
      * A timer is considered "active" if it has been added to this loop instance
      * via [`addTimer()`](#addtimer) or [`addPeriodicTimer()`](#addperiodictimer)
-     * and has not been canceled via [`cancelTimer()`](#canceltimer) and is not
+     * and has not been cancelled via [`cancelTimer()`](#canceltimer) and is not
      * a non-periodic timer that has already been triggered after its interval.
      *
      * @param TimerInterface $timer The timer to check.
@@ -281,14 +281,14 @@ interface LoopInterface
      * can bind arbitrary data to a callback closure like this:
      *
      * ```php
-     * function hello(LoopInterface $loop, $name)
+     * function hello($name, LoopInterface $loop)
      * {
      *     $loop->futureTick(function () use ($name) {
      *         echo "hello $name\n";
      *     });
      * }
      *
-     * hello('Tester');
+     * hello('Tester', $loop);
      * ```
      *
      * Unlike timers, tick callbacks are guaranteed to be executed in the order

@@ -32,7 +32,7 @@ Here is an async HTTP server built with just the event loop.
 $loop = React\EventLoop\Factory::create();
 
 $server = stream_socket_server('tcp://127.0.0.1:8080');
-stream_set_blocking($server, 0);
+stream_set_blocking($server, false);
 
 $loop->addReadStream($server, function ($server) use ($loop) {
     $conn = stream_socket_accept($server);
@@ -97,7 +97,7 @@ $loop->run();
 ## Factory
 
 The `Factory` class exists as a convenient way to pick the best available
-[loop implementation)(#loop-implementation).
+[loop implementation](#loop-implementations).
 
 The `create(): LoopInterface` method can be used to create a new loop
 instance:
@@ -170,14 +170,14 @@ If you want to access any variables within your callback function, you
 can bind arbitrary data to a callback closure like this:
 
 ```php
-function hello(LoopInterface $loop, $name)
+function hello($name, LoopInterface $loop)
 {
     $loop->addTimer(1.0, function () use ($name) {
         echo "hello $name\n";
     });
 }
 
-hello('Tester');
+hello('Tester', $loop);
 ```
 
 The execution order of timers scheduled to execute at the same time is
@@ -218,7 +218,7 @@ If you want to limit the number of executions, you can bind
 arbitrary data to a callback closure like this:
 
 ```php
-function hello(LoopInterface $loop, $name)
+function hello($name, LoopInterface $loop)
 {
     $n = 3;
     $loop->addPeriodicTimer(1.0, function ($timer) use ($name, $loop, &$n) {
@@ -231,7 +231,7 @@ function hello(LoopInterface $loop, $name)
     });
 }
 
-hello('Tester');
+hello('Tester', $loop);
 ```
 
 The execution order of timers scheduled to execute at the same time is
@@ -245,11 +245,12 @@ cancel a pending timer.
 See also [`addPeriodicTimer()`](#addperiodictimer) and [example #2](examples).
 
 You can use the [`isTimerActive()`](#istimeractive) method to check if
-this timer is still "active". After a timer is successfully canceled,
+this timer is still "active". After a timer is successfully cancelled,
 it is no longer considered "active".
 
 Calling this method on a timer instance that has not been added to this
-loop instance or on a timer
+loop instance or on a timer that is not "active" (or has already been
+cancelled) has no effect.
 
 ### isTimerActive()
 
@@ -258,7 +259,7 @@ check if a given timer is active.
 
 A timer is considered "active" if it has been added to this loop instance
 via [`addTimer()`](#addtimer) or [`addPeriodicTimer()`](#addperiodictimer)
-and has not been canceled via [`cancelTimer()`](#canceltimer) and is not
+and has not been cancelled via [`cancelTimer()`](#canceltimer) and is not
 a non-periodic timer that has already been triggered after its interval.
 
 ### futureTick()
@@ -280,14 +281,14 @@ If you want to access any variables within your callback function, you
 can bind arbitrary data to a callback closure like this:
 
 ```php
-function hello(LoopInterface $loop, $name)
+function hello($name, LoopInterface $loop)
 {
     $loop->futureTick(function () use ($name) {
         echo "hello $name\n";
     });
 }
 
-hello('Tester');
+hello('Tester', $loop);
 ```
 
 Unlike timers, tick callbacks are guaranteed to be executed in the order

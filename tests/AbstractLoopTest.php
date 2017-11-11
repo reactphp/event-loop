@@ -72,8 +72,8 @@ abstract class AbstractLoopTest extends TestCase
     }
 
     /**
-     * Telper for above test. This happens in another helper method to verify
-     * the loop keep track of assigned stream resources (refcount).
+     * Helper for above test. This happens in another helper method to verify
+     * the loop keeps track of assigned stream resources (refcount).
      */
     private function subAddReadStreamReceivesDataFromStreamReference()
     {
