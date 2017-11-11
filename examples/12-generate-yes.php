@@ -10,13 +10,14 @@ $data = str_repeat($data, round(200000 / strlen($data)));
 
 $loop = React\EventLoop\Factory::create();
 
-$stdout = STDOUT;
-if (stream_set_blocking($stdout, false) !== true) {
-    fwrite(STDERR, 'ERROR: Unable to set STDOUT non-blocking' . PHP_EOL);
+if (!defined('STDOUT') || stream_set_blocking(STDOUT, false) !== true) {
+    fwrite(STDERR, 'ERROR: Unable to set STDOUT non-blocking (not CLI or Windows?)' . PHP_EOL);
     exit(1);
 }
 
-$loop->addWriteStream($stdout, function () use ($loop, $stdout, &$data) {
+// write data to STDOUT whenever its write buffer accepts data
+// for illustrations purpose only, should use react/stream instead
+$loop->addWriteStream(STDOUT, function ($stdout) use ($loop, &$data) {
     // try to write data
     $r = fwrite($stdout, $data);
 
@@ -24,6 +25,7 @@ $loop->addWriteStream($stdout, function () use ($loop, $stdout, &$data) {
     if ($r === 0) {
         $loop->removeWriteStream($stdout);
         fclose($stdout);
+        stream_set_blocking($stdout, true);
         fwrite(STDERR, 'Stopped because STDOUT closed' . PHP_EOL);
 
         return;
