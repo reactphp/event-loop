@@ -2,9 +2,10 @@
 
 namespace React\Tests\EventLoop;
 
+use PHPUnit\Framework\TestCase as BaseTestCase;
 use React\EventLoop\LoopInterface;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class TestCase extends BaseTestCase
 {
     protected function expectCallableExactly($amount)
     {

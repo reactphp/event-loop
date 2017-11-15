@@ -7,7 +7,7 @@
         "php": ">=5.4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8"
+        "phpunit/phpunit": "~4.8.35 || ^5.7 || ^6.4"
     },
     "suggest": {
         "ext-libevent": ">=0.1.0 for LibEventLoop and PHP5 only",

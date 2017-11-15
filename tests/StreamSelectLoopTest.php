@@ -154,7 +154,9 @@ class StreamSelectLoopTest extends AbstractLoopTest
     public function testSmallTimerInterval()
     {
         /** @var StreamSelectLoop|\PHPUnit_Framework_MockObject_MockObject $loop */
-        $loop = $this->getMock('React\EventLoop\StreamSelectLoop', ['streamSelect']);
+        $loop = $this->getMockBuilder('React\EventLoop\StreamSelectLoop')
+                    ->setMethods(['streamSelect'])
+                    ->getMock();
         $loop
             ->expects($this->at(0))
             ->method('streamSelect')
