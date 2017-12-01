@@ -10,7 +10,8 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
 
     # install 'libevent' PHP extension (does not support php 7)
     if [[ "$TRAVIS_PHP_VERSION" != "7.0" &&
-          "$TRAVIS_PHP_VERSION" != "7.1" ]]; then
+          "$TRAVIS_PHP_VERSION" != "7.1" &&
+          "$TRAVIS_PHP_VERSION" != "7.2" ]]; then
         curl http://pecl.php.net/get/libevent-0.1.0.tgz | tar -xz
         pushd libevent-0.1.0
         phpize
@@ -23,7 +24,8 @@ if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
 
     # install 'libev' PHP extension (does not support php 7)
     if [[ "$TRAVIS_PHP_VERSION" != "7.0" &&
-          "$TRAVIS_PHP_VERSION" != "7.1" ]]; then
+          "$TRAVIS_PHP_VERSION" != "7.1" &&
+          "$TRAVIS_PHP_VERSION" != "7.2" ]]; then
         git clone --recursive https://github.com/m4rw3r/php-libev
         pushd php-libev
         phpize
