@@ -22,6 +22,7 @@ class ExtEventLoop implements LoopInterface
     private $streamCallback;
     private $streamEvents = [];
     private $streamFlags = [];
+    private $streamRefs = [];
     private $readListeners = [];
     private $writeListeners = [];
     private $running;
@@ -110,7 +111,8 @@ class ExtEventLoop implements LoopInterface
                 $this->streamFlags[$key],
                 $this->streamEvents[$key],
                 $this->readListeners[$key],
-                $this->writeListeners[$key]
+                $this->writeListeners[$key],
+                $this->streamRefs[$key]
             );
         }
     }
@@ -224,6 +226,12 @@ class ExtEventLoop implements LoopInterface
 
             $this->streamEvents[$key] = $event;
             $this->streamFlags[$key] = $flag;
+
+            // ext-event does not increase refcount on stream resources for PHP 7+
+            // manually keep track of stream resource to prevent premature garbage collection
+            if (PHP_VERSION_ID >= 70000) {
+                $this->streamRefs[$key] = $stream;
+            }
         }
 
         $event->add();
