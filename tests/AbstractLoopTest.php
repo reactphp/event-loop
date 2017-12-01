@@ -61,6 +61,39 @@ abstract class AbstractLoopTest extends TestCase
         $this->tickLoop($this->loop);
     }
 
+    public function testAddReadStreamReceivesDataFromStreamReference()
+    {
+        $this->received = '';
+        $this->subAddReadStreamReceivesDataFromStreamReference();
+        $this->assertEquals('', $this->received);
+
+        $this->assertRunFasterThan($this->tickTimeout * 2);
+        $this->assertEquals('[hello]X', $this->received);
+    }
+
+    /**
+     * Telper for above test. This happens in another helper method to verify
+     * the loop keep track of assigned stream resources (refcount).
+     */
+    private function subAddReadStreamReceivesDataFromStreamReference()
+    {
+        list ($input, $output) = $this->createSocketPair();
+
+        fwrite($input, 'hello');
+        fclose($input);
+
+        $this->loop->addReadStream($output, function ($output) {
+            $chunk = fread($output, 1024);
+            if ($chunk === '') {
+                $this->received .= 'X';
+                $this->loop->removeReadStream($output);
+                fclose($output);
+            } else {
+                $this->received .= '[' . $chunk . ']';
+            }
+        });
+    }
+
     public function testAddWriteStream()
     {
         list ($input) = $this->createSocketPair();
