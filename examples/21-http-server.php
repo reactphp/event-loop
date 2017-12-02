@@ -4,9 +4,15 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
 
+// start TCP/IP server on localhost:8080
+// for illustration purposes only, should use react/socket instead
 $server = stream_socket_server('tcp://127.0.0.1:8080');
-stream_set_blocking($server, 0);
+if (!$server) {
+    exit(1);
+}
+stream_set_blocking($server, false);
 
+// wait for incoming connections on server socket
 $loop->addReadStream($server, function ($server) use ($loop) {
     $conn = stream_socket_accept($server);
     $data = "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nHi\n";
