@@ -12,6 +12,11 @@ use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
 
 /**
+ * An `ext-libev` based event loop.
+ *
+ * This uses an [unofficial `libev` extension](https://github.com/m4rw3r/php-libev).
+ * It supports the same backends as libevent.
+ *
  * @see https://github.com/m4rw3r/php-libev
  * @see https://gist.github.com/1688204
  */

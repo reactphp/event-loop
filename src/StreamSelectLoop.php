@@ -9,7 +9,14 @@ use React\EventLoop\Timer\TimerInterface;
 use React\EventLoop\Timer\Timers;
 
 /**
- * A stream_select() based event-loop.
+ * A `stream_select()` based event loop.
+ *
+ * This uses the [`stream_select()`](http://php.net/manual/en/function.stream-select.php)
+ * function and is the only implementation which works out of the box with PHP.
+ * It does a simple `select` system call.
+ * It's not the most performant of loops, but still does the job quite well.
+ *
+ * @link http://php.net/manual/en/function.stream-select.php
  */
 class StreamSelectLoop implements LoopInterface
 {

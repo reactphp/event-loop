@@ -18,19 +18,25 @@ For the code of the current stable 0.4.x release, checkout the
 
 * [Quickstart example](#quickstart-example)
 * [Usage](#usage)
-* [Factory](#factory)
-* [Loop implementations](#loop-implementations)
-  * [addtimer()](#addtimer)
-  * [addPeriodicTimer()](#addperiodictimer)
-  * [cancelTimer()](#canceltimer)
-  * [isTimerActive()](#istimeractive)
-  * [futureTick()](#futuretick)
-  * [addSignal()](#addsignal)
-  * [removeSignal()](#removesignal)
-  * [addReadStream()](#addreadstream)
-  * [addWriteStream()](#addwritestream)
-  * [removeReadStream()](#removereadstream)
-  * [removeWriteStream()](#removewritestream)
+  * [Factory](#factory)
+    * [create()](#create)
+  * [Loop implementations](#loop-implementations)
+    * [StreamSelectLoop](#streamselectloop)
+    * [LibEventLoop](#libeventloop)
+    * [LibEvLoop](#libevloop)
+    * [ExtEventLoop](#exteventloop)
+  * [LoopInterface](#loopinterface)
+    * [addtimer()](#addtimer)
+    * [addPeriodicTimer()](#addperiodictimer)
+    * [cancelTimer()](#canceltimer)
+    * [isTimerActive()](#istimeractive)
+    * [futureTick()](#futuretick)
+    * [addSignal()](#addsignal)
+    * [removeSignal()](#removesignal)
+    * [addReadStream()](#addreadstream)
+    * [addWriteStream()](#addwritestream)
+    * [removeReadStream()](#removereadstream)
+    * [removeWriteStream()](#removewritestream)
 * [Install](#install)
 * [Tests](#tests)
 * [License](#license)
@@ -106,49 +112,79 @@ $loop->run();
    purposes.
 3. The loop is run with a single `$loop->run()` call at the end of the program.
 
-## Factory
+### Factory
 
 The `Factory` class exists as a convenient way to pick the best available
-[loop implementation](#loop-implementations).
+[event loop implementation](#loop-implementations).
 
-The `create(): LoopInterface` method can be used to create a new loop
+#### create()
+
+The `create(): LoopInterface` method can be used to create a new event loop
 instance:
 
 ```php
 $loop = React\EventLoop\Factory::create();
 ```
 
-This method always returns an instance implementing `LoopInterface`,
-the actual loop implementation is an implementation detail.
+This method always returns an instance implementing [`LoopInterface`](#loopinterface),
+the actual [event loop implementation](#loop-implementations) is an implementation detail.
 
 This method should usually only be called once at the beginning of the program.
 
-## Loop implementations
+### Loop implementations
 
-In addition to the interface there are the following implementations provided:
+In addition to the [`LoopInterface`](#loopinterface), there are a number of
+event loop implementations provided.
 
-* `StreamSelectLoop`: This is the only implementation which works out of the
-  box with PHP. It does a simple `select` system call. It's not the most
-  performant of loops, but still does the job quite well.
-
-* `LibEventLoop`: This uses the `libevent` pecl extension. `libevent` itself
-  supports a number of system-specific backends (epoll, kqueue).
-
-* `LibEvLoop`: This uses the `libev` pecl extension
-  ([github](https://github.com/m4rw3r/php-libev)). It supports the same
-  backends as libevent.
-
-* `ExtEventLoop`: This uses the `event` pecl extension. It supports the same
-  backends as libevent.
-
-All of the loops support these features:
+All of the event loops support these features:
 
 * File descriptor polling
 * One-off timers
 * Periodic timers
 * Deferred execution on future loop tick
 
-### addTimer()
+For most consumers of this package, the underlying event loop implementation is
+an implementation detail.
+You should use the [`Factory`](#factory) to automatically create a new instance.
+
+Advanced! If you explicitly need a certain event loop implementation, you can
+manually instantiate one of the following classes.
+Note that you may have to install the required PHP extensions for the respective
+event loop implementation first or this may result in a fatal error.
+
+#### StreamSelectLoop
+
+A `stream_select()` based event loop.
+
+This uses the [`stream_select()`](http://php.net/manual/en/function.stream-select.php)
+function and is the only implementation which works out of the box with PHP.
+It does a simple `select` system call.
+It's not the most performant of loops, but still does the job quite well.
+
+#### LibEventLoop
+
+An `ext-libevent` based event loop.
+
+This uses the [`libevent` PECL extension](https://pecl.php.net/package/libevent).
+`libevent` itself supports a number of system-specific backends (epoll, kqueue).
+
+#### LibEvLoop
+
+An `ext-libev` based event loop.
+
+This uses an [unofficial `libev` extension](https://github.com/m4rw3r/php-libev).
+It supports the same backends as libevent.
+
+#### ExtEventLoop
+
+An `ext-event` based event loop.
+
+This uses the [`event` PECL extension](https://pecl.php.net/package/event).
+It supports the same backends as libevent.
+
+### LoopInterface
+
+#### addTimer()
 
 The `addTimer(float $interval, callable $callback): TimerInterface` method can be used to
 enqueue a callback to be invoked once after the given interval.
@@ -195,7 +231,7 @@ hello('Tester', $loop);
 The execution order of timers scheduled to execute at the same time is
 not guaranteed.
 
-### addPeriodicTimer()
+#### addPeriodicTimer()
 
 The `addPeriodicTimer(float $interval, callable $callback): TimerInterface` method can be used to
 enqueue a callback to be invoked repeatedly after the given interval.
@@ -249,7 +285,7 @@ hello('Tester', $loop);
 The execution order of timers scheduled to execute at the same time is
 not guaranteed.
 
-### cancelTimer()
+#### cancelTimer()
 
 The `cancelTimer(TimerInterface $timer): void` method can be used to
 cancel a pending timer.
@@ -264,7 +300,7 @@ Calling this method on a timer instance that has not been added to this
 loop instance or on a timer that is not "active" (or has already been
 cancelled) has no effect.
 
-### isTimerActive()
+#### isTimerActive()
 
 The `isTimerActive(TimerInterface $timer): bool` method can be used to
 check if a given timer is active.
@@ -274,7 +310,7 @@ via [`addTimer()`](#addtimer) or [`addPeriodicTimer()`](#addperiodictimer)
 and has not been cancelled via [`cancelTimer()`](#canceltimer) and is not
 a non-periodic timer that has already been triggered after its interval.
 
-### futureTick()
+#### futureTick()
 
 The `futureTick(callable $listener): void` method can be used to
 schedule a callback to be invoked on a future tick of the event loop.
@@ -322,7 +358,7 @@ echo 'a';
 
 See also [example #3](examples).
 
-### addSignal()
+#### addSignal()
 
 The `addSignal(int $signal, callable $listener): void` method can be used to
 register a listener to be notified when a signal has been caught by this process.
@@ -356,7 +392,7 @@ missing.
 **Note: A listener can only be added once to the same signal, any
 attempts to add it more then once will be ignored.**
 
-### removeSignal()
+#### removeSignal()
 
 The `removeSignal(int $signal, callable $listener): void` method can be used to
 remove a previously added signal listener.
@@ -367,7 +403,7 @@ $loop->removeSignal(SIGINT, $listener);
 
 Any attempts to remove listeners that aren't registered will be ignored.
 
-### addReadStream()
+#### addReadStream()
 
 > Advanced! Note that this low-level API is considered advanced usage.
   Most use cases should probably use the higher-level
@@ -410,7 +446,7 @@ read event listener for this stream.
 The execution order of listeners when multiple streams become ready at
 the same time is not guaranteed.
 
-### addWriteStream()
+#### addWriteStream()
 
 > Advanced! Note that this low-level API is considered advanced usage.
   Most use cases should probably use the higher-level
@@ -453,7 +489,7 @@ write event listener for this stream.
 The execution order of listeners when multiple streams become ready at
 the same time is not guaranteed.
 
-### removeReadStream()
+#### removeReadStream()
 
 The `removeReadStream(resource $stream): void` method can be used to
 remove the read event listener for the given stream.
@@ -461,7 +497,7 @@ remove the read event listener for the given stream.
 Removing a stream from the loop that has already been removed or trying
 to remove a stream that was never added or is invalid has no effect.
 
-### removeWriteStream()
+#### removeWriteStream()
 
 The `removeWriteStream(resource $stream): void` method can be used to
 remove the write event listener for the given stream.
@@ -479,6 +515,14 @@ This will install the latest supported version:
 ```bash
 $ composer require react/event-loop
 ```
+
+This project aims to run on any platform and thus does not require any PHP
+extensions and supports running on legacy PHP 5.4 through current PHP 7+ and
+HHVM.
+It's *highly recommended to use PHP 7+* for this project.
+
+Installing any of the event loop extensions is suggested, but entirely optional.
+See also [event loop implementations](#loop-implementations) for more details.
 
 ## Tests
 
