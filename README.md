@@ -313,8 +313,10 @@ See also [example #3](examples).
 ### addSignal()
 
 The `addSignal(int $signal, callable $listener): void` method can be used to
-be notified about OS signals. This is useful to catch user interrupt signals or 
-shutdown signals from tools like `supervisor` or `systemd`.
+register a listener to be notified when a signal has been caught by this process.
+
+This is useful to catch user interrupt signals or shutdown signals from
+tools like `supervisor` or `systemd`.
 
 The listener callback function MUST be able to accept a single parameter,
 the signal added by this method or you MAY use a function which
@@ -326,32 +328,32 @@ no effect, so for performance reasons you're recommended to not return
 any excessive data structures.
 
 ```php
-$listener = function (int $signal) {
-    echo 'Caught user iterrupt signal', PHP_EOL;
-};
-$loop->addSignal(SIGINT, $listener);
+$loop->addSignal(SIGINT, function (int $signal) {
+    echo 'Caught user interrupt signal' . PHP_EOL;
+});
 ```
 
 See also [example #4](examples).
 
-**Note: A listener can only be added once to the same signal, any attempts to add it 
-more then once will be ignored.**
+Signaling is only available on Unix-like platform, Windows isn't
+supported due to operating system limitations.
+This method may throw a `BadMethodCallException` if signals aren't
+supported on this platform, for example when required extensions are
+missing.
 
-**Note: Signaling is only available on Unix-like platform, Windows isn't supported due 
-to limitations from underlying signal handlers.**
+**Note: A listener can only be added once to the same signal, any
+attempts to add it more then once will be ignored.**
 
 ### removeSignal()
 
-The `removeSignal(int $signal, callable $listener): void` removes a previously added 
-signal listener.
-
-Any attempts to remove listeners that aren't registerred will be ignored.
+The `removeSignal(int $signal, callable $listener): void` method can be used to
+remove a previously added signal listener.
 
 ```php
 $loop->removeSignal(SIGINT, $listener);
 ```
 
-See also [example #4](examples).
+Any attempts to remove listeners that aren't registered will be ignored.
 
 ### addReadStream()
 

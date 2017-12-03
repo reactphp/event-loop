@@ -317,32 +317,55 @@ interface LoopInterface
     public function futureTick(callable $listener);
 
     /**
-     * Registers a signal listener with the loop, which
-     * on it's turn registers it with a signal handler
-     * suitable for the loop implementation.
+     * Register a listener to be notified when a signal has been caught by this process.
      *
-     * A listener can only be added once, any attempts
-     * to add it again will be ignored.
+     * This is useful to catch user interrupt signals or shutdown signals from
+     * tools like `supervisor` or `systemd`.
+     *
+     * The listener callback function MUST be able to accept a single parameter,
+     * the signal added by this method or you MAY use a function which
+     * has no parameters at all.
+     *
+     * The listener callback function MUST NOT throw an `Exception`.
+     * The return value of the listener callback function will be ignored and has
+     * no effect, so for performance reasons you're recommended to not return
+     * any excessive data structures.
+     *
+     * ```php
+     * $loop->addSignal(SIGINT, function (int $signal) {
+     *     echo 'Caught user interrupt signal' . PHP_EOL;
+     * });
+     * ```
      *
      * See also [example #4](examples).
+     *
+     * Signaling is only available on Unix-like platform, Windows isn't
+     * supported due to operating system limitations.
+     * This method may throw a `BadMethodCallException` if signals aren't
+     * supported on this platform, for example when required extensions are
+     * missing.
+     *
+     * **Note: A listener can only be added once to the same signal, any
+     * attempts to add it more then once will be ignored.**
      *
      * @param int $signal
      * @param callable $listener
      *
-     * @throws \BadMethodCallException when signals
-     * aren't supported by the loop, e.g. when required
-     * extensions are missing.
+     * @throws \BadMethodCallException when signals aren't supported on this
+     *     platform, for example when required extensions are missing.
      *
      * @return void
      */
     public function addSignal($signal, callable $listener);
 
     /**
-     * Removed previous registered signal listener from
-     * the loop, which on it's turn removes it from the
-     * underlying signal handler.
+     * Removes a previously added signal listener.
      *
-     * See also [example #4](examples).
+     * ```php
+     * $loop->removeSignal(SIGINT, $listener);
+     * ```
+     *
+     * Any attempts to remove listeners that aren't registered will be ignored.
      *
      * @param int $signal
      * @param callable $listener
