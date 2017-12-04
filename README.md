@@ -22,9 +22,9 @@ For the code of the current stable 0.4.x release, checkout the
     * [create()](#create)
   * [Loop implementations](#loop-implementations)
     * [StreamSelectLoop](#streamselectloop)
-    * [LibEventLoop](#libeventloop)
-    * [LibEvLoop](#libevloop)
     * [ExtEventLoop](#exteventloop)
+    * [ExtLibeventLoop](#extlibeventloop)
+    * [ExtLibevLoop](#extlibevloop)
   * [LoopInterface](#loopinterface)
     * [addtimer()](#addtimer)
     * [addPeriodicTimer()](#addperiodictimer)
@@ -184,7 +184,16 @@ It is commonly installed as part of many PHP distributions.
 If this extension is missing (or you're running on Windows), signal handling is
 not supported and throws a `BadMethodCallException` instead.
 
-#### LibEventLoop
+#### ExtEventLoop
+
+An `ext-event` based event loop.
+
+This uses the [`event` PECL extension](https://pecl.php.net/package/event).
+It supports the same backends as libevent.
+
+This loop is known to work with PHP 5.4 through PHP 7+.
+
+#### ExtLibeventLoop
 
 An `ext-libevent` based event loop.
 
@@ -198,7 +207,7 @@ To reiterate: Using this event loop on PHP 7 is not recommended.
 Accordingly, the [`Factory`](#factory) will not try to use this event loop on
 PHP 7.
 
-#### LibEvLoop
+#### ExtLibevLoop
 
 An `ext-libev` based event loop.
 
@@ -208,15 +217,6 @@ It supports the same backends as libevent.
 This loop does only work with PHP 5.
 An update for PHP 7 is [unlikely](https://github.com/m4rw3r/php-libev/issues/8)
 to happen any time soon.
-
-#### ExtEventLoop
-
-An `ext-event` based event loop.
-
-This uses the [`event` PECL extension](https://pecl.php.net/package/event).
-It supports the same backends as libevent.
-
-This loop is known to work with PHP 5.4 through PHP 7+.
 
 ### LoopInterface
 

@@ -2,9 +2,9 @@
 
 namespace React\Tests\EventLoop;
 
-use React\EventLoop\LibEvLoop;
+use React\EventLoop\ExtLibevLoop;
 
-class LibEvLoopTest extends AbstractLoopTest
+class ExtLibevLoopTest extends AbstractLoopTest
 {
     public function createLoop()
     {
@@ -12,11 +12,11 @@ class LibEvLoopTest extends AbstractLoopTest
             $this->markTestSkipped('libev tests skipped because ext-libev is not installed.');
         }
 
-        return new LibEvLoop();
+        return new ExtLibevLoop();
     }
 
     public function testLibEvConstructor()
     {
-        $loop = new LibEvLoop();
+        $loop = new ExtLibevLoop();
     }
 }

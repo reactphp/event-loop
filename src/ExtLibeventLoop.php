@@ -24,7 +24,7 @@ use SplObjectStorage;
  *
  * @link https://pecl.php.net/package/libevent
  */
-class LibEventLoop implements LoopInterface
+class ExtLibeventLoop implements LoopInterface
 {
     const MICROSECONDS_PER_SECOND = 1000000;
 
