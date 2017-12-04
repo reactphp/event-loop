@@ -480,6 +480,23 @@ abstract class AbstractLoopTest extends TestCase
         $this->assertRunFasterThan(1.6);
     }
 
+    public function testTimerIntervalCanBeFarInFuture()
+    {
+        // get only one part of the pair to ensure the other side will close immediately
+        list($stream) = $this->createSocketPair();
+
+        // start a timer very far in the future
+        $timer = $this->loop->addTimer(PHP_INT_MAX, function () { });
+
+        // remove stream and timer when the stream is readable (closes)
+        $this->loop->addReadStream($stream, function ($stream) use ($timer) {
+            $this->loop->removeReadStream($stream);
+            $this->loop->cancelTimer($timer);
+        });
+
+        $this->assertRunFasterThan($this->tickTimeout);
+    }
+
     private function assertRunSlowerThan($minInterval)
     {
         $start = microtime(true);
