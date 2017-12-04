@@ -35,6 +35,7 @@ use SplObjectStorage;
  */
 class ExtLibeventLoop implements LoopInterface
 {
+    /** @internal */
     const MICROSECONDS_PER_SECOND = 1000000;
 
     private $eventBase;
