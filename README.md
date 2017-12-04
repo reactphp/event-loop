@@ -29,7 +29,6 @@ For the code of the current stable 0.4.x release, checkout the
     * [addTimer()](#addtimer)
     * [addPeriodicTimer()](#addperiodictimer)
     * [cancelTimer()](#canceltimer)
-    * [isTimerActive()](#istimeractive)
     * [futureTick()](#futuretick)
     * [addSignal()](#addsignal)
     * [removeSignal()](#removesignal)
@@ -357,23 +356,8 @@ cancel a pending timer.
 
 See also [`addPeriodicTimer()`](#addperiodictimer) and [example #2](examples).
 
-You can use the [`isTimerActive()`](#istimeractive) method to check if
-this timer is still "active". After a timer is successfully cancelled,
-it is no longer considered "active".
-
 Calling this method on a timer instance that has not been added to this
-loop instance or on a timer that is not "active" (or has already been
-cancelled) has no effect.
-
-#### isTimerActive()
-
-The `isTimerActive(TimerInterface $timer): bool` method can be used to
-check if a given timer is active.
-
-A timer is considered "active" if it has been added to this loop instance
-via [`addTimer()`](#addtimer) or [`addPeriodicTimer()`](#addperiodictimer)
-and has not been cancelled via [`cancelTimer()`](#canceltimer) and is not
-a non-periodic timer that has already been triggered after its interval.
+loop instance or on a timer that has already been cancelled has no effect.
 
 #### futureTick()
 

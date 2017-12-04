@@ -164,7 +164,7 @@ final class ExtLibeventLoop implements LoopInterface
 
     public function cancelTimer(TimerInterface $timer)
     {
-        if ($this->isTimerActive($timer)) {
+        if ($this->timerEvents->contains($timer)) {
             $event = $this->timerEvents[$timer];
 
             event_del($event);
@@ -172,11 +172,6 @@ final class ExtLibeventLoop implements LoopInterface
 
             $this->timerEvents->detach($timer);
         }
-    }
-
-    public function isTimerActive(TimerInterface $timer)
-    {
-        return $this->timerEvents->contains($timer);
     }
 
     public function futureTick(callable $listener)
@@ -299,7 +294,7 @@ final class ExtLibeventLoop implements LoopInterface
             call_user_func($timer->getCallback(), $timer);
 
             // Timer already cancelled ...
-            if (!$this->isTimerActive($timer)) {
+            if (!$this->timerEvents->contains($timer)) {
                 return;
 
             // Reschedule periodic timers ...

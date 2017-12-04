@@ -122,7 +122,7 @@ final class ExtLibevLoop implements LoopInterface
         $callback = function () use ($timer) {
             call_user_func($timer->getCallback(), $timer);
 
-            if ($this->isTimerActive($timer)) {
+            if ($this->timerEvents->contains($timer)) {
                 $this->cancelTimer($timer);
             }
         };
@@ -155,11 +155,6 @@ final class ExtLibevLoop implements LoopInterface
             $this->loop->remove($this->timerEvents[$timer]);
             $this->timerEvents->detach($timer);
         }
-    }
-
-    public function isTimerActive(TimerInterface $timer)
-    {
-        return $this->timerEvents->contains($timer);
     }
 
     public function futureTick(callable $listener)

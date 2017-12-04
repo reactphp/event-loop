@@ -153,11 +153,6 @@ final class StreamSelectLoop implements LoopInterface
         $this->timers->cancel($timer);
     }
 
-    public function isTimerActive(TimerInterface $timer)
-    {
-        return $this->timers->contains($timer);
-    }
-
     public function futureTick(callable $listener)
     {
         $this->futureTickQueue->add($listener);
