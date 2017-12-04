@@ -22,6 +22,15 @@ use SplObjectStorage;
  * Accordingly, the [`Factory`](#factory) will not try to use this event loop on
  * PHP 7.
  *
+ * This event loop is known to trigger a readable listener only if
+ * the stream *becomes* readable (edge-triggered) and may not trigger if the
+ * stream has already been readable from the beginning.
+ * This also implies that a stream may not be recognized as readable when data
+ * is still left in PHP's internal stream buffers.
+ * As such, it's recommended to use `stream_set_read_buffer($stream, 0);`
+ * to disable PHP's internal read buffer in this case.
+ * See also [`addReadStream()`](#addreadstream) for more details.
+ *
  * @link https://pecl.php.net/package/libevent
  */
 class ExtLibeventLoop implements LoopInterface
