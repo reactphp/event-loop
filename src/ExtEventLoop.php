@@ -11,7 +11,14 @@ use React\EventLoop\Timer\TimerInterface;
 use SplObjectStorage;
 
 /**
- * An ext-event based event-loop.
+ * An `ext-event` based event loop.
+ *
+ * This uses the [`event` PECL extension](https://pecl.php.net/package/event).
+ * It supports the same backends as libevent.
+ *
+ * This loop is known to work with PHP 5.4 through PHP 7+.
+ *
+ * @link https://pecl.php.net/package/event
  */
 class ExtEventLoop implements LoopInterface
 {
