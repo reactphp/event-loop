@@ -158,8 +158,31 @@ A `stream_select()` based event loop.
 
 This uses the [`stream_select()`](http://php.net/manual/en/function.stream-select.php)
 function and is the only implementation which works out of the box with PHP.
-It does a simple `select` system call.
-It's not the most performant of loops, but still does the job quite well.
+
+This event loop works out of the box on PHP 5.4 through PHP 7+ and HHVM.
+This means that no installation is required and this library works on all
+platforms and supported PHP versions.
+Accordingly, the [`Factory`](#factory) will use this event loop by default if
+you do not install any of the event loop extensions listed below.
+
+Under the hood, it does a simple `select` system call.
+This system call is limited to the maximum file descriptor number of
+`FD_SETSIZE` (platform dependent, commonly 1024) and scales with `O(m)`
+(`m` being the maximum file descriptor number passed).
+This means that you may run into issues when handling thousands of streams
+concurrently and you may want to look into using one of the alternative
+event loop implementations listed below in this case.
+If your use case is among the many common use cases that involve handling only
+dozens or a few hundred streams at once, then this event loop implementation
+performs really well.
+
+If you want to use signal handling (see also [`addSignal()`](#addsignal) below),
+this event loop implementation requires `ext-pcntl`.
+This extension is only available for Unix-like platforms and does not support
+Windows.
+It is commonly installed as part of many PHP distributions.
+If this extension is missing (or you're running on Windows), signal handling is
+not supported and throws a `BadMethodCallException` instead.
 
 #### LibEventLoop
 
@@ -168,6 +191,13 @@ An `ext-libevent` based event loop.
 This uses the [`libevent` PECL extension](https://pecl.php.net/package/libevent).
 `libevent` itself supports a number of system-specific backends (epoll, kqueue).
 
+This event loop does only work with PHP 5.
+An [unofficial update](https://github.com/php/pecl-event-libevent/pull/2) for
+PHP 7 does exist, but it is known to cause regular crashes due to `SEGFAULT`s.
+To reiterate: Using this event loop on PHP 7 is not recommended.
+Accordingly, the [`Factory`](#factory) will not try to use this event loop on
+PHP 7.
+
 #### LibEvLoop
 
 An `ext-libev` based event loop.
@@ -175,12 +205,18 @@ An `ext-libev` based event loop.
 This uses an [unofficial `libev` extension](https://github.com/m4rw3r/php-libev).
 It supports the same backends as libevent.
 
+This loop does only work with PHP 5.
+An update for PHP 7 is [unlikely](https://github.com/m4rw3r/php-libev/issues/8)
+to happen any time soon.
+
 #### ExtEventLoop
 
 An `ext-event` based event loop.
 
 This uses the [`event` PECL extension](https://pecl.php.net/package/event).
 It supports the same backends as libevent.
+
+This loop is known to work with PHP 5.4 through PHP 7+.
 
 ### LoopInterface
 

@@ -13,8 +13,31 @@ use React\EventLoop\Timer\Timers;
  *
  * This uses the [`stream_select()`](http://php.net/manual/en/function.stream-select.php)
  * function and is the only implementation which works out of the box with PHP.
- * It does a simple `select` system call.
- * It's not the most performant of loops, but still does the job quite well.
+ *
+ * This event loop works out of the box on PHP 5.4 through PHP 7+ and HHVM.
+ * This means that no installation is required and this library works on all
+ * platforms and supported PHP versions.
+ * Accordingly, the [`Factory`](#factory) will use this event loop by default if
+ * you do not install any of the event loop extensions listed below.
+ *
+ * Under the hood, it does a simple `select` system call.
+ * This system call is limited to the maximum file descriptor number of
+ * `FD_SETSIZE` (platform dependent, commonly 1024) and scales with `O(m)`
+ * (`m` being the maximum file descriptor number passed).
+ * This means that you may run into issues when handling thousands of streams
+ * concurrently and you may want to look into using one of the alternative
+ * event loop implementations listed below in this case.
+ * If your use case is among the many common use cases that involve handling only
+ * dozens or a few hundred streams at once, then this event loop implementation
+ * performs really well.
+ *
+ * If you want to use signal handling (see also [`addSignal()`](#addsignal) below),
+ * this event loop implementation requires `ext-pcntl`.
+ * This extension is only available for Unix-like platforms and does not support
+ * Windows.
+ * It is commonly installed as part of many PHP distributions.
+ * If this extension is missing (or you're running on Windows), signal handling is
+ * not supported and throws a `BadMethodCallException` instead.
  *
  * @link http://php.net/manual/en/function.stream-select.php
  */

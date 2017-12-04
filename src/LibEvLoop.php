@@ -17,6 +17,10 @@ use SplObjectStorage;
  * This uses an [unofficial `libev` extension](https://github.com/m4rw3r/php-libev).
  * It supports the same backends as libevent.
  *
+ * This loop does only work with PHP 5.
+ * An update for PHP 7 is [unlikely](https://github.com/m4rw3r/php-libev/issues/8)
+ * to happen any time soon.
+ *
  * @see https://github.com/m4rw3r/php-libev
  * @see https://gist.github.com/1688204
  */
