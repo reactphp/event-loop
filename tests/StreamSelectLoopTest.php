@@ -4,7 +4,6 @@ namespace React\Tests\EventLoop;
 
 use React\EventLoop\LoopInterface;
 use React\EventLoop\StreamSelectLoop;
-use React\EventLoop\Timer\Timer;
 
 class StreamSelectLoopTest extends AbstractLoopTest
 {
@@ -143,37 +142,5 @@ class StreamSelectLoopTest extends AbstractLoopTest
             posix_kill($currentPid, constant($signal));
             die();
         }
-    }
-
-    /**
-     * https://github.com/reactphp/event-loop/issues/48
-     *
-     * Tests that timer with very small interval uses at least 1 microsecond
-     * timeout.
-     */
-    public function testSmallTimerInterval()
-    {
-        /** @var StreamSelectLoop|\PHPUnit_Framework_MockObject_MockObject $loop */
-        $loop = $this->getMockBuilder('React\EventLoop\StreamSelectLoop')
-                    ->setMethods(['streamSelect'])
-                    ->getMock();
-        $loop
-            ->expects($this->at(0))
-            ->method('streamSelect')
-            ->with([], [], 1);
-        $loop
-            ->expects($this->at(1))
-            ->method('streamSelect')
-            ->with([], [], 0);
-
-        $callsCount = 0;
-        $loop->addPeriodicTimer(Timer::MIN_INTERVAL, function() use (&$loop, &$callsCount) {
-            $callsCount++;
-            if ($callsCount == 2) {
-                $loop->stop();
-            }
-        });
-
-        $loop->run();
     }
 }
