@@ -20,7 +20,7 @@ use SplObjectStorage;
  *
  * @link https://pecl.php.net/package/event
  */
-class ExtEventLoop implements LoopInterface
+final class ExtEventLoop implements LoopInterface
 {
     private $eventBase;
     private $futureTickQueue;

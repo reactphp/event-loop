@@ -5,7 +5,7 @@ namespace React\EventLoop;
 /**
  * The `Factory` class exists as a convenient way to pick the best available event loop implementation.
  */
-class Factory
+final class Factory
 {
     /**
      * Creates a new event loop instance

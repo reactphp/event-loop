@@ -50,7 +50,7 @@ use React\EventLoop\Timer\Timers;
  *
  * @link http://php.net/manual/en/function.stream-select.php
  */
-class StreamSelectLoop implements LoopInterface
+final class StreamSelectLoop implements LoopInterface
 {
     /** @internal */
     const MICROSECONDS_PER_SECOND = 1000000;
