@@ -24,7 +24,7 @@ use SplObjectStorage;
  * @see https://github.com/m4rw3r/php-libev
  * @see https://gist.github.com/1688204
  */
-class ExtLibevLoop implements LoopInterface
+final class ExtLibevLoop implements LoopInterface
 {
     private $loop;
     private $futureTickQueue;

@@ -50,8 +50,9 @@ use React\EventLoop\Timer\Timers;
  *
  * @link http://php.net/manual/en/function.stream-select.php
  */
-class StreamSelectLoop implements LoopInterface
+final class StreamSelectLoop implements LoopInterface
 {
+    /** @internal */
     const MICROSECONDS_PER_SECOND = 1000000;
 
     private $futureTickQueue;
@@ -268,7 +269,7 @@ class StreamSelectLoop implements LoopInterface
      * @return integer|false The total number of streams that are ready for read/write.
      * Can return false if stream_select() is interrupted by a signal.
      */
-    protected function streamSelect(array &$read, array &$write, $timeout)
+    private function streamSelect(array &$read, array &$write, $timeout)
     {
         if ($read || $write) {
             $except = null;
