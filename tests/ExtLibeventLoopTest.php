@@ -2,9 +2,9 @@
 
 namespace React\Tests\EventLoop;
 
-use React\EventLoop\LibEventLoop;
+use React\EventLoop\ExtLibeventLoop;
 
-class LibEventLoopTest extends AbstractLoopTest
+class ExtLibeventLoopTest extends AbstractLoopTest
 {
     private $fifoPath;
 
@@ -18,7 +18,7 @@ class LibEventLoopTest extends AbstractLoopTest
             $this->markTestSkipped('libevent tests skipped because ext-libevent is not installed.');
         }
 
-        return new LibEventLoop();
+        return new ExtLibeventLoop();
     }
 
     public function tearDown()

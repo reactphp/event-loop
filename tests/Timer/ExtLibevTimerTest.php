@@ -2,9 +2,9 @@
 
 namespace React\Tests\EventLoop\Timer;
 
-use React\EventLoop\LibEvLoop;
+use React\EventLoop\ExtLibevLoop;
 
-class LibEvTimerTest extends AbstractTimerTest
+class ExtLibevTimerTest extends AbstractTimerTest
 {
     public function createLoop()
     {
@@ -12,6 +12,6 @@ class LibEvTimerTest extends AbstractTimerTest
             $this->markTestSkipped('libev tests skipped because ext-libev is not installed.');
         }
 
-        return new LibEvLoop();
+        return new ExtLibevLoop();
     }
 }
