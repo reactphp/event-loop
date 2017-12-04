@@ -26,7 +26,7 @@ For the code of the current stable 0.4.x release, checkout the
     * [ExtLibeventLoop](#extlibeventloop)
     * [ExtLibevLoop](#extlibevloop)
   * [LoopInterface](#loopinterface)
-    * [addtimer()](#addtimer)
+    * [addTimer()](#addtimer)
     * [addPeriodicTimer()](#addperiodictimer)
     * [cancelTimer()](#canceltimer)
     * [isTimerActive()](#istimeractive)
@@ -184,6 +184,15 @@ It is commonly installed as part of many PHP distributions.
 If this extension is missing (or you're running on Windows), signal handling is
 not supported and throws a `BadMethodCallException` instead.
 
+This event loop is known to rely on wall-clock time to schedule future
+timers, because a monotonic time source is not available in PHP by default.
+While this does not affect many common use cases, this is an important
+distinction for programs that rely on a high time precision or on systems
+that are subject to discontinuous time adjustments (time jumps).
+This means that if you schedule a timer to trigger in 30s and then adjust
+your system time forward by 20s, the timer may trigger in 10s.
+See also [`addTimer()`](#addtimer) for more details.
+
 #### ExtEventLoop
 
 An `ext-event` based event loop.
@@ -275,6 +284,17 @@ hello('Tester', $loop);
 
 The execution order of timers scheduled to execute at the same time is
 not guaranteed.
+
+This interface suggests that event loop implementations SHOULD use a
+monotic time source if available. Given that a monotonic time source is
+not available on PHP by default, event loop implementations MAY fall back
+to using wall-clock time.
+While this does not affect many common use cases, this is an important
+distinction for programs that rely on a high time precision or on systems
+that are subject to discontinuous time adjustments (time jumps).
+This means that if you schedule a timer to trigger in 30s and then adjust
+your system time forward by 20s, the timer SHOULD still trigger in 30s.
+See also [event loop implementations](#loop-implementations) for more details.
 
 #### addPeriodicTimer()
 

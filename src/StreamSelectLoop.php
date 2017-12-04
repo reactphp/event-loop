@@ -39,6 +39,15 @@ use React\EventLoop\Timer\Timers;
  * If this extension is missing (or you're running on Windows), signal handling is
  * not supported and throws a `BadMethodCallException` instead.
  *
+ * This event loop is known to rely on wall-clock time to schedule future
+ * timers, because a monotonic time source is not available in PHP by default.
+ * While this does not affect many common use cases, this is an important
+ * distinction for programs that rely on a high time precision or on systems
+ * that are subject to discontinuous time adjustments (time jumps).
+ * This means that if you schedule a timer to trigger in 30s and then adjust
+ * your system time forward by 20s, the timer may trigger in 10s.
+ * See also [`addTimer()`](#addtimer) for more details.
+ *
  * @link http://php.net/manual/en/function.stream-select.php
  */
 class StreamSelectLoop implements LoopInterface
