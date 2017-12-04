@@ -224,6 +224,17 @@ interface LoopInterface
      * The execution order of timers scheduled to execute at the same time is
      * not guaranteed.
      *
+     * This interface suggests that event loop implementations SHOULD use a
+     * monotic time source if available. Given that a monotonic time source is
+     * not available on PHP by default, event loop implementations MAY fall back
+     * to using wall-clock time.
+     * While this does not affect many common use cases, this is an important
+     * distinction for programs that rely on a high time precision or on systems
+     * that are subject to discontinuous time adjustments (time jumps).
+     * This means that if you schedule a timer to trigger in 30s and then adjust
+     * your system time forward by 20s, the timer SHOULD still trigger in 30s.
+     * See also [event loop implementations](#loop-implementations) for more details.
+     *
      * @param int|float $interval The number of seconds to wait before execution.
      * @param callable  $callback The callback to invoke.
      *
