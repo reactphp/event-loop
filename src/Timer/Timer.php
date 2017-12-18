@@ -2,6 +2,8 @@
 
 namespace React\EventLoop\Timer;
 
+use React\EventLoop\TimerInterface;
+
 /**
  * The actual connection implementation for TimerInterface
  *

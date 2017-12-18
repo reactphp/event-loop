@@ -5,7 +5,7 @@ namespace React\EventLoop;
 use React\EventLoop\Signal\Pcntl;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
-use React\EventLoop\Timer\TimerInterface;
+use React\EventLoop\TimerInterface;
 use React\EventLoop\Timer\Timers;
 
 /**

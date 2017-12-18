@@ -1,6 +1,6 @@
 <?php
 
-namespace React\EventLoop\Timer;
+namespace React\EventLoop;
 
 interface TimerInterface
 {

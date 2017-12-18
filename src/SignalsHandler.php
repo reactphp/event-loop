@@ -2,7 +2,7 @@
 
 namespace React\EventLoop;
 
-use React\EventLoop\Timer\TimerInterface;
+use React\EventLoop\TimerInterface;
 
 /**
  * @internal
