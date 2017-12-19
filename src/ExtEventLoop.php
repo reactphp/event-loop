@@ -27,11 +27,12 @@ final class ExtEventLoop implements LoopInterface
     private $timerCallback;
     private $timerEvents;
     private $streamCallback;
-    private $streamEvents = [];
-    private $streamFlags = [];
-    private $streamRefs = [];
+    private $readEvents = [];
+    private $writeEvents = [];
     private $readListeners = [];
     private $writeListeners = [];
+    private $readRefs = [];
+    private $writeRefs = [];
     private $running;
     private $signals;
     private $signalEvents = [];
@@ -70,20 +71,38 @@ final class ExtEventLoop implements LoopInterface
     public function addReadStream($stream, callable $listener)
     {
         $key = (int) $stream;
+        if (isset($this->readListeners[$key])) {
+            return;
+        }
 
-        if (!isset($this->readListeners[$key])) {
-            $this->readListeners[$key] = $listener;
-            $this->subscribeStreamEvent($stream, Event::READ);
+        $event = new Event($this->eventBase, $stream, Event::PERSIST | Event::READ, $this->streamCallback);
+        $event->add();
+        $this->readEvents[$key] = $event;
+        $this->readListeners[$key] = $listener;
+
+        // ext-event does not increase refcount on stream resources for PHP 7+
+        // manually keep track of stream resource to prevent premature garbage collection
+        if (PHP_VERSION_ID >= 70000) {
+            $this->readRefs[$key] = $stream;
         }
     }
 
     public function addWriteStream($stream, callable $listener)
     {
         $key = (int) $stream;
+        if (isset($this->writeListeners[$key])) {
+            return;
+        }
 
-        if (!isset($this->writeListeners[$key])) {
-            $this->writeListeners[$key] = $listener;
-            $this->subscribeStreamEvent($stream, Event::WRITE);
+        $event = new Event($this->eventBase, $stream, Event::PERSIST | Event::WRITE, $this->streamCallback);
+        $event->add();
+        $this->writeEvents[$key] = $event;
+        $this->writeListeners[$key] = $listener;
+
+        // ext-event does not increase refcount on stream resources for PHP 7+
+        // manually keep track of stream resource to prevent premature garbage collection
+        if (PHP_VERSION_ID >= 70000) {
+            $this->writeRefs[$key] = $stream;
         }
     }
 
@@ -91,9 +110,13 @@ final class ExtEventLoop implements LoopInterface
     {
         $key = (int) $stream;
 
-        if (isset($this->readListeners[$key])) {
-            unset($this->readListeners[$key]);
-            $this->unsubscribeStreamEvent($stream, Event::READ);
+        if (isset($this->readEvents[$key])) {
+            $this->readEvents[$key]->free();
+            unset(
+                $this->readEvents[$key],
+                $this->readListeners[$key],
+                $this->readRefs[$key]
+            );
         }
     }
 
@@ -101,25 +124,12 @@ final class ExtEventLoop implements LoopInterface
     {
         $key = (int) $stream;
 
-        if (isset($this->writeListeners[$key])) {
-            unset($this->writeListeners[$key]);
-            $this->unsubscribeStreamEvent($stream, Event::WRITE);
-        }
-    }
-
-    private function removeStream($stream)
-    {
-        $key = (int) $stream;
-
-        if (isset($this->streamEvents[$key])) {
-            $this->streamEvents[$key]->free();
-
+        if (isset($this->writeEvents[$key])) {
+            $this->writeEvents[$key]->free();
             unset(
-                $this->streamFlags[$key],
-                $this->streamEvents[$key],
-                $this->readListeners[$key],
+                $this->writeEvents[$key],
                 $this->writeListeners[$key],
-                $this->streamRefs[$key]
+                $this->writeRefs[$key]
             );
         }
     }
@@ -175,7 +185,7 @@ final class ExtEventLoop implements LoopInterface
             $flags = EventBase::LOOP_ONCE;
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= EventBase::LOOP_NONBLOCK;
-            } elseif (!$this->streamEvents && !$this->timerEvents->count()) {
+            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count()) {
                 break;
             }
 
@@ -205,64 +215,6 @@ final class ExtEventLoop implements LoopInterface
         $this->timerEvents[$timer] = $event;
 
         $event->add($timer->getInterval());
-    }
-
-    /**
-     * Create a new ext-event Event object, or update the existing one.
-     *
-     * @param resource $stream
-     * @param integer  $flag   Event::READ or Event::WRITE
-     */
-    private function subscribeStreamEvent($stream, $flag)
-    {
-        $key = (int) $stream;
-
-        if (isset($this->streamEvents[$key])) {
-            $event = $this->streamEvents[$key];
-            $flags = ($this->streamFlags[$key] |= $flag);
-
-            $event->del();
-            $event->set($this->eventBase, $stream, Event::PERSIST | $flags, $this->streamCallback);
-        } else {
-            $event = new Event($this->eventBase, $stream, Event::PERSIST | $flag, $this->streamCallback);
-
-            $this->streamEvents[$key] = $event;
-            $this->streamFlags[$key] = $flag;
-
-            // ext-event does not increase refcount on stream resources for PHP 7+
-            // manually keep track of stream resource to prevent premature garbage collection
-            if (PHP_VERSION_ID >= 70000) {
-                $this->streamRefs[$key] = $stream;
-            }
-        }
-
-        $event->add();
-    }
-
-    /**
-     * Update the ext-event Event object for this stream to stop listening to
-     * the given event type, or remove it entirely if it's no longer needed.
-     *
-     * @param resource $stream
-     * @param integer  $flag   Event::READ or Event::WRITE
-     */
-    private function unsubscribeStreamEvent($stream, $flag)
-    {
-        $key = (int) $stream;
-
-        $flags = $this->streamFlags[$key] &= ~$flag;
-
-        if (0 === $flags) {
-            $this->removeStream($stream);
-
-            return;
-        }
-
-        $event = $this->streamEvents[$key];
-
-        $event->del();
-        $event->set($this->eventBase, $stream, Event::PERSIST | $flags, $this->streamCallback);
-        $event->add();
     }
 
     /**
