@@ -2,8 +2,6 @@
 
 namespace React\EventLoop;
 
-use React\EventLoop\Timer\TimerInterface;
-
 interface LoopInterface
 {
     /**

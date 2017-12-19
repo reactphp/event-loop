@@ -2,6 +2,7 @@
 
 namespace React\EventLoop\Timer;
 
+use React\EventLoop\TimerInterface;
 use SplObjectStorage;
 use SplPriorityQueue;
 

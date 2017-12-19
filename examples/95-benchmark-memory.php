@@ -9,7 +9,7 @@
 
 use React\EventLoop\Factory;
 use React\EventLoop\LoopInterface;
-use React\EventLoop\Timer\TimerInterface;
+use React\EventLoop\TimerInterface;
 
 require __DIR__ . '/../vendor/autoload.php';
 
