@@ -49,7 +49,7 @@ interface LoopInterface
      * @param callable $listener Invoked when the stream is ready.
      * @see self::removeReadStream()
      */
-    public function addReadStream($stream, callable $listener);
+    public function addReadStream($stream, $listener);
 
     /**
      * [Advanced] Register a listener to be notified when a stream is ready to write.
@@ -104,7 +104,7 @@ interface LoopInterface
      * @param callable $listener Invoked when the stream is ready.
      * @see self::removeWriteStream()
      */
-    public function addWriteStream($stream, callable $listener);
+    public function addWriteStream($stream, $listener);
 
     /**
      * Remove the read event listener for the given stream.
@@ -176,7 +176,7 @@ interface LoopInterface
      *
      * @return TimerInterface
      */
-    public function addTimer($interval, callable $callback);
+    public function addTimer($interval, $callback);
 
     /**
      * Enqueue a callback to be invoked repeatedly after the given interval.
@@ -246,7 +246,7 @@ interface LoopInterface
      *
      * @return TimerInterface
      */
-    public function addPeriodicTimer($interval, callable $callback);
+    public function addPeriodicTimer($interval, $callback);
 
     /**
      * Cancel a pending timer.
@@ -312,7 +312,7 @@ interface LoopInterface
      *
      * @return void
      */
-    public function futureTick(callable $listener);
+    public function futureTick($listener);
 
     /**
      * Register a listener to be notified when a signal has been caught by this process.
@@ -354,7 +354,7 @@ interface LoopInterface
      *
      * @return void
      */
-    public function addSignal($signal, callable $listener);
+    public function addSignal($signal, $listener);
 
     /**
      * Removes a previously added signal listener.
@@ -370,7 +370,7 @@ interface LoopInterface
      *
      * @return void
      */
-    public function removeSignal($signal, callable $listener);
+    public function removeSignal($signal, $listener);
 
     /**
      * Run the event loop until there are no more tasks to perform.
