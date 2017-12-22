@@ -2,9 +2,9 @@
 
 /**
  * Run the script indefinitely seconds with the loop from the factory and report every 2 seconds:
- * php test-memory.php
+ * php 95-benchmark-memory.php
  * Run the script for 30 seconds with the stream_select loop and report every 10 seconds:
- * php test-memory.php -t 30 -l StreamSelect -r 10
+ * php 95-benchmark-memory.php -t 30 -l StreamSelect -r 10
  */
 
 use React\EventLoop\Factory;
