@@ -26,8 +26,8 @@ $r = isset($args['r']) ? (int)$args['r'] : 2;
 $runs = 0;
 
 if (5 < $t) {
-    $loop->addTimer($t, function (TimerInterface $timer) {
-        $timer->getLoop()->stop();
+    $loop->addTimer($t, function () use ($loop) {
+        $loop->stop();
     });
 
 }
@@ -35,8 +35,8 @@ if (5 < $t) {
 $loop->addPeriodicTimer(0.001, function () use (&$runs, $loop) {
     $runs++;
 
-    $loop->addPeriodicTimer(1, function (TimerInterface $timer) {
-        $timer->cancel();
+    $loop->addPeriodicTimer(1, function (TimerInterface $timer) use ($loop) {
+        $loop->cancelTimer($timer);
     });
 });
 
