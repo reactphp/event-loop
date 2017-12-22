@@ -184,6 +184,77 @@ abstract class AbstractLoopTest extends TestCase
         $this->tickLoop($this->loop);
     }
 
+    public function testRemoveReadAndWriteStreamFromLoopOnceResourceClosesEndsLoop()
+    {
+        list($stream, $other) = $this->createSocketPair();
+        stream_set_blocking($stream, false);
+        stream_set_blocking($other, false);
+
+        // dummy writable handler
+        $this->loop->addWriteStream($stream, function () { });
+
+        // remove stream when the stream is readable (closes)
+        $this->loop->addReadStream($stream, function ($stream) {
+            $this->loop->removeReadStream($stream);
+            $this->loop->removeWriteStream($stream);
+            fclose($stream);
+        });
+
+        // close other side
+        fclose($other);
+
+        $this->assertRunFasterThan($this->tickTimeout);
+    }
+
+    public function testRemoveReadAndWriteStreamFromLoopOnceResourceClosesOnEndOfFileEndsLoop()
+    {
+        list($stream, $other) = $this->createSocketPair();
+        stream_set_blocking($stream, false);
+        stream_set_blocking($other, false);
+
+        // dummy writable handler
+        $this->loop->addWriteStream($stream, function () { });
+
+        // remove stream when the stream is readable (closes)
+        $this->loop->addReadStream($stream, function ($stream) {
+            $data = fread($stream, 1024);
+            if ($data !== '') {
+                return;
+            }
+
+            $this->loop->removeReadStream($stream);
+            $this->loop->removeWriteStream($stream);
+            fclose($stream);
+        });
+
+        // send data and close stream
+        fwrite($other, str_repeat('.', 60000));
+        $this->loop->addTimer(0.01, function () use ($other) {
+            fclose($other);
+        });
+
+        $this->assertRunFasterThan(0.1);
+    }
+
+    public function testRemoveReadAndWriteStreamFromLoopWithClosingResourceEndsLoop()
+    {
+        // get only one part of the pair to ensure the other side will close immediately
+        list($stream) = $this->createSocketPair();
+        stream_set_blocking($stream, false);
+
+        // dummy writable handler
+        $this->loop->addWriteStream($stream, function () { });
+
+        // remove stream when the stream is readable (closes)
+        $this->loop->addReadStream($stream, function ($stream) {
+            $this->loop->removeReadStream($stream);
+            $this->loop->removeWriteStream($stream);
+            fclose($stream);
+        });
+
+        $this->assertRunFasterThan($this->tickTimeout);
+    }
+
     public function testRemoveInvalid()
     {
         list ($stream) = $this->createSocketPair();

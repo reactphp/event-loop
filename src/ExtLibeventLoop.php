@@ -43,8 +43,8 @@ final class ExtLibeventLoop implements LoopInterface
     private $timerCallback;
     private $timerEvents;
     private $streamCallback;
-    private $streamEvents = [];
-    private $streamFlags = [];
+    private $readEvents = [];
+    private $writeEvents = [];
     private $readListeners = [];
     private $writeListeners = [];
     private $running;
@@ -88,21 +88,33 @@ final class ExtLibeventLoop implements LoopInterface
     public function addReadStream($stream, callable $listener)
     {
         $key = (int) $stream;
-
-        if (!isset($this->readListeners[$key])) {
-            $this->readListeners[$key] = $listener;
-            $this->subscribeStreamEvent($stream, EV_READ);
+        if (isset($this->readListeners[$key])) {
+            return;
         }
+
+        $event = event_new();
+        event_set($event, $stream, EV_PERSIST | EV_READ, $this->streamCallback);
+        event_base_set($event, $this->eventBase);
+        event_add($event);
+
+        $this->readEvents[$key] = $event;
+        $this->readListeners[$key] = $listener;
     }
 
     public function addWriteStream($stream, callable $listener)
     {
         $key = (int) $stream;
-
-        if (!isset($this->writeListeners[$key])) {
-            $this->writeListeners[$key] = $listener;
-            $this->subscribeStreamEvent($stream, EV_WRITE);
+        if (isset($this->writeListeners[$key])) {
+            return;
         }
+
+        $event = event_new();
+        event_set($event, $stream, EV_PERSIST | EV_WRITE, $this->streamCallback);
+        event_base_set($event, $this->eventBase);
+        event_add($event);
+
+        $this->writeEvents[$key] = $event;
+        $this->writeListeners[$key] = $listener;
     }
 
     public function removeReadStream($stream)
@@ -110,8 +122,14 @@ final class ExtLibeventLoop implements LoopInterface
         $key = (int) $stream;
 
         if (isset($this->readListeners[$key])) {
-            unset($this->readListeners[$key]);
-            $this->unsubscribeStreamEvent($stream, EV_READ);
+            $event = $this->readEvents[$key];
+            event_del($event);
+            event_free($event);
+
+            unset(
+                $this->readEvents[$key],
+                $this->readListeners[$key]
+            );
         }
     }
 
@@ -120,25 +138,12 @@ final class ExtLibeventLoop implements LoopInterface
         $key = (int) $stream;
 
         if (isset($this->writeListeners[$key])) {
-            unset($this->writeListeners[$key]);
-            $this->unsubscribeStreamEvent($stream, EV_WRITE);
-        }
-    }
-
-    private function removeStream($stream)
-    {
-        $key = (int) $stream;
-
-        if (isset($this->streamEvents[$key])) {
-            $event = $this->streamEvents[$key];
-
+            $event = $this->writeEvents[$key];
             event_del($event);
             event_free($event);
 
             unset(
-                $this->streamFlags[$key],
-                $this->streamEvents[$key],
-                $this->readListeners[$key],
+                $this->writeEvents[$key],
                 $this->writeListeners[$key]
             );
         }
@@ -166,7 +171,6 @@ final class ExtLibeventLoop implements LoopInterface
     {
         if ($this->timerEvents->contains($timer)) {
             $event = $this->timerEvents[$timer];
-
             event_del($event);
             event_free($event);
 
@@ -199,7 +203,7 @@ final class ExtLibeventLoop implements LoopInterface
             $flags = EVLOOP_ONCE;
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= EVLOOP_NONBLOCK;
-            } elseif (!$this->streamEvents && !$this->timerEvents->count()) {
+            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count()) {
                 break;
             }
 
@@ -224,61 +228,6 @@ final class ExtLibeventLoop implements LoopInterface
         event_timer_set($event, $this->timerCallback, $timer);
         event_base_set($event, $this->eventBase);
         event_add($event, $timer->getInterval() * self::MICROSECONDS_PER_SECOND);
-    }
-
-    /**
-     * Create a new ext-libevent event resource, or update the existing one.
-     *
-     * @param resource $stream
-     * @param integer  $flag   EV_READ or EV_WRITE
-     */
-    private function subscribeStreamEvent($stream, $flag)
-    {
-        $key = (int) $stream;
-
-        if (isset($this->streamEvents[$key])) {
-            $event = $this->streamEvents[$key];
-            $flags = $this->streamFlags[$key] |= $flag;
-
-            event_del($event);
-            event_set($event, $stream, EV_PERSIST | $flags, $this->streamCallback);
-        } else {
-            $event = event_new();
-
-            event_set($event, $stream, EV_PERSIST | $flag, $this->streamCallback);
-            event_base_set($event, $this->eventBase);
-
-            $this->streamEvents[$key] = $event;
-            $this->streamFlags[$key] = $flag;
-        }
-
-        event_add($event);
-    }
-
-    /**
-     * Update the ext-libevent event resource for this stream to stop listening to
-     * the given event type, or remove it entirely if it's no longer needed.
-     *
-     * @param resource $stream
-     * @param integer  $flag   EV_READ or EV_WRITE
-     */
-    private function unsubscribeStreamEvent($stream, $flag)
-    {
-        $key = (int) $stream;
-
-        $flags = $this->streamFlags[$key] &= ~$flag;
-
-        if (0 === $flags) {
-            $this->removeStream($stream);
-
-            return;
-        }
-
-        $event = $this->streamEvents[$key];
-
-        event_del($event);
-        event_set($event, $stream, EV_PERSIST | $flags, $this->streamCallback);
-        event_add($event);
     }
 
     /**
