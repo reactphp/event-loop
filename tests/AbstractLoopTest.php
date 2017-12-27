@@ -262,6 +262,8 @@ abstract class AbstractLoopTest extends TestCase
         // remove a valid stream from the event loop that was never added in the first place
         $this->loop->removeReadStream($stream);
         $this->loop->removeWriteStream($stream);
+
+        $this->assertTrue(true);
     }
 
     /** @test */
