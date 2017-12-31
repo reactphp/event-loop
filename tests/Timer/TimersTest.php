@@ -25,5 +25,7 @@ class TimersTest extends TestCase
         }));
 
         $timers->tick();
+
+        $this->assertTrue(true);
     }
 }
