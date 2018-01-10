@@ -5,7 +5,6 @@ namespace React\EventLoop;
 use React\EventLoop\Signal\Pcntl;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
-use React\EventLoop\TimerInterface;
 use React\EventLoop\Timer\Timers;
 
 /**
@@ -276,21 +275,5 @@ final class StreamSelectLoop implements LoopInterface
         $timeout && usleep($timeout);
 
         return 0;
-    }
-
-    /**
-     * Iterate over signal listeners for the given signal
-     * and call each of them with the signal as first
-     * argument.
-     *
-     * @param int $signal
-     *
-     * @return void
-     */
-    private function handleSignal($signal)
-    {
-        foreach ($this->signals[$signal] as $listener) {
-            \call_user_func($listener, $signal);
-        }
     }
 }

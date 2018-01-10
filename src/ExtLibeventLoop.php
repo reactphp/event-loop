@@ -6,7 +6,6 @@ use Event;
 use EventBase;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
-use React\EventLoop\TimerInterface;
 use SplObjectStorage;
 
 /**
@@ -245,9 +244,10 @@ final class ExtLibeventLoop implements LoopInterface
             // Timer already cancelled ...
             if (!$this->timerEvents->contains($timer)) {
                 return;
+            }
 
             // Reschedule periodic timers ...
-            } elseif ($timer->isPeriodic()) {
+            if ($timer->isPeriodic()) {
                 event_add(
                     $this->timerEvents[$timer],
                     $timer->getInterval() * self::MICROSECONDS_PER_SECOND
