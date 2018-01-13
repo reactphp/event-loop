@@ -2,8 +2,6 @@
 
 namespace React\EventLoop;
 
-use React\EventLoop\TimerInterface;
-
 /**
  * @internal
  */
@@ -32,7 +30,7 @@ final class SignalsHandler
 
     public function add($signal, $listener)
     {
-        if (count($this->signals) == 0 && $this->timer === null) {
+        if (empty($this->signals) && $this->timer === null) {
             /**
              * Timer to keep the loop alive as long as there are any signal handlers registered
              */
@@ -69,7 +67,7 @@ final class SignalsHandler
             $off($signal);
         }
 
-        if (count($this->signals) == 0 && $this->timer instanceof TimerInterface) {
+        if (empty($this->signals) && $this->timer instanceof TimerInterface) {
             $this->loop->cancelTimer($this->timer);
             $this->timer = null;
         }

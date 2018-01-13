@@ -8,7 +8,6 @@ use libev\SignalEvent;
 use libev\TimerEvent;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
-use React\EventLoop\TimerInterface;
 use SplObjectStorage;
 
 /**

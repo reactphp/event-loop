@@ -7,7 +7,6 @@ use EventBase;
 use EventConfig as EventBaseConfig;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
-use React\EventLoop\TimerInterface;
 use SplObjectStorage;
 
 /**

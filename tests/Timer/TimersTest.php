@@ -10,10 +10,6 @@ class TimersTest extends TestCase
 {
     public function testBlockedTimer()
     {
-        $loop = $this
-            ->getMockBuilder('React\EventLoop\LoopInterface')
-            ->getMock();
-
         $timers = new Timers();
         $timers->tick();
 
