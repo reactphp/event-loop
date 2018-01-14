@@ -11,6 +11,8 @@ abstract class AbstractLoopTest extends TestCase
 
     private $tickTimeout;
 
+    const PHP_DEFAULT_CHUNK_SIZE = 8192;
+
     public function setUp()
     {
         // HHVM is a bit slow, so give it more time
@@ -228,7 +230,7 @@ abstract class AbstractLoopTest extends TestCase
         });
 
         // send data and close stream
-        fwrite($other, str_repeat('.', 60000));
+        fwrite($other, str_repeat('.', static::PHP_DEFAULT_CHUNK_SIZE));
         $this->loop->addTimer(0.01, function () use ($other) {
             fclose($other);
         });
