@@ -42,13 +42,13 @@ final class ExtLibeventLoop implements LoopInterface
     private $timerCallback;
     private $timerEvents;
     private $streamCallback;
-    private $readEvents = [];
-    private $writeEvents = [];
-    private $readListeners = [];
-    private $writeListeners = [];
+    private $readEvents = array();
+    private $writeEvents = array();
+    private $readListeners = array();
+    private $writeListeners = array();
     private $running;
     private $signals;
-    private $signalEvents = [];
+    private $signalEvents = array();
 
     public function __construct()
     {
@@ -228,24 +228,26 @@ final class ExtLibeventLoop implements LoopInterface
      */
     private function createTimerCallback()
     {
-        $this->timerCallback = function ($_, $__, $timer) {
+        $that = $this;
+        $timers = $this->timerEvents;
+        $this->timerCallback = function ($_, $__, $timer) use ($timers, $that) {
             call_user_func($timer->getCallback(), $timer);
 
             // Timer already cancelled ...
-            if (!$this->timerEvents->contains($timer)) {
+            if (!$timers->contains($timer)) {
                 return;
             }
 
             // Reschedule periodic timers ...
             if ($timer->isPeriodic()) {
                 event_add(
-                    $this->timerEvents[$timer],
-                    $timer->getInterval() * self::MICROSECONDS_PER_SECOND
+                    $timers[$timer],
+                    $timer->getInterval() * ExtLibeventLoop::MICROSECONDS_PER_SECOND
                 );
 
             // Clean-up one shot timers ...
             } else {
-                $this->cancelTimer($timer);
+                $that->cancelTimer($timer);
             }
         };
     }
@@ -259,15 +261,17 @@ final class ExtLibeventLoop implements LoopInterface
      */
     private function createStreamCallback()
     {
-        $this->streamCallback = function ($stream, $flags) {
+        $read =& $this->readListeners;
+        $write =& $this->writeListeners;
+        $this->streamCallback = function ($stream, $flags) use (&$read, &$write) {
             $key = (int) $stream;
 
-            if (EV_READ === (EV_READ & $flags) && isset($this->readListeners[$key])) {
-                call_user_func($this->readListeners[$key], $stream);
+            if (EV_READ === (EV_READ & $flags) && isset($read[$key])) {
+                call_user_func($read[$key], $stream);
             }
 
-            if (EV_WRITE === (EV_WRITE & $flags) && isset($this->writeListeners[$key])) {
-                call_user_func($this->writeListeners[$key], $stream);
+            if (EV_WRITE === (EV_WRITE & $flags) && isset($write[$key])) {
+                call_user_func($write[$key], $stream);
             }
         };
     }

@@ -39,11 +39,11 @@ class StreamSelectLoopTest extends AbstractLoopTest
 
     public function signalProvider()
     {
-        return [
-            ['SIGUSR1'],
-            ['SIGHUP'],
-            ['SIGTERM'],
-        ];
+        return array(
+            array('SIGUSR1'),
+            array('SIGHUP'),
+            array('SIGTERM'),
+        );
     }
 
     /**
@@ -60,8 +60,9 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $check = $this->loop->addPeriodicTimer(0.01, function() {
             pcntl_signal_dispatch();
         });
-        $this->loop->addTimer(0.1, function () use ($check) {
-            $this->loop->cancelTimer($check);
+        $loop = $this->loop;
+        $loop->addTimer(0.1, function () use ($check, $loop) {
+            $loop->cancelTimer($check);
         });
 
         $handled = false;
@@ -92,12 +93,13 @@ class StreamSelectLoopTest extends AbstractLoopTest
         });
 
         // add stream to the loop
+        $loop = $this->loop;
         list($writeStream, $readStream) = $this->createSocketPair();
-        $this->loop->addReadStream($readStream, function ($stream) {
+        $loop->addReadStream($readStream, function ($stream) use ($loop) {
             /** @var $loop LoopInterface */
             $read = fgets($stream);
             if ($read === "end loop\n") {
-                $this->loop->stop();
+                $loop->stop();
             }
         });
         $this->loop->addTimer(0.1, function() use ($writeStream) {

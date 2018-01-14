@@ -26,15 +26,15 @@ final class ExtEventLoop implements LoopInterface
     private $timerCallback;
     private $timerEvents;
     private $streamCallback;
-    private $readEvents = [];
-    private $writeEvents = [];
-    private $readListeners = [];
-    private $writeListeners = [];
-    private $readRefs = [];
-    private $writeRefs = [];
+    private $readEvents = array();
+    private $writeEvents = array();
+    private $readListeners = array();
+    private $writeListeners = array();
+    private $readRefs = array();
+    private $writeRefs = array();
     private $running;
     private $signals;
-    private $signalEvents = [];
+    private $signalEvents = array();
 
     public function __construct(EventBaseConfig $config = null)
     {
@@ -215,10 +215,11 @@ final class ExtEventLoop implements LoopInterface
      */
     private function createTimerCallback()
     {
-        $this->timerCallback = function ($_, $__, $timer) {
+        $timers = $this->timerEvents;
+        $this->timerCallback = function ($_, $__, $timer) use ($timers) {
             call_user_func($timer->getCallback(), $timer);
 
-            if (!$timer->isPeriodic() && $this->timerEvents->contains($timer)) {
+            if (!$timer->isPeriodic() && $timers->contains($timer)) {
                 $this->cancelTimer($timer);
             }
         };
@@ -233,15 +234,17 @@ final class ExtEventLoop implements LoopInterface
      */
     private function createStreamCallback()
     {
-        $this->streamCallback = function ($stream, $flags) {
+        $read =& $this->readListeners;
+        $write =& $this->writeListeners;
+        $this->streamCallback = function ($stream, $flags) use (&$read, &$write) {
             $key = (int) $stream;
 
-            if (Event::READ === (Event::READ & $flags) && isset($this->readListeners[$key])) {
-                call_user_func($this->readListeners[$key], $stream);
+            if (Event::READ === (Event::READ & $flags) && isset($read[$key])) {
+                call_user_func($read[$key], $stream);
             }
 
-            if (Event::WRITE === (Event::WRITE & $flags) && isset($this->writeListeners[$key])) {
-                call_user_func($this->writeListeners[$key], $stream);
+            if (Event::WRITE === (Event::WRITE & $flags) && isset($write[$key])) {
+                call_user_func($write[$key], $stream);
             }
         };
     }
