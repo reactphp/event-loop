@@ -54,12 +54,6 @@ final class ExtEventLoop implements LoopInterface
                     $f = $g;
                 });
                 $this->signalEvents[$signal]->add();
-            },
-            function ($signal) {
-                if ($this->signals->count($signal) === 0) {
-                    $this->signalEvents[$signal]->free();
-                    unset($this->signalEvents[$signal]);
-                }
             }
         );
 
@@ -172,6 +166,11 @@ final class ExtEventLoop implements LoopInterface
     public function removeSignal($signal, $listener)
     {
         $this->signals->remove($signal, $listener);
+
+        if (isset($this->signalEvents[$signal]) && $this->signals->count($signal) === 0) {
+            $this->signalEvents[$signal]->free();
+            unset($this->signalEvents[$signal]);
+        }
     }
 
     public function run()

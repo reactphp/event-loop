@@ -80,11 +80,6 @@ final class StreamSelectLoop implements LoopInterface
                     $g = $f;
                     $f = $g;
                 });
-            },
-            function ($signal) {
-                if ($this->signals->count($signal) === 0) {
-                    \pcntl_signal($signal, SIG_DFL);
-                }
             }
         );
     }
@@ -168,7 +163,15 @@ final class StreamSelectLoop implements LoopInterface
 
     public function removeSignal($signal, $listener)
     {
+        if (!$this->signals->count($signal)) {
+            return;
+        }
+
         $this->signals->remove($signal, $listener);
+
+        if ($this->signals->count($signal) === 0) {
+            \pcntl_signal($signal, SIG_DFL);
+        }
     }
 
     public function run()

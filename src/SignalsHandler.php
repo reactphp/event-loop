@@ -11,21 +11,11 @@ final class SignalsHandler
     private $timer;
     private $signals = [];
     private $on;
-    private $off;
 
-    public function __construct(LoopInterface $loop, $on, $off)
+    public function __construct(LoopInterface $loop, $on)
     {
         $this->loop = $loop;
         $this->on = $on;
-        $this->off = $off;
-    }
-
-    public function __destruct()
-    {
-        $off = $this->off;
-        foreach ($this->signals as $signal => $listeners) {
-            $off($signal);
-        }
     }
 
     public function add($signal, $listener)
@@ -62,9 +52,6 @@ final class SignalsHandler
 
         if (isset($this->signals[$signal]) && \count($this->signals[$signal]) === 0) {
             unset($this->signals[$signal]);
-
-            $off = $this->off;
-            $off($signal);
         }
 
         if (empty($this->signals) && $this->timer instanceof TimerInterface) {
