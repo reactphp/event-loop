@@ -2,10 +2,14 @@
 
 namespace React\Tests\EventLoop\Timer;
 
+use React\EventLoop\LoopInterface;
 use React\Tests\EventLoop\TestCase;
 
 abstract class AbstractTimerTest extends TestCase
 {
+    /**
+     * @return LoopInterface
+     */
     abstract public function createLoop();
 
     public function testAddTimerReturnsNonPeriodicTimerInstance()

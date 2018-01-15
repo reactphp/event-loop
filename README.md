@@ -201,6 +201,16 @@ It supports the same backends as libevent.
 
 This loop is known to work with PHP 5.4 through PHP 7+.
 
+#### ExtEvLoop
+
+An `ext-ev` based event loop.
+
+This loop uses the [`ev` PECL extension](https://pecl.php.net/package/ev), that
+provides an interface to `libev` library.
+
+This loop is known to work with PHP 5.4 through PHP 7+.
+
+
 #### ExtLibeventLoop
 
 An `ext-libevent` based event loop.
