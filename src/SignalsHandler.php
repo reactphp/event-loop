@@ -10,12 +10,10 @@ final class SignalsHandler
     private $loop;
     private $timer;
     private $signals = [];
-    private $on;
 
-    public function __construct(LoopInterface $loop, $on)
+    public function __construct(LoopInterface $loop)
     {
         $this->loop = $loop;
-        $this->on = $on;
     }
 
     public function add($signal, $listener)
@@ -29,9 +27,6 @@ final class SignalsHandler
 
         if (!isset($this->signals[$signal])) {
             $this->signals[$signal] = [];
-
-            $on = $this->on;
-            $on($signal);
         }
 
         if (in_array($listener, $this->signals[$signal])) {

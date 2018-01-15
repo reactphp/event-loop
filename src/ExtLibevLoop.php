@@ -39,21 +39,7 @@ final class ExtLibevLoop implements LoopInterface
         $this->loop = new EventLoop();
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
-
-        $this->signals = new SignalsHandler(
-            $this,
-            function ($signal) {
-                $this->signalEvents[$signal] = new SignalEvent($f = function () use ($signal, &$f) {
-                    $this->signals->call($signal);
-                    // Ensure there are two copies of the callable around until it has been executed.
-                    // For more information see: https://bugs.php.net/bug.php?id=62452
-                    // Only an issue for PHP 5, this hack can be removed once PHP 5 support has been dropped.
-                    $g = $f;
-                    $f = $g;
-                }, $signal);
-                $this->loop->add($this->signalEvents[$signal]);
-            }
-        );
+        $this->signals = new SignalsHandler($this);
     }
 
     public function addReadStream($stream, $listener)
@@ -160,6 +146,18 @@ final class ExtLibevLoop implements LoopInterface
     public function addSignal($signal, $listener)
     {
         $this->signals->add($signal, $listener);
+
+        if (!isset($this->signalEvents[$signal])) {
+            $this->signalEvents[$signal] = new SignalEvent($f = function () use ($signal, &$f) {
+                $this->signals->call($signal);
+                // Ensure there are two copies of the callable around until it has been executed.
+                // For more information see: https://bugs.php.net/bug.php?id=62452
+                // Only an issue for PHP 5, this hack can be removed once PHP 5 support has been dropped.
+                $g = $f;
+                $f = $g;
+            }, $signal);
+            $this->loop->add($this->signalEvents[$signal]);
+        }
     }
 
     public function removeSignal($signal, $listener)

@@ -41,21 +41,7 @@ final class ExtEventLoop implements LoopInterface
         $this->eventBase = new EventBase($config);
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
-
-        $this->signals = new SignalsHandler(
-            $this,
-            function ($signal) {
-                $this->signalEvents[$signal] = Event::signal($this->eventBase, $signal, $f = function () use ($signal, &$f) {
-                    $this->signals->call($signal);
-                    // Ensure there are two copies of the callable around until it has been executed.
-                    // For more information see: https://bugs.php.net/bug.php?id=62452
-                    // Only an issue for PHP 5, this hack can be removed once PHP 5 support has been dropped.
-                    $g = $f;
-                    $f = $g;
-                });
-                $this->signalEvents[$signal]->add();
-            }
-        );
+        $this->signals = new SignalsHandler($this);
 
         $this->createTimerCallback();
         $this->createStreamCallback();
@@ -161,6 +147,18 @@ final class ExtEventLoop implements LoopInterface
     public function addSignal($signal, $listener)
     {
         $this->signals->add($signal, $listener);
+
+        if (!isset($this->signalEvents[$signal])) {
+            $this->signalEvents[$signal] = Event::signal($this->eventBase, $signal, $f = function () use ($signal, &$f) {
+                $this->signals->call($signal);
+                // Ensure there are two copies of the callable around until it has been executed.
+                // For more information see: https://bugs.php.net/bug.php?id=62452
+                // Only an issue for PHP 5, this hack can be removed once PHP 5 support has been dropped.
+                $g = $f;
+                $f = $g;
+            });
+            $this->signalEvents[$signal]->add();
+        }
     }
 
     public function removeSignal($signal, $listener)
