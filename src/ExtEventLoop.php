@@ -57,7 +57,7 @@ final class ExtEventLoop implements LoopInterface
             },
             function ($signal) {
                 if ($this->signals->count($signal) === 0) {
-                    $this->signalEvents[$signal]->del();
+                    $this->signalEvents[$signal]->free();
                     unset($this->signalEvents[$signal]);
                 }
             }

@@ -55,6 +55,7 @@ final class ExtLibevLoop implements LoopInterface
             },
             function ($signal) {
                 if ($this->signals->count($signal) === 0) {
+                    $this->signalEvents[$signal]->stop();
                     $this->loop->remove($this->signalEvents[$signal]);
                     unset($this->signalEvents[$signal]);
                 }
@@ -100,6 +101,7 @@ final class ExtLibevLoop implements LoopInterface
 
         if (isset($this->readEvents[$key])) {
             $this->readEvents[$key]->stop();
+            $this->loop->remove($this->readEvents[$key]);
             unset($this->readEvents[$key]);
         }
     }
@@ -110,6 +112,7 @@ final class ExtLibevLoop implements LoopInterface
 
         if (isset($this->writeEvents[$key])) {
             $this->writeEvents[$key]->stop();
+            $this->loop->remove($this->writeEvents[$key]);
             unset($this->writeEvents[$key]);
         }
     }
