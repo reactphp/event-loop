@@ -2,7 +2,6 @@
 
 namespace React\Tests\EventLoop;
 
-use React\EventLoop\Factory;
 use React\EventLoop\SignalsHandler;
 
 final class SignalsHandlerTest extends TestCase
@@ -13,9 +12,7 @@ final class SignalsHandlerTest extends TestCase
         $func = function () use (&$callCount) {
             $callCount++;
         };
-        $signals = new SignalsHandler(
-            Factory::create()
-        );
+        $signals = new SignalsHandler();
 
         $this->assertSame(0, $callCount);
 

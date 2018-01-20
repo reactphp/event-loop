@@ -7,24 +7,10 @@ namespace React\EventLoop;
  */
 final class SignalsHandler
 {
-    private $loop;
-    private $timer;
     private $signals = [];
-
-    public function __construct(LoopInterface $loop)
-    {
-        $this->loop = $loop;
-    }
 
     public function add($signal, $listener)
     {
-        if (empty($this->signals) && $this->timer === null) {
-            /**
-             * Timer to keep the loop alive as long as there are any signal handlers registered
-             */
-            $this->timer = $this->loop->addPeriodicTimer(300, function () {});
-        }
-
         if (!isset($this->signals[$signal])) {
             $this->signals[$signal] = [];
         }
@@ -48,11 +34,6 @@ final class SignalsHandler
         if (isset($this->signals[$signal]) && \count($this->signals[$signal]) === 0) {
             unset($this->signals[$signal]);
         }
-
-        if (empty($this->signals) && $this->timer instanceof TimerInterface) {
-            $this->loop->cancelTimer($this->timer);
-            $this->timer = null;
-        }
     }
 
     public function call($signal)
@@ -73,5 +54,10 @@ final class SignalsHandler
         }
 
         return \count($this->signals[$signal]);
+    }
+
+    public function isEmpty()
+    {
+        return !$this->signals;
     }
 }

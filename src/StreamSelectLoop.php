@@ -69,7 +69,7 @@ final class StreamSelectLoop implements LoopInterface
         $this->futureTickQueue = new FutureTickQueue();
         $this->timers = new Timers();
         $this->pcntl = extension_loaded('pcntl');
-        $this->signals = new SignalsHandler($this);
+        $this->signals = new SignalsHandler();
     }
 
     public function addReadStream($stream, $listener)
@@ -200,8 +200,8 @@ final class StreamSelectLoop implements LoopInterface
                     $timeout = $timeout > PHP_INT_MAX ? PHP_INT_MAX : (int)$timeout;
                 }
 
-            // The only possible event is stream activity, so wait forever ...
-            } elseif ($this->readStreams || $this->writeStreams) {
+            // The only possible event is stream or signal activity, so wait forever ...
+            } elseif ($this->readStreams || $this->writeStreams || !$this->signals->isEmpty()) {
                 $timeout = null;
 
             // There's nothing left to do ...

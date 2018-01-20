@@ -39,7 +39,7 @@ final class ExtLibevLoop implements LoopInterface
         $this->loop = new EventLoop();
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
-        $this->signals = new SignalsHandler($this);
+        $this->signals = new SignalsHandler();
     }
 
     public function addReadStream($stream, $listener)
@@ -181,7 +181,7 @@ final class ExtLibevLoop implements LoopInterface
             $flags = EventLoop::RUN_ONCE;
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= EventLoop::RUN_NOWAIT;
-            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count()) {
+            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count() && $this->signals->isEmpty()) {
                 break;
             }
 

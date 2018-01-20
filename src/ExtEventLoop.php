@@ -41,7 +41,7 @@ final class ExtEventLoop implements LoopInterface
         $this->eventBase = new EventBase($config);
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
-        $this->signals = new SignalsHandler($this);
+        $this->signals = new SignalsHandler();
 
         $this->createTimerCallback();
         $this->createStreamCallback();
@@ -181,7 +181,7 @@ final class ExtEventLoop implements LoopInterface
             $flags = EventBase::LOOP_ONCE;
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= EventBase::LOOP_NONBLOCK;
-            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count()) {
+            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count() && $this->signals->isEmpty()) {
                 break;
             }
 
