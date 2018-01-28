@@ -165,14 +165,7 @@ final class ExtLibeventLoop implements LoopInterface
 
         if (!isset($this->signalEvents[$signal])) {
             $this->signalEvents[$signal] = event_new();
-            event_set($this->signalEvents[$signal], $signal, EV_PERSIST | EV_SIGNAL, $f = function () use ($signal, &$f) {
-                $this->signals->call($signal);
-                // Ensure there are two copies of the callable around until it has been executed.
-                // For more information see: https://bugs.php.net/bug.php?id=62452
-                // Only an issue for PHP 5, this hack can be removed once PHP 5 support has been dropped.
-                $g = $f;
-                $f = $g;
-            });
+            event_set($this->signalEvents[$signal], $signal, EV_PERSIST | EV_SIGNAL, array($this->signals, 'call'));
             event_base_set($this->signalEvents[$signal], $this->eventBase);
             event_add($this->signalEvents[$signal]);
         }
