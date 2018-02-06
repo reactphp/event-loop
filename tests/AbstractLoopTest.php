@@ -475,6 +475,12 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->run();
     }
 
+    public function testRemoveSignalNotRegisteredIsNoOp()
+    {
+        $this->loop->removeSignal(SIGINT, function () { });
+        $this->assertTrue(true);
+    }
+
     public function testSignal()
     {
         if (!function_exists('posix_kill') || !function_exists('posix_getpid')) {

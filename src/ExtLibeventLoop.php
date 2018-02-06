@@ -55,30 +55,7 @@ final class ExtLibeventLoop implements LoopInterface
         $this->eventBase = event_base_new();
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
-
-        $this->signals = new SignalsHandler(
-            $this,
-            function ($signal) {
-                $this->signalEvents[$signal] = event_new();
-                event_set($this->signalEvents[$signal], $signal, EV_PERSIST | EV_SIGNAL, $f = function () use ($signal, &$f) {
-                    $this->signals->call($signal);
-                    // Ensure there are two copies of the callable around until it has been executed.
-                    // For more information see: https://bugs.php.net/bug.php?id=62452
-                    // Only an issue for PHP 5, this hack can be removed once PHP 5 support has been dropped.
-                    $g = $f;
-                    $f = $g;
-                });
-                event_base_set($this->signalEvents[$signal], $this->eventBase);
-                event_add($this->signalEvents[$signal]);
-            },
-            function ($signal) {
-                if ($this->signals->count($signal) === 0) {
-                    event_del($this->signalEvents[$signal]);
-                    event_free($this->signalEvents[$signal]);
-                    unset($this->signalEvents[$signal]);
-                }
-            }
-        );
+        $this->signals = new SignalsHandler();
 
         $this->createTimerCallback();
         $this->createStreamCallback();
@@ -185,11 +162,24 @@ final class ExtLibeventLoop implements LoopInterface
     public function addSignal($signal, $listener)
     {
         $this->signals->add($signal, $listener);
+
+        if (!isset($this->signalEvents[$signal])) {
+            $this->signalEvents[$signal] = event_new();
+            event_set($this->signalEvents[$signal], $signal, EV_PERSIST | EV_SIGNAL, array($this->signals, 'call'));
+            event_base_set($this->signalEvents[$signal], $this->eventBase);
+            event_add($this->signalEvents[$signal]);
+        }
     }
 
     public function removeSignal($signal, $listener)
     {
         $this->signals->remove($signal, $listener);
+
+        if (isset($this->signalEvents[$signal]) && $this->signals->count($signal) === 0) {
+            event_del($this->signalEvents[$signal]);
+            event_free($this->signalEvents[$signal]);
+            unset($this->signalEvents[$signal]);
+        }
     }
 
     public function run()
@@ -202,7 +192,7 @@ final class ExtLibeventLoop implements LoopInterface
             $flags = EVLOOP_ONCE;
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= EVLOOP_NONBLOCK;
-            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count()) {
+            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count() && $this->signals->isEmpty()) {
                 break;
             }
 

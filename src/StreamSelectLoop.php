@@ -69,24 +69,7 @@ final class StreamSelectLoop implements LoopInterface
         $this->futureTickQueue = new FutureTickQueue();
         $this->timers = new Timers();
         $this->pcntl = extension_loaded('pcntl');
-        $this->signals = new SignalsHandler(
-            $this,
-            function ($signal) {
-                \pcntl_signal($signal, $f = function ($signal) use (&$f) {
-                    $this->signals->call($signal);
-                    // Ensure there are two copies of the callable around until it has been executed.
-                    // For more information see: https://bugs.php.net/bug.php?id=62452
-                    // Only an issue for PHP 5, this hack can be removed once PHP 5 support has been dropped.
-                    $g = $f;
-                    $f = $g;
-                });
-            },
-            function ($signal) {
-                if ($this->signals->count($signal) === 0) {
-                    \pcntl_signal($signal, SIG_DFL);
-                }
-            }
-        );
+        $this->signals = new SignalsHandler();
     }
 
     public function addReadStream($stream, $listener)
@@ -163,12 +146,25 @@ final class StreamSelectLoop implements LoopInterface
             throw new \BadMethodCallException('Event loop feature "signals" isn\'t supported by the "StreamSelectLoop"');
         }
 
+        $first = $this->signals->count($signal) === 0;
         $this->signals->add($signal, $listener);
+
+        if ($first) {
+            \pcntl_signal($signal, array($this->signals, 'call'));
+        }
     }
 
     public function removeSignal($signal, $listener)
     {
+        if (!$this->signals->count($signal)) {
+            return;
+        }
+
         $this->signals->remove($signal, $listener);
+
+        if ($this->signals->count($signal) === 0) {
+            \pcntl_signal($signal, SIG_DFL);
+        }
     }
 
     public function run()
@@ -197,8 +193,8 @@ final class StreamSelectLoop implements LoopInterface
                     $timeout = $timeout > PHP_INT_MAX ? PHP_INT_MAX : (int)$timeout;
                 }
 
-            // The only possible event is stream activity, so wait forever ...
-            } elseif ($this->readStreams || $this->writeStreams) {
+            // The only possible event is stream or signal activity, so wait forever ...
+            } elseif ($this->readStreams || $this->writeStreams || !$this->signals->isEmpty()) {
                 $timeout = null;
 
             // There's nothing left to do ...
