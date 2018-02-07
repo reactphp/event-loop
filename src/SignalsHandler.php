@@ -7,12 +7,12 @@ namespace React\EventLoop;
  */
 final class SignalsHandler
 {
-    private $signals = [];
+    private $signals = array();
 
     public function add($signal, $listener)
     {
         if (!isset($this->signals[$signal])) {
-            $this->signals[$signal] = [];
+            $this->signals[$signal] = array();
         }
 
         if (in_array($listener, $this->signals[$signal])) {

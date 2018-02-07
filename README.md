@@ -158,7 +158,7 @@ A `stream_select()` based event loop.
 This uses the [`stream_select()`](http://php.net/manual/en/function.stream-select.php)
 function and is the only implementation which works out of the box with PHP.
 
-This event loop works out of the box on PHP 5.4 through PHP 7+ and HHVM.
+This event loop works out of the box on PHP 5.3 through PHP 7+ and HHVM.
 This means that no installation is required and this library works on all
 platforms and supported PHP versions.
 Accordingly, the [`Factory`](#factory) will use this event loop by default if
@@ -574,7 +574,7 @@ $ composer require react/event-loop
 ```
 
 This project aims to run on any platform and thus does not require any PHP
-extensions and supports running on legacy PHP 5.4 through current PHP 7+ and
+extensions and supports running on legacy PHP 5.3 through current PHP 7+ and
 HHVM.
 It's *highly recommended to use PHP 7+* for this project.
 

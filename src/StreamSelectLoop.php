@@ -56,10 +56,10 @@ final class StreamSelectLoop implements LoopInterface
 
     private $futureTickQueue;
     private $timers;
-    private $readStreams = [];
-    private $readListeners = [];
-    private $writeStreams = [];
-    private $writeListeners = [];
+    private $readStreams = array();
+    private $readListeners = array();
+    private $writeStreams = array();
+    private $writeListeners = array();
     private $running;
     private $pcntl = false;
     private $signals;

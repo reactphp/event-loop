@@ -82,14 +82,16 @@ abstract class AbstractLoopTest extends TestCase
         fwrite($input, 'hello');
         fclose($input);
 
-        $this->loop->addReadStream($output, function ($output) {
+        $loop = $this->loop;
+        $received =& $this->received;
+        $loop->addReadStream($output, function ($output) use ($loop, &$received) {
             $chunk = fread($output, 1024);
             if ($chunk === '') {
-                $this->received .= 'X';
-                $this->loop->removeReadStream($output);
+                $received .= 'X';
+                $loop->removeReadStream($output);
                 fclose($output);
             } else {
-                $this->received .= '[' . $chunk . ']';
+                $received .= '[' . $chunk . ']';
             }
         });
     }
@@ -194,9 +196,10 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addWriteStream($stream, function () { });
 
         // remove stream when the stream is readable (closes)
-        $this->loop->addReadStream($stream, function ($stream) {
-            $this->loop->removeReadStream($stream);
-            $this->loop->removeWriteStream($stream);
+        $loop = $this->loop;
+        $loop->addReadStream($stream, function ($stream) use ($loop) {
+            $loop->removeReadStream($stream);
+            $loop->removeWriteStream($stream);
             fclose($stream);
         });
 
@@ -216,14 +219,15 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addWriteStream($stream, function () { });
 
         // remove stream when the stream is readable (closes)
-        $this->loop->addReadStream($stream, function ($stream) {
+        $loop = $this->loop;
+        $loop->addReadStream($stream, function ($stream) use ($loop) {
             $data = fread($stream, 1024);
             if ($data !== '') {
                 return;
             }
 
-            $this->loop->removeReadStream($stream);
-            $this->loop->removeWriteStream($stream);
+            $loop->removeReadStream($stream);
+            $loop->removeWriteStream($stream);
             fclose($stream);
         });
 
@@ -246,9 +250,10 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addWriteStream($stream, function () { });
 
         // remove stream when the stream is readable (closes)
-        $this->loop->addReadStream($stream, function ($stream) {
-            $this->loop->removeReadStream($stream);
-            $this->loop->removeWriteStream($stream);
+        $loop = $this->loop;
+        $loop->addReadStream($stream, function ($stream) use ($loop) {
+            $loop->removeReadStream($stream);
+            $loop->removeWriteStream($stream);
             fclose($stream);
         });
 
@@ -304,16 +309,18 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testStopShouldPreventRunFromBlocking()
     {
+        $that = $this;
         $this->loop->addTimer(
             1,
-            function () {
-                $this->fail('Timer was executed.');
+            function () use ($that) {
+                $that->fail('Timer was executed.');
             }
         );
 
+        $loop = $this->loop;
         $this->loop->futureTick(
-            function () {
-                $this->loop->stop();
+            function () use ($loop) {
+                $loop->stop();
             }
         );
 
@@ -338,9 +345,10 @@ abstract class AbstractLoopTest extends TestCase
         });
 
         // this callback would have to be called as well, but the first stream already removed us
-        $loop->addReadStream($input2, function () use (& $called) {
+        $that = $this;
+        $loop->addReadStream($input2, function () use (& $called, $that) {
             if ($called) {
-                $this->fail('Callback 2 must not be called after callback 1 was called');
+                $that->fail('Callback 2 must not be called after callback 1 was called');
             }
         });
 
@@ -354,9 +362,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testFutureTickEventGeneratedByFutureTick()
     {
+        $loop = $this->loop;
         $this->loop->futureTick(
-            function () {
-                $this->loop->futureTick(
+            function () use ($loop) {
+                $loop->futureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
                     }
@@ -412,18 +421,19 @@ abstract class AbstractLoopTest extends TestCase
     {
         list ($stream) = $this->createSocketPair();
 
+        $loop = $this->loop;
         $this->loop->addWriteStream(
             $stream,
-            function () use ($stream) {
+            function () use ($stream, $loop) {
                 echo 'stream' . PHP_EOL;
-                $this->loop->removeWriteStream($stream);
+                $loop->removeWriteStream($stream);
             }
         );
 
         $this->loop->futureTick(
-            function () {
+            function () use ($loop) {
                 echo 'future-tick-1' . PHP_EOL;
-                $this->loop->futureTick(
+                $loop->futureTick(
                     function () {
                         echo 'future-tick-2' . PHP_EOL;
                     }
@@ -440,11 +450,12 @@ abstract class AbstractLoopTest extends TestCase
     {
         list ($stream) = $this->createSocketPair();
 
+        $loop = $this->loop;
         $this->loop->addWriteStream(
             $stream,
-            function () use ($stream) {
-                $this->loop->removeWriteStream($stream);
-                $this->loop->futureTick(
+            function () use ($stream, $loop) {
+                $loop->removeWriteStream($stream);
+                $loop->futureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
                     }
@@ -459,10 +470,11 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testFutureTickEventGeneratedByTimer()
     {
+        $loop = $this->loop;
         $this->loop->addTimer(
             0.001,
-            function () {
-                $this->loop->futureTick(
+            function () use ($loop) {
+                $loop->futureTick(
                     function () {
                         echo 'future-tick' . PHP_EOL;
                     }
@@ -496,11 +508,12 @@ abstract class AbstractLoopTest extends TestCase
             $calledShouldNot = false;
         });
 
-        $this->loop->addSignal(SIGUSR1, $func1 = function () use (&$func1, &$func2, &$called, $timer) {
+        $loop = $this->loop;
+        $this->loop->addSignal(SIGUSR1, $func1 = function () use (&$func1, &$func2, &$called, $timer, $loop) {
             $called = true;
-            $this->loop->removeSignal(SIGUSR1, $func1);
-            $this->loop->removeSignal(SIGUSR2, $func2);
-            $this->loop->cancelTimer($timer);
+            $loop->removeSignal(SIGUSR1, $func1);
+            $loop->removeSignal(SIGUSR2, $func2);
+            $loop->cancelTimer($timer);
         });
 
         $this->loop->futureTick(function () {
@@ -527,8 +540,9 @@ abstract class AbstractLoopTest extends TestCase
         $this->loop->addTimer(0.4, function () {
             posix_kill(posix_getpid(), SIGUSR1);
         });
-        $this->loop->addTimer(0.9, function () use (&$func) {
-            $this->loop->removeSignal(SIGUSR1, $func);
+        $loop = $this->loop;
+        $this->loop->addTimer(0.9, function () use (&$func, $loop) {
+            $loop->removeSignal(SIGUSR1, $func);
         });
 
         $this->loop->run();
@@ -538,11 +552,12 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testSignalsKeepTheLoopRunning()
     {
+        $loop = $this->loop;
         $function = function () {};
         $this->loop->addSignal(SIGUSR1, $function);
-        $this->loop->addTimer(1.5, function () use ($function) {
-            $this->loop->removeSignal(SIGUSR1, $function);
-            $this->loop->stop();
+        $this->loop->addTimer(1.5, function () use ($function, $loop) {
+            $loop->removeSignal(SIGUSR1, $function);
+            $loop->stop();
         });
 
         $this->assertRunSlowerThan(1.5);
@@ -550,10 +565,11 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testSignalsKeepTheLoopRunningAndRemovingItStopsTheLoop()
     {
+        $loop = $this->loop;
         $function = function () {};
         $this->loop->addSignal(SIGUSR1, $function);
-        $this->loop->addTimer(1.5, function () use ($function) {
-            $this->loop->removeSignal(SIGUSR1, $function);
+        $this->loop->addTimer(1.5, function () use ($function, $loop) {
+            $loop->removeSignal(SIGUSR1, $function);
         });
 
         $this->assertRunFasterThan(1.6);
@@ -568,9 +584,10 @@ abstract class AbstractLoopTest extends TestCase
         $timer = $this->loop->addTimer(PHP_INT_MAX, function () { });
 
         // remove stream and timer when the stream is readable (closes)
-        $this->loop->addReadStream($stream, function ($stream) use ($timer) {
-            $this->loop->removeReadStream($stream);
-            $this->loop->cancelTimer($timer);
+        $loop = $this->loop;
+        $this->loop->addReadStream($stream, function ($stream) use ($timer, $loop) {
+            $loop->removeReadStream($stream);
+            $loop->cancelTimer($timer);
         });
 
         $this->assertRunFasterThan($this->tickTimeout);
