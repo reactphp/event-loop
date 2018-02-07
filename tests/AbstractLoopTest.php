@@ -13,8 +13,8 @@ abstract class AbstractLoopTest extends TestCase
 
     public function setUp()
     {
-        // HHVM is a bit slow, so give it more time
-        $this->tickTimeout = defined('HHVM_VERSION') ? 0.02 : 0.005;
+        // It's a timeout, don't set it too low. Travis and other CI systems are slow.
+        $this->tickTimeout = 0.02;
         $this->loop = $this->createLoop();
     }
 
