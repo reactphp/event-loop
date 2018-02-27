@@ -4,7 +4,6 @@ namespace React\EventLoop;
 
 use Event;
 use EventBase;
-use EventConfig as EventBaseConfig;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
 use SplObjectStorage;
@@ -36,9 +35,9 @@ final class ExtEventLoop implements LoopInterface
     private $signals;
     private $signalEvents = array();
 
-    public function __construct(EventBaseConfig $config = null)
+    public function __construct()
     {
-        $this->eventBase = new EventBase($config);
+        $this->eventBase = new EventBase();
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
         $this->signals = new SignalsHandler();
