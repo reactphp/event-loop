@@ -2,6 +2,7 @@
 
 namespace React\EventLoop;
 
+use BadMethodCallException;
 use libev\EventLoop;
 use libev\IOEvent;
 use libev\SignalEvent;
@@ -36,6 +37,10 @@ final class ExtLibevLoop implements LoopInterface
 
     public function __construct()
     {
+        if (!class_exists('libev\EventLoop', false)) {
+            throw new BadMethodCallException('Cannot create ExtLibevLoop, ext-libev extension missing');
+        }
+
         $this->loop = new EventLoop();
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();

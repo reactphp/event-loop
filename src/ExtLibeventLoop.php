@@ -2,6 +2,7 @@
 
 namespace React\EventLoop;
 
+use BadMethodCallException;
 use Event;
 use EventBase;
 use React\EventLoop\Tick\FutureTickQueue;
@@ -52,6 +53,10 @@ final class ExtLibeventLoop implements LoopInterface
 
     public function __construct()
     {
+        if (!function_exists('event_base_new')) {
+            throw new BadMethodCallException('Cannot create ExtLibeventLoop, ext-libevent extension missing');
+        }
+
         $this->eventBase = event_base_new();
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();

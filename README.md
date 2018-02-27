@@ -149,7 +149,7 @@ You should use the [`Factory`](#factory) to automatically create a new instance.
 Advanced! If you explicitly need a certain event loop implementation, you can
 manually instantiate one of the following classes.
 Note that you may have to install the required PHP extensions for the respective
-event loop implementation first or this may result in a fatal error.
+event loop implementation first or they will throw a `BadMethodCallException` on creation.
 
 #### StreamSelectLoop
 
