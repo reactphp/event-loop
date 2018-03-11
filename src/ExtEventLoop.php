@@ -38,6 +38,11 @@ final class ExtEventLoop implements LoopInterface
 
     public function __construct(EventBaseConfig $config = null)
     {
+        if ($config === null) {
+            $config = new EventBaseConfig();
+            $config->requireFeatures(EventBaseConfig::FEATURE_FDS);
+        }
+
         $this->eventBase = new EventBase($config);
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();

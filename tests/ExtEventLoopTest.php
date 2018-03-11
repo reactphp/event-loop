@@ -16,13 +16,7 @@ class ExtEventLoopTest extends AbstractLoopTest
             $this->markTestSkipped('ext-event tests skipped because ext-event is not installed.');
         }
 
-        $cfg = null;
-        if ($readStreamCompatible) {
-            $cfg = new \EventConfig();
-            $cfg->requireFeatures(\EventConfig::FEATURE_FDS);
-        }
-
-        return new ExtEventLoop($cfg);
+        return new ExtEventLoop();
     }
 
     public function createStream()
