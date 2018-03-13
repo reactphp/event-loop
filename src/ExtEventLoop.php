@@ -2,6 +2,7 @@
 
 namespace React\EventLoop;
 
+use BadMethodCallException;
 use Event;
 use EventBase;
 use EventConfig as EventBaseConfig;
@@ -38,6 +39,10 @@ final class ExtEventLoop implements LoopInterface
 
     public function __construct()
     {
+        if (!class_exists('EventBase', false)) {
+            throw new BadMethodCallException('Cannot create ExtEventLoop, ext-event extension missing');
+        }
+
         $config = new EventBaseConfig();
         $config->requireFeatures(EventBaseConfig::FEATURE_FDS);
 
