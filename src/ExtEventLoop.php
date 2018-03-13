@@ -36,8 +36,11 @@ final class ExtEventLoop implements LoopInterface
     private $signals;
     private $signalEvents = array();
 
-    public function __construct(EventBaseConfig $config = null)
+    public function __construct()
     {
+        $config = new EventBaseConfig();
+        $config->requireFeatures(EventBaseConfig::FEATURE_FDS);
+
         $this->eventBase = new EventBase($config);
         $this->futureTickQueue = new FutureTickQueue();
         $this->timerEvents = new SplObjectStorage();
