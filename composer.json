@@ -11,8 +11,6 @@
     },
     "suggest": {
         "ext-event": "~1.0 for ExtEventLoop",
-        "ext-libevent": ">=0.1.0 for ExtLibeventLoop and PHP 5 only",
-        "ext-libev": "for ExtLibevLoop and PHP 5 only",
         "ext-pcntl": "For signal handling support when using the StreamSelectLoop"
     },
     "autoload": {
