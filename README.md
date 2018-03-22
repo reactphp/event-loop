@@ -499,7 +499,8 @@ checking whether it is ready to read by this loop implementation.
 A single stream resource MUST NOT be added more than once.
 Instead, either call [`removeReadStream()`](#removereadstream) first or
 react to this event with a single listener and then dispatch from this
-listener.
+listener. This method MAY throw an `Exception` if the given resource type
+is not supported by this loop implementation.
 
 The listener callback function MUST be able to accept a single parameter,
 the stream resource added by this method or you MAY use a function which
@@ -550,7 +551,8 @@ checking whether it is ready to write by this loop implementation.
 A single stream resource MUST NOT be added more than once.
 Instead, either call [`removeWriteStream()`](#removewritestream) first or
 react to this event with a single listener and then dispatch from this
-listener.
+listener. This method MAY throw an `Exception` if the given resource type
+is not supported by this loop implementation.
 
 The listener callback function MUST be able to accept a single parameter,
 the stream resource added by this method or you MAY use a function which
