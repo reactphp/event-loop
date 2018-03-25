@@ -168,8 +168,16 @@ interface LoopInterface
      * hello('Tester', $loop);
      * ```
      *
-     * The execution order of timers scheduled to execute at the same time is
-     * not guaranteed.
+     * This interface does not enforce any particular timer resolution, so
+     * special care may have to be taken if you rely on very high precision with
+     * millisecond accuracy or below. Event loop implementations SHOULD work on
+     * a best effort basis and SHOULD provide at least millisecond accuracy
+     * unless otherwise noted. Many existing event loop implementations are
+     * known to provide microsecond accuracy, but it's generally not recommended
+     * to rely on this high precision.
+     *
+     * Similarly, the execution order of timers scheduled to execute at the
+     * same time (within its possible accuracy) is not guaranteed.
      *
      * @param int|float $interval The number of seconds to wait before execution.
      * @param callable  $callback The callback to invoke.
@@ -227,8 +235,16 @@ interface LoopInterface
      * hello('Tester', $loop);
      * ```
      *
-     * The execution order of timers scheduled to execute at the same time is
-     * not guaranteed.
+     * This interface does not enforce any particular timer resolution, so
+     * special care may have to be taken if you rely on very high precision with
+     * millisecond accuracy or below. Event loop implementations SHOULD work on
+     * a best effort basis and SHOULD provide at least millisecond accuracy
+     * unless otherwise noted. Many existing event loop implementations are
+     * known to provide microsecond accuracy, but it's generally not recommended
+     * to rely on this high precision.
+     *
+     * Similarly, the execution order of timers scheduled to execute at the
+     * same time (within its possible accuracy) is not guaranteed.
      *
      * This interface suggests that event loop implementations SHOULD use a
      * monotic time source if available. Given that a monotonic time source is
