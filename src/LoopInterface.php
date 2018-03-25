@@ -179,6 +179,17 @@ interface LoopInterface
      * Similarly, the execution order of timers scheduled to execute at the
      * same time (within its possible accuracy) is not guaranteed.
      *
+     * This interface suggests that event loop implementations SHOULD use a
+     * monotonic time source if available. Given that a monotonic time source is
+     * not available on PHP by default, event loop implementations MAY fall back
+     * to using wall-clock time.
+     * While this does not affect many common use cases, this is an important
+     * distinction for programs that rely on a high time precision or on systems
+     * that are subject to discontinuous time adjustments (time jumps).
+     * This means that if you schedule a timer to trigger in 30s and then adjust
+     * your system time forward by 20s, the timer SHOULD still trigger in 30s.
+     * See also [event loop implementations](#loop-implementations) for more details.
+     *
      * @param int|float $interval The number of seconds to wait before execution.
      * @param callable  $callback The callback to invoke.
      *
@@ -247,7 +258,7 @@ interface LoopInterface
      * same time (within its possible accuracy) is not guaranteed.
      *
      * This interface suggests that event loop implementations SHOULD use a
-     * monotic time source if available. Given that a monotonic time source is
+     * monotonic time source if available. Given that a monotonic time source is
      * not available on PHP by default, event loop implementations MAY fall back
      * to using wall-clock time.
      * While this does not affect many common use cases, this is an important
@@ -256,6 +267,11 @@ interface LoopInterface
      * This means that if you schedule a timer to trigger in 30s and then adjust
      * your system time forward by 20s, the timer SHOULD still trigger in 30s.
      * See also [event loop implementations](#loop-implementations) for more details.
+     *
+     * Additionally, periodic timers may be subject to timer drift due to
+     * re-scheduling after each invocation. As such, it's generally not
+     * recommended to rely on this for high precision intervals with millisecond
+     * accuracy or below.
      *
      * @param int|float $interval The number of seconds to wait before execution.
      * @param callable  $callback The callback to invoke.
