@@ -281,11 +281,19 @@ function hello($name, LoopInterface $loop)
 hello('Tester', $loop);
 ```
 
-The execution order of timers scheduled to execute at the same time is
-not guaranteed.
+This interface does not enforce any particular timer resolution, so
+special care may have to be taken if you rely on very high precision with
+millisecond accuracy or below. Event loop implementations SHOULD work on
+a best effort basis and SHOULD provide at least millisecond accuracy
+unless otherwise noted. Many existing event loop implementations are
+known to provide microsecond accuracy, but it's generally not recommended
+to rely on this high precision.
+
+Similarly, the execution order of timers scheduled to execute at the
+same time (within its possible accuracy) is not guaranteed.
 
 This interface suggests that event loop implementations SHOULD use a
-monotic time source if available. Given that a monotonic time source is
+monotonic time source if available. Given that a monotonic time source is
 not available on PHP by default, event loop implementations MAY fall back
 to using wall-clock time.
 While this does not affect many common use cases, this is an important
@@ -346,8 +354,32 @@ function hello($name, LoopInterface $loop)
 hello('Tester', $loop);
 ```
 
-The execution order of timers scheduled to execute at the same time is
-not guaranteed.
+This interface does not enforce any particular timer resolution, so
+special care may have to be taken if you rely on very high precision with
+millisecond accuracy or below. Event loop implementations SHOULD work on
+a best effort basis and SHOULD provide at least millisecond accuracy
+unless otherwise noted. Many existing event loop implementations are
+known to provide microsecond accuracy, but it's generally not recommended
+to rely on this high precision.
+
+Similarly, the execution order of timers scheduled to execute at the
+same time (within its possible accuracy) is not guaranteed.
+
+This interface suggests that event loop implementations SHOULD use a
+monotonic time source if available. Given that a monotonic time source is
+not available on PHP by default, event loop implementations MAY fall back
+to using wall-clock time.
+While this does not affect many common use cases, this is an important
+distinction for programs that rely on a high time precision or on systems
+that are subject to discontinuous time adjustments (time jumps).
+This means that if you schedule a timer to trigger in 30s and then adjust
+your system time forward by 20s, the timer SHOULD still trigger in 30s.
+See also [event loop implementations](#loop-implementations) for more details.
+
+Additionally, periodic timers may be subject to timer drift due to
+re-scheduling after each invocation. As such, it's generally not
+recommended to rely on this for high precision intervals with millisecond
+accuracy or below.
 
 #### cancelTimer()
 
