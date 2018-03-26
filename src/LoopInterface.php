@@ -17,7 +17,8 @@ interface LoopInterface
      * A single stream resource MUST NOT be added more than once.
      * Instead, either call [`removeReadStream()`](#removereadstream) first or
      * react to this event with a single listener and then dispatch from this
-     * listener.
+     * listener. This method MAY throw an `Exception` if the given resource type
+     * is not supported by this loop implementation.
      *
      * The listener callback function MUST be able to accept a single parameter,
      * the stream resource added by this method or you MAY use a function which
@@ -47,6 +48,7 @@ interface LoopInterface
      *
      * @param resource $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
+     * @throws \Exception if the given resource type is not supported by this loop implementation
      * @see self::removeReadStream()
      */
     public function addReadStream($stream, $listener);
@@ -64,7 +66,8 @@ interface LoopInterface
      * A single stream resource MUST NOT be added more than once.
      * Instead, either call [`removeWriteStream()`](#removewritestream) first or
      * react to this event with a single listener and then dispatch from this
-     * listener.
+     * listener. This method MAY throw an `Exception` if the given resource type
+     * is not supported by this loop implementation.
      *
      * The listener callback function MUST be able to accept a single parameter,
      * the stream resource added by this method or you MAY use a function which
@@ -102,6 +105,7 @@ interface LoopInterface
      *
      * @param resource $stream   The PHP stream resource to check.
      * @param callable $listener Invoked when the stream is ready.
+     * @throws \Exception if the given resource type is not supported by this loop implementation
      * @see self::removeWriteStream()
      */
     public function addWriteStream($stream, $listener);
