@@ -8,7 +8,7 @@ Event loop abstraction layer that libraries can use for evented I/O.
 In order for async based libraries to be interoperable, they need to use the
 same event loop. This component provides a common `LoopInterface` that any
 library can target. This allows them to be used in the same loop, with one
-single `run()` call that is controlled by the user.
+single [`run()`](#run) call that is controlled by the user.
 
 > The master branch contains the code for the upcoming 0.5 release.
 For the code of the current stable 0.4.x release, checkout the
@@ -26,6 +26,8 @@ For the code of the current stable 0.4.x release, checkout the
     * [ExtLibeventLoop](#extlibeventloop)
     * [ExtLibevLoop](#extlibevloop)
   * [LoopInterface](#loopinterface)
+    * [run()](#run)
+    * [stop()](#stop)
     * [addTimer()](#addtimer)
     * [addPeriodicTimer()](#addperiodictimer)
     * [cancelTimer()](#canceltimer)
@@ -100,7 +102,7 @@ $loop->run();
 ```
 
 1. The loop instance is created at the beginning of the program. A convenience
-   factory `React\EventLoop\Factory::create()` is provided by this library which
+   factory [`React\EventLoop\Factory::create()`](#create) is provided by this library which
    picks the best available [loop implementation](#loop-implementations).
 2. The loop instance is used directly or passed to library and application code.
    In this example, a periodic timer is registered with the event loop which
@@ -109,7 +111,7 @@ $loop->run();
    is created by using ReactPHP's
    [stream component](https://github.com/reactphp/stream) for demonstration
    purposes.
-3. The loop is run with a single `$loop->run()` call at the end of the program.
+3. The loop is run with a single [`$loop->run()`](#run) call at the end of the program.
 
 ### Factory
 
@@ -236,6 +238,55 @@ An update for PHP 7 is [unlikely](https://github.com/m4rw3r/php-libev/issues/8)
 to happen any time soon.
 
 ### LoopInterface
+
+#### run()
+
+The `run(): void` method can be used to
+run the event loop until there are no more tasks to perform.
+
+For many applications, this method is the only directly visible
+invocation on the event loop.
+As a rule of thumb, it is usally recommended to attach everything to the
+same loop instance and then run the loop once at the bottom end of the
+application.
+
+```php
+$loop->run();
+```
+
+This method will keep the loop running until there are no more tasks
+to perform. In other words: This method will block until the last
+timer, stream and/or signal has been removed.
+
+Likewise, it is imperative to ensure the application actually invokes
+this method once. Adding listeners to the loop and missing to actually
+run it will result in the application exiting without actually waiting
+for any of the attached listeners.
+
+This method MUST NOT be called while the loop is already running.
+This method MAY be called more than once after it has explicity been
+[`stop()`ped](#stop) or after it automatically stopped because it
+previously did no longer have anything to do.
+
+#### stop()
+
+The `stop(): void` method can be used to
+instruct a running event loop to stop.
+
+This method is considered advanced usage and should be used with care.
+As a rule of thumb, it is usually recommended to let the loop stop
+only automatically when it no longer has anything to do.
+
+This method can be used to explicitly instruct the event loop to stop:
+
+```php
+$loop->addTimer(3.0, function () use ($loop) {
+    $loop->stop();
+});
+```
+
+Calling this method on a loop instance that is not currently running or
+on a loop instance that has already been stopped has no effect.
 
 #### addTimer()
 
