@@ -410,11 +410,54 @@ interface LoopInterface
 
     /**
      * Run the event loop until there are no more tasks to perform.
+     *
+     * For many applications, this method is the only directly visible
+     * invocation on the event loop.
+     * As a rule of thumb, it is usally recommended to attach everything to the
+     * same loop instance and then run the loop once at the bottom end of the
+     * application.
+     *
+     * ```php
+     * $loop->run();
+     * ```
+     *
+     * This method will keep the loop running until there are no more tasks
+     * to perform. In other words: This method will block until the last
+     * timer, stream and/or signal has been removed.
+     *
+     * Likewise, it is imperative to ensure the application actually invokes
+     * this method once. Adding listeners to the loop and missing to actually
+     * run it will result in the application exiting without actually waiting
+     * for any of the attached listeners.
+     *
+     * This method MUST NOT be called while the loop is already running.
+     * This method MAY be called more than once after it has explicity been
+     * [`stop()`ped](#stop) or after it automatically stopped because it
+     * previously did no longer have anything to do.
+     *
+     * @return void
      */
     public function run();
 
     /**
      * Instruct a running event loop to stop.
+     *
+     * This method is considered advanced usage and should be used with care.
+     * As a rule of thumb, it is usually recommended to let the loop stop
+     * only automatically when it no longer has anything to do.
+     *
+     * This method can be used to explicitly instruct the event loop to stop:
+     *
+     * ```php
+     * $loop->addTimer(3.0, function () use ($loop) {
+     *     $loop->stop();
+     * });
+     * ```
+     *
+     * Calling this method on a loop instance that is not currently running or
+     * on a loop instance that has already been stopped has no effect.
+     *
+     * @return void
      */
     public function stop();
 }
