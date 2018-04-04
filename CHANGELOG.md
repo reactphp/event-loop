@@ -4,6 +4,22 @@
 
 * BC break: Remove `LoopInterface::tick()` (@jsor, #72)
 
+## 0.4.3 (2017-04-27)
+
+* Bug fix: Bugfix in the usage sample code #57 (@dandelionred) 
+* Improvement: Remove branch-alias definition #53 (@WyriHaximus)
+* Improvement: StreamSelectLoop: Use fresh time so Timers added during stream events are accurate #51 (@andrewminerd)
+* Improvement: Avoid deprecation warnings in test suite due to deprecation of getMock() in PHPUnit #68 (@martinschroeder)
+* Improvement: Add PHPUnit 4.8 to require-dev #69 (@shaunbramley)
+* Improvement: Increase test timeouts for HHVM and unify timeout handling #70 (@clue)
+* Improvement: Travis improvements (backported from #74) #75 (@clue)
+* Improvement: Test suite now uses socket pairs instead of memory streams #66 (@martinschroeder)
+* Improvement: StreamSelectLoop: Test suite uses signal constant names in data provider #67 (@martinschroeder)
+* Improvement: ExtEventLoop: No longer suppress all errors #65 (@mamciek)
+* Improvement: Readme cleanup #89 (@jsor)
+* Improvement: Restructure and improve README #90 (@jsor)
+* Bug fix: StreamSelectLoop: Fix erroneous zero-time sleep (backport to 0.4) #94 (@jsor)
+
 ## 0.4.2 (2016-03-07)
 
 * Bug fix: No longer error when signals sent to StreamSelectLoop
@@ -16,10 +32,6 @@
 * Bug fix: null timeout in StreamSelectLoop causing 100% CPU usage (@clue)
 * Bug fix: v0.3.4 changes merged for v0.4.1
 
-## 0.3.4 (2014-03-30)
-
-* Changed StreamSelectLoop to use non-blocking behavior on tick() (@astephens25)
-
 ## 0.4.0 (2014-02-02)
 
 * Feature: Added `EventLoopInterface::nextTick()`, implemented in all event loops (@jmalloc)
@@ -29,6 +41,18 @@
 * BC break: New method: `EventLoopInterface::nextTick()`
 * BC break: New method: `EventLoopInterface::futureTick()`
 * Dependency: Autoloading and filesystem structure now PSR-4 instead of PSR-0
+
+## 0.3.5 (2016-12-28)
+
+This is a compatibility release that eases upgrading to the v0.4 release branch.
+You should consider upgrading to the v0.4 release branch.
+
+* Feature: Cap min timer interval at 1µs, thus improving compatibility with v0.4
+  (#47 by @clue)
+
+## 0.3.4 (2014-03-30)
+
+* Bug fix: Changed StreamSelectLoop to use non-blocking behavior on tick() (@astephens25)
 
 ## 0.3.3 (2013-07-08)
 
