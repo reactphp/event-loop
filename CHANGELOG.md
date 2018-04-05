@@ -1,8 +1,229 @@
 # Changelog
 
-## 0.5.0 (xxxx-xx-xx)
+## 0.5.0 (2018-04-05)
 
-* BC break: Remove `LoopInterface::tick()` (@jsor, #72)
+A major feature release with a significant documentation overhaul and long overdue API cleanup!
+
+This update involves a number of BC breaks due to dropped support for deprecated
+functionality. We've tried hard to avoid BC breaks where possible and minimize
+impact otherwise. We expect that most consumers of this package will actually
+not be affected by any BC breaks, see below for more details.
+
+We realize that the changes listed below may seem overwhelming, but we've tried
+to be very clear about any possible BC breaks. Don't worry: In fact, all ReactPHP
+components are already compatible and support both this new release as well as
+providing backwards compatibility with the last release.
+
+*   Feature / BC break: Add support for signal handling via new
+    `LoopInterface::addSignal()` and `LoopInterface::removeSignal()` methods.
+    (#104 by @WyriHaximus and #111 and #150 by @clue)
+
+    ```php
+    $loop->addSignal(SIGINT, function () {
+        echo 'CTRL-C';
+    });
+    ```
+
+*   Feature: Significant documentation updates for `LoopInterface` and `Factory`.
+    (#100, #119, #126, #127, #159 and #160 by @clue, #113 by @WyriHaximus and #81 and #91 by @jsor)
+
+*   Feature: Add examples to ease getting started
+    (#99, #100 and #125 by @clue, #59 by @WyriHaximus and #143 by @jsor)
+
+*   Feature: Documentation for advanced timer concepts, such as monotonic time source vs wall-clock time
+    and high precision timers with millisecond accuracy or below.
+    (#130 and #157 by @clue)
+
+*   Feature: Documentation for advanced stream concepts, such as edge-triggered event listeners
+    and stream buffers and allow throwing Exception if stream resource is not supported.
+    (#129 and #158 by @clue)
+
+*   Feature: Throw `BadMethodCallException` on manual loop creation when required extension isn't installed.
+    (#153 by @WyriHaximus)
+
+*   Feature / BC break: First class support for legacy PHP 5.3 through PHP 7.2 and HHVM
+    and remove all `callable` type hints for consistency reasons.
+    (#141 and #151 by @clue)
+
+*   BC break: Documentation for timer API and clean up unneeded timer API.
+    (#102 by @clue)
+
+    Remove `TimerInterface::cancel()`, use `LoopInterface::cancelTimer()` instead:
+
+    ```php
+    // old (method invoked on timer instance)
+    $timer->cancel();
+    
+    // already supported before: invoke method on loop instance
+    $loop->cancelTimer($timer);
+    ```
+
+    Remove unneeded `TimerInterface::setData()` and `TimerInterface::getData()`,
+    use closure binding to add arbitrary data to timer instead:
+
+    ```php
+    // old (limited setData() and getData() only allows single variable)
+    $name = 'Tester';
+    $timer = $loop->addTimer(1.0, function ($timer) {
+        echo 'Hello ' . $timer->getData() . PHP_EOL;
+    });
+    $timer->setData($name);
+
+    // already supported before: closure binding allows any number of variables
+    $name = 'Tester';
+    $loop->addTimer(1.0, function () use ($name) {
+        echo 'Hello ' . $name . PHP_EOL;
+    });
+    ```
+
+    Remove unneeded `TimerInterface::getLoop()`, use closure binding instead:
+
+    ```php
+    // old (getLoop() called on timer instance)
+    $loop->addTimer(0.1, function ($timer) {
+        $timer->getLoop()->stop();
+    });
+
+    // already supported before: use closure binding as usual
+    $loop->addTimer(0.1, function () use ($loop) {
+        $loop->stop();
+    });
+    ```
+
+*   BC break: Remove unneeded `LoopInterface::isTimerActive()` and
+    `TimerInterface::isActive()` to reduce API surface.
+    (#133 by @clue)
+
+    ```php
+    // old (method on timer instance or on loop instance)
+    $timer->isActive();
+    $loop->isTimerActive($timer);
+    ```
+
+*   BC break: Move `TimerInterface` one level up to `React\EventLoop\TimerInterface`.
+    (#138 by @WyriHaximus)
+
+    ```php
+    // old (notice obsolete "Timer" namespace)
+    assert($timer instanceof React\EventLoop\Timer\TimerInterface);
+
+    // new
+    assert($timer instanceof React\EventLoop\TimerInterface);
+    ```
+
+*   BC break: Remove unneeded `LoopInterface::nextTick()` (and internal `NextTickQueue`),
+    use `LoopInterface::futureTick()` instead.
+    (#30 by @clue)
+
+    ```php
+    // old (removed)
+    $loop->nextTick(function () {
+        echo 'tick';
+    });
+
+    // already supported before
+    $loop->futureTick(function () {
+        echo 'tick';
+    });
+    ```
+
+*   BC break: Remove unneeded `$loop` argument for `LoopInterface::futureTick()`
+    (and fix internal cyclic dependency).
+    (#103 by @clue)
+
+    ```php
+    // old ($loop gets passed by default)
+    $loop->futureTick(function ($loop) {
+        $loop->stop();
+    });
+
+    // already supported before: use closure binding as usual
+    $loop->futureTick(function () use ($loop) {
+        $loop->stop();
+    });
+    ```
+
+*   BC break: Remove unneeded `LoopInterface::tick()`.
+    (#72 by @jsor)
+
+    ```php
+    // old (removed)
+    $loop->tick();
+
+    // suggested work around for testing purposes only
+    $loop->futureTick(function () use ($loop) {
+        $loop->stop();
+    });
+    ```
+
+*   BC break: Documentation for advanced stream API and clean up unneeded stream API.
+    (#110 by @clue)
+
+    Remove unneeded `$loop` argument for `LoopInterface::addReadStream()`
+    and `LoopInterface::addWriteStream()`, use closure binding instead:
+
+    ```php
+    // old ($loop gets passed by default)
+    $loop->addReadStream($stream, function ($stream, $loop) {
+        $loop->removeReadStream($stream);
+    });
+
+    // already supported before: use closure binding as usual
+    $loop->addReadStream($stream, function ($stream) use ($loop) {
+        $loop->removeReadStream($stream);
+    });
+    ```
+
+*   BC break: Remove unneeded `LoopInterface::removeStream()` method,
+    use `LoopInterface::removeReadStream()` and `LoopInterface::removeWriteStream()` instead.
+    (#118 by @clue)
+
+    ```php
+    // old
+    $loop->removeStream($stream);
+
+    // already supported before
+    $loop->removeReadStream($stream);
+    $loop->removeWriteStream($stream);
+    ```
+
+*   BC break: Rename `LibEventLoop` to `ExtLibeventLoop` and `LibEvLoop` to `ExtLibevLoop`
+    for consistent naming for event loop implementations.
+    (#128 by @clue)
+
+*   BC break: Remove optional `EventBaseConfig` argument from `ExtEventLoop`
+    and make its `FEATURE_FDS` enabled by default.
+    (#156 by @WyriHaximus)
+
+*   BC break: Mark all classes as final to discourage inheritance.
+    (#131 by @clue)
+
+*   Fix: Fix `ExtEventLoop` to keep track of stream resources (refcount)
+    (#123 by @clue)
+
+*   Fix: Ensure large timer interval does not overflow on 32bit systems
+    (#132 by @clue)
+
+*   Fix: Fix separately removing readable and writable side of stream when closing
+    (#139 by @clue)
+
+*   Fix: Properly clean up event watchers for `ext-event` and `ext-libev`
+    (#149 by @clue)
+
+*   Fix: Minor code cleanup and remove unneeded references
+    (#145 by @seregazhuk)
+
+*   Fix: Discourage outdated `ext-libevent` on PHP 7
+    (#62 by @cboden)
+
+*   Improve test suite by adding forward compatibility with PHPUnit 6 and PHPUnit 5,
+    lock Travis distro so new defaults will not break the build,
+    improve test suite to be less fragile and increase test timeouts,
+    test against PHP 7.2 and reduce fwrite() call length to one chunk.
+    (#106 and #144 by @clue, #120 and #124 by @carusogabriel, #147 by nawarian and #92 by @kelunik)
+
+*   A number of changes were originally planned for this release but have been backported
+    to the last `v0.4.3` already: #74, #76, #79, #81 (refs #65, #66, #67), #88 and #93
 
 ## 0.4.3 (2017-04-27)
 

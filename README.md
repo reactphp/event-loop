@@ -1,18 +1,13 @@
 # EventLoop Component
 
 [![Build Status](https://travis-ci.org/reactphp/event-loop.svg?branch=master)](https://travis-ci.org/reactphp/event-loop)
-[![Code Climate](https://codeclimate.com/github/reactphp/event-loop/badges/gpa.svg)](https://codeclimate.com/github/reactphp/event-loop)
 
-Event loop abstraction layer that libraries can use for evented I/O.
+[ReactPHP](https://reactphp.org/)'s core reactor event loop that libraries can use for evented I/O.
 
 In order for async based libraries to be interoperable, they need to use the
 same event loop. This component provides a common `LoopInterface` that any
 library can target. This allows them to be used in the same loop, with one
 single [`run()`](#run) call that is controlled by the user.
-
-> The master branch contains the code for the upcoming 0.5 release.
-For the code of the current stable 0.4.x release, checkout the
-[0.4 branch](https://github.com/reactphp/event-loop/tree/0.4).
 
 **Table of Contents**
 
@@ -649,14 +644,16 @@ to remove a stream that was never added or is invalid has no effect.
 
 ## Install
 
-The recommended way to install this library is [through Composer](http://getcomposer.org).
-[New to Composer?](http://getcomposer.org/doc/00-intro.md)
+The recommended way to install this library is [through Composer](https://getcomposer.org).
+[New to Composer?](https://getcomposer.org/doc/00-intro.md)
 
 This will install the latest supported version:
 
 ```bash
-$ composer require react/event-loop
+$ composer require react/event-loop:^0.5
 ```
+
+See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
 
 This project aims to run on any platform and thus does not require any PHP
 extensions and supports running on legacy PHP 5.3 through current PHP 7+ and
@@ -669,7 +666,7 @@ See also [event loop implementations](#loop-implementations) for more details.
 ## Tests
 
 To run the test suite, you first need to clone this repo and then install all
-dependencies [through Composer](http://getcomposer.org):
+dependencies [through Composer](https://getcomposer.org):
 
 ```bash
 $ composer install

@@ -1,6 +1,6 @@
 {
     "name": "react/event-loop",
-    "description": "Event loop abstraction layer that libraries can use for evented I/O.",
+    "description": "ReactPHP's core reactor event loop that libraries can use for evented I/O.",
     "keywords": ["event-loop", "asynchronous"],
     "license": "MIT",
     "require": {
