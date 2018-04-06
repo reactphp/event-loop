@@ -25,6 +25,7 @@ For the code of the current stable 0.4.x release, checkout the
     * [ExtEventLoop](#exteventloop)
     * [ExtLibeventLoop](#extlibeventloop)
     * [ExtLibevLoop](#extlibevloop)
+    * [ExtEvLoop](#extevloop)
   * [LoopInterface](#loopinterface)
     * [addTimer()](#addtimer)
     * [addPeriodicTimer()](#addperiodictimer)
