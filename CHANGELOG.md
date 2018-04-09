@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1 (2018-04-09)
+
+* New loop: ExtEvLoop (PECL ext-ev)  (#148 by @kaduev13)
+
 ## 0.5.0 (2018-04-05)
 
 A major feature release with a significant documentation overhaul and long overdue API cleanup!
