@@ -3,8 +3,6 @@
 namespace React\EventLoop\Timer;
 
 use React\EventLoop\TimerInterface;
-use SplObjectStorage;
-use SplPriorityQueue;
 
 /**
  * A scheduler implementation that can hold multiple timer instances
@@ -17,14 +15,8 @@ use SplPriorityQueue;
 final class Timers
 {
     private $time;
-    private $timers;
-    private $scheduler;
-
-    public function __construct()
-    {
-        $this->timers = new SplObjectStorage();
-        $this->scheduler = new SplPriorityQueue();
-    }
+    private $timers = array();
+    private $schedule = array();
 
     public function updateTime()
     {
@@ -38,36 +30,26 @@ final class Timers
 
     public function add(TimerInterface $timer)
     {
-        $interval = $timer->getInterval();
-        $scheduledAt = $interval + microtime(true);
-
-        $this->timers->attach($timer, $scheduledAt);
-        $this->scheduler->insert($timer, -$scheduledAt);
+        $id = spl_object_hash($timer);
+        $this->timers[$id] = $timer;
+        $this->schedule[$id] = $timer->getInterval() + microtime(true);
+        asort($this->schedule);
     }
 
     public function contains(TimerInterface $timer)
     {
-        return $this->timers->contains($timer);
+        return isset($this->timers[spl_oject_hash($timer)]);
     }
 
     public function cancel(TimerInterface $timer)
     {
-        $this->timers->detach($timer);
+        $id = spl_object_hash($timer);
+        unset($this->timers[$id], $this->schedule[$id]);
     }
 
     public function getFirst()
     {
-        while ($this->scheduler->count()) {
-            $timer = $this->scheduler->top();
-
-            if ($this->timers->contains($timer)) {
-                return $this->timers[$timer];
-            }
-
-            $this->scheduler->extract();
-        }
-
-        return null;
+        return reset($this->schedule);
     }
 
     public function isEmpty()
@@ -78,31 +60,27 @@ final class Timers
     public function tick()
     {
         $time = $this->updateTime();
-        $timers = $this->timers;
-        $scheduler = $this->scheduler;
 
-        while (!$scheduler->isEmpty()) {
-            $timer = $scheduler->top();
-
-            if (!isset($timers[$timer])) {
-                $scheduler->extract();
-                $timers->detach($timer);
-
-                continue;
-            }
-
-            if ($timers[$timer] >= $time) {
+        foreach ($this->schedule as $id => $scheduled) {
+            // schedule is ordered, so loop until first timer that is not scheduled for execution now
+            if ($scheduled >= $time) {
                 break;
             }
 
-            $scheduler->extract();
+            // skip any timers that are removed while we process the current schedule
+            if (!isset($this->schedule[$id]) || $this->schedule[$id] !== $scheduled) {
+                continue;
+            }
+
+            $timer = $this->timers[$id];
             call_user_func($timer->getCallback(), $timer);
 
-            if ($timer->isPeriodic() && isset($timers[$timer])) {
-                $timers[$timer] = $scheduledAt = $timer->getInterval() + $time;
-                $scheduler->insert($timer, -$scheduledAt);
+            // re-schedule if this is a periodic timer and it has not been cancelled explicitly already
+            if ($timer->isPeriodic() && isset($this->timers[$id])) {
+                $this->schedule[$id] = $timer->getInterval() + $time;
+                asort($this->schedule);
             } else {
-                $timers->detach($timer);
+                unset($this->timers[$id], $this->schedule[$id]);
             }
         }
     }
