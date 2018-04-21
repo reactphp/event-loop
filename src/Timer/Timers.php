@@ -17,6 +17,7 @@ final class Timers
     private $time;
     private $timers = array();
     private $schedule = array();
+    private $sorted = true;
 
     public function updateTime()
     {
@@ -33,7 +34,7 @@ final class Timers
         $id = spl_object_hash($timer);
         $this->timers[$id] = $timer;
         $this->schedule[$id] = $timer->getInterval() + microtime(true);
-        asort($this->schedule);
+        $this->sorted = false;
     }
 
     public function contains(TimerInterface $timer)
@@ -49,6 +50,12 @@ final class Timers
 
     public function getFirst()
     {
+        // ensure timers are sorted to simply accessing next (first) one
+        if (!$this->sorted) {
+            $this->sorted = true;
+            asort($this->schedule);
+        }
+
         return reset($this->schedule);
     }
 
@@ -59,6 +66,12 @@ final class Timers
 
     public function tick()
     {
+        // ensure timers are sorted so we can execute in order
+        if (!$this->sorted) {
+            $this->sorted = true;
+            asort($this->schedule);
+        }
+
         $time = $this->updateTime();
 
         foreach ($this->schedule as $id => $scheduled) {
@@ -78,7 +91,7 @@ final class Timers
             // re-schedule if this is a periodic timer and it has not been cancelled explicitly already
             if ($timer->isPeriodic() && isset($this->timers[$id])) {
                 $this->schedule[$id] = $timer->getInterval() + $time;
-                asort($this->schedule);
+                $this->sorted = false;
             } else {
                 unset($this->timers[$id], $this->schedule[$id]);
             }
