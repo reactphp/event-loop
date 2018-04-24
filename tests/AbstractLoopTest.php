@@ -579,16 +579,11 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testTimerIntervalCanBeFarInFuture()
     {
-        // get only one part of the pair to ensure the other side will close immediately
-        list($stream) = $this->createSocketPair();
-
+        $loop = $this->loop;
         // start a timer very far in the future
         $timer = $this->loop->addTimer(PHP_INT_MAX, function () { });
 
-        // remove stream and timer when the stream is readable (closes)
-        $loop = $this->loop;
-        $this->loop->addReadStream($stream, function ($stream) use ($timer, $loop) {
-            $loop->removeReadStream($stream);
+        $this->loop->futureTick(function () use ($timer, $loop) {
             $loop->cancelTimer($timer);
         });
 
