@@ -1,8 +1,16 @@
 # Changelog
 
+## 0.5.2 (2018-04-24)
+
+*   Feature: Improve memory consumption and runtime performance for `StreamSelectLoop` timers.
+    (#164 by @clue)
+
+*   Improve test suite by removing I/O dependency at `StreamSelectLoopTest` to fix Mac OS X tests.
+    (#161 by @nawarian)
+
 ## 0.5.1 (2018-04-09)
 
-* New loop: ExtEvLoop (PECL ext-ev)  (#148 by @kaduev13)
+*   Feature: New `ExtEvLoop` (PECL ext-ev)  (#148 by @kaduev13)
 
 ## 0.5.0 (2018-04-05)
 
