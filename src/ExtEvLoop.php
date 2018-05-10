@@ -40,12 +40,12 @@ class ExtEvLoop implements LoopInterface
     /**
      * @var EvIo[]
      */
-    private $readStreams = [];
+    private $readStreams = array();
 
     /**
      * @var EvIo[]
      */
-    private $writeStreams = [];
+    private $writeStreams = array();
 
     /**
      * @var bool
@@ -60,7 +60,7 @@ class ExtEvLoop implements LoopInterface
     /**
      * @var \EvSignal[]
      */
-    private $signalEvents = [];
+    private $signalEvents = array();
 
     public function __construct()
     {
