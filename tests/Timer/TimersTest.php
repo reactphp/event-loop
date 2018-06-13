@@ -2,7 +2,6 @@
 
 namespace React\Tests\EventLoop\Timer;
 
-use React\EventLoop\TimerInterface;
 use React\Tests\EventLoop\TestCase;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\Timers;
@@ -30,10 +29,8 @@ class TimersTest extends TestCase
     {
         $timers = new Timers();
 
-        /** @var TimerInterface $timer1 */
-        $timer1 = $this->createMock('React\EventLoop\TimerInterface');
-        /** @var TimerInterface $timer2 */
-        $timer2 = $this->createMock('React\EventLoop\TimerInterface');
+        $timer1 = new Timer(0.1, function () {});
+        $timer2 = new Timer(0.1, function () {});
 
         $timers->add($timer1);
 
