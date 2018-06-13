@@ -15,7 +15,7 @@ final class SignalsHandler
             $this->signals[$signal] = array();
         }
 
-        if (in_array($listener, $this->signals[$signal])) {
+        if (\in_array($listener, $this->signals[$signal])) {
             return;
         }
 

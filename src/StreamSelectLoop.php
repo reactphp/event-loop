@@ -68,7 +68,7 @@ final class StreamSelectLoop implements LoopInterface
     {
         $this->futureTickQueue = new FutureTickQueue();
         $this->timers = new Timers();
-        $this->pcntl = extension_loaded('pcntl');
+        $this->pcntl = \extension_loaded('pcntl');
         $this->signals = new SignalsHandler();
     }
 
@@ -235,7 +235,7 @@ final class StreamSelectLoop implements LoopInterface
             $key = (int) $stream;
 
             if (isset($this->readListeners[$key])) {
-                call_user_func($this->readListeners[$key], $stream);
+                \call_user_func($this->readListeners[$key], $stream);
             }
         }
 
@@ -243,7 +243,7 @@ final class StreamSelectLoop implements LoopInterface
             $key = (int) $stream;
 
             if (isset($this->writeListeners[$key])) {
-                call_user_func($this->writeListeners[$key], $stream);
+                \call_user_func($this->writeListeners[$key], $stream);
             }
         }
     }
@@ -265,10 +265,10 @@ final class StreamSelectLoop implements LoopInterface
             $except = null;
 
             // suppress warnings that occur, when stream_select is interrupted by a signal
-            return @stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+            return @\stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
         }
 
-        $timeout && usleep($timeout);
+        $timeout && \usleep($timeout);
 
         return 0;
     }
