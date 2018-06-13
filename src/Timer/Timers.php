@@ -21,7 +21,7 @@ final class Timers
 
     public function updateTime()
     {
-        return $this->time = microtime(true);
+        return $this->time = \microtime(true);
     }
 
     public function getTime()
