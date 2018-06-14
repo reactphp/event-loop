@@ -163,7 +163,7 @@ final class StreamSelectLoop implements LoopInterface
         $this->signals->remove($signal, $listener);
 
         if ($this->signals->count($signal) === 0) {
-            \pcntl_signal($signal, SIG_DFL);
+            \pcntl_signal($signal, \SIG_DFL);
         }
     }
 
@@ -190,7 +190,7 @@ final class StreamSelectLoop implements LoopInterface
                     // Ensure we do not exceed maximum integer size, which may
                     // cause the loop to tick once every ~35min on 32bit systems.
                     $timeout *= self::MICROSECONDS_PER_SECOND;
-                    $timeout = $timeout > PHP_INT_MAX ? PHP_INT_MAX : (int)$timeout;
+                    $timeout = $timeout > \PHP_INT_MAX ? \PHP_INT_MAX : (int)$timeout;
                 }
 
             // The only possible event is stream or signal activity, so wait forever ...

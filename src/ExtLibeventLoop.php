@@ -74,7 +74,7 @@ final class ExtLibeventLoop implements LoopInterface
         }
 
         $event = \event_new();
-        \event_set($event, $stream, EV_PERSIST | EV_READ, $this->streamCallback);
+        \event_set($event, $stream, \EV_PERSIST | \EV_READ, $this->streamCallback);
         \event_base_set($event, $this->eventBase);
         \event_add($event);
 
@@ -90,7 +90,7 @@ final class ExtLibeventLoop implements LoopInterface
         }
 
         $event = \event_new();
-        \event_set($event, $stream, EV_PERSIST | EV_WRITE, $this->streamCallback);
+        \event_set($event, $stream, \EV_PERSIST | \EV_WRITE, $this->streamCallback);
         \event_base_set($event, $this->eventBase);
         \event_add($event);
 
@@ -170,7 +170,7 @@ final class ExtLibeventLoop implements LoopInterface
 
         if (!isset($this->signalEvents[$signal])) {
             $this->signalEvents[$signal] = \event_new();
-            \event_set($this->signalEvents[$signal], $signal, EV_PERSIST | EV_SIGNAL, array($this->signals, 'call'));
+            \event_set($this->signalEvents[$signal], $signal, \EV_PERSIST | \EV_SIGNAL, array($this->signals, 'call'));
             \event_base_set($this->signalEvents[$signal], $this->eventBase);
             \event_add($this->signalEvents[$signal]);
         }
@@ -194,9 +194,9 @@ final class ExtLibeventLoop implements LoopInterface
         while ($this->running) {
             $this->futureTickQueue->tick();
 
-            $flags = EVLOOP_ONCE;
+            $flags = \EVLOOP_ONCE;
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
-                $flags |= EVLOOP_NONBLOCK;
+                $flags |= \EVLOOP_NONBLOCK;
             } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count() && $this->signals->isEmpty()) {
                 break;
             }
@@ -271,11 +271,11 @@ final class ExtLibeventLoop implements LoopInterface
         $this->streamCallback = function ($stream, $flags) use (&$read, &$write) {
             $key = (int) $stream;
 
-            if (EV_READ === (EV_READ & $flags) && isset($read[$key])) {
+            if (\EV_READ === (\EV_READ & $flags) && isset($read[$key])) {
                 \call_user_func($read[$key], $stream);
             }
 
-            if (EV_WRITE === (EV_WRITE & $flags) && isset($write[$key])) {
+            if (\EV_WRITE === (\EV_WRITE & $flags) && isset($write[$key])) {
                 \call_user_func($write[$key], $stream);
             }
         };

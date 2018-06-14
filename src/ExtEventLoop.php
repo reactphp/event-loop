@@ -69,7 +69,7 @@ final class ExtEventLoop implements LoopInterface
 
         // ext-event does not increase refcount on stream resources for PHP 7+
         // manually keep track of stream resource to prevent premature garbage collection
-        if (PHP_VERSION_ID >= 70000) {
+        if (\PHP_VERSION_ID >= 70000) {
             $this->readRefs[$key] = $stream;
         }
     }
@@ -88,7 +88,7 @@ final class ExtEventLoop implements LoopInterface
 
         // ext-event does not increase refcount on stream resources for PHP 7+
         // manually keep track of stream resource to prevent premature garbage collection
-        if (PHP_VERSION_ID >= 70000) {
+        if (\PHP_VERSION_ID >= 70000) {
             $this->writeRefs[$key] = $stream;
         }
     }
