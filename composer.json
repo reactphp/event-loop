@@ -17,5 +17,10 @@
         "psr-4": {
             "React\\EventLoop\\": "src"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "React\\Tests\\EventLoop\\": "tests"
+        }
     }
 }
