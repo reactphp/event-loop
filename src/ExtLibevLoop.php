@@ -37,7 +37,7 @@ final class ExtLibevLoop implements LoopInterface
 
     public function __construct()
     {
-        if (!class_exists('libev\EventLoop', false)) {
+        if (!\class_exists('libev\EventLoop', false)) {
             throw new BadMethodCallException('Cannot create ExtLibevLoop, ext-libev extension missing');
         }
 
@@ -54,7 +54,7 @@ final class ExtLibevLoop implements LoopInterface
         }
 
         $callback = function () use ($stream, $listener) {
-            call_user_func($listener, $stream);
+            \call_user_func($listener, $stream);
         };
 
         $event = new IOEvent($callback, $stream, IOEvent::READ);
@@ -70,7 +70,7 @@ final class ExtLibevLoop implements LoopInterface
         }
 
         $callback = function () use ($stream, $listener) {
-            call_user_func($listener, $stream);
+            \call_user_func($listener, $stream);
         };
 
         $event = new IOEvent($callback, $stream, IOEvent::WRITE);
@@ -108,7 +108,7 @@ final class ExtLibevLoop implements LoopInterface
         $that = $this;
         $timers = $this->timerEvents;
         $callback = function () use ($timer, $timers, $that) {
-            call_user_func($timer->getCallback(), $timer);
+            \call_user_func($timer->getCallback(), $timer);
 
             if ($timers->contains($timer)) {
                 $that->cancelTimer($timer);
@@ -127,7 +127,7 @@ final class ExtLibevLoop implements LoopInterface
         $timer = new Timer($interval, $callback, true);
 
         $callback = function () use ($timer) {
-            call_user_func($timer->getCallback(), $timer);
+            \call_user_func($timer->getCallback(), $timer);
         };
 
         $event = new TimerEvent($callback, $interval, $interval);

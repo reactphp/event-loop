@@ -24,13 +24,13 @@ final class Factory
     public static function create()
     {
         // @codeCoverageIgnoreStart
-        if (class_exists('libev\EventLoop', false)) {
+        if (\class_exists('libev\EventLoop', false)) {
             return new ExtLibevLoop();
-        } elseif (class_exists('EvLoop', false)) {
+        } elseif (\class_exists('EvLoop', false)) {
             return new ExtEvLoop();
-        } elseif (class_exists('EventBase', false)) {
+        } elseif (\class_exists('EventBase', false)) {
             return new ExtEventLoop();
-        } elseif (function_exists('event_base_new') && PHP_VERSION_ID < 70000) {
+        } elseif (\function_exists('event_base_new') && \PHP_VERSION_ID < 70000) {
             // only use ext-libevent on PHP < 7 for now
             return new ExtLibeventLoop();
         }

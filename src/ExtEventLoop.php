@@ -39,7 +39,7 @@ final class ExtEventLoop implements LoopInterface
 
     public function __construct()
     {
-        if (!class_exists('EventBase', false)) {
+        if (!\class_exists('EventBase', false)) {
             throw new BadMethodCallException('Cannot create ExtEventLoop, ext-event extension missing');
         }
 
@@ -69,7 +69,7 @@ final class ExtEventLoop implements LoopInterface
 
         // ext-event does not increase refcount on stream resources for PHP 7+
         // manually keep track of stream resource to prevent premature garbage collection
-        if (PHP_VERSION_ID >= 70000) {
+        if (\PHP_VERSION_ID >= 70000) {
             $this->readRefs[$key] = $stream;
         }
     }
@@ -88,7 +88,7 @@ final class ExtEventLoop implements LoopInterface
 
         // ext-event does not increase refcount on stream resources for PHP 7+
         // manually keep track of stream resource to prevent premature garbage collection
-        if (PHP_VERSION_ID >= 70000) {
+        if (\PHP_VERSION_ID >= 70000) {
             $this->writeRefs[$key] = $stream;
         }
     }
@@ -225,7 +225,7 @@ final class ExtEventLoop implements LoopInterface
     {
         $timers = $this->timerEvents;
         $this->timerCallback = function ($_, $__, $timer) use ($timers) {
-            call_user_func($timer->getCallback(), $timer);
+            \call_user_func($timer->getCallback(), $timer);
 
             if (!$timer->isPeriodic() && $timers->contains($timer)) {
                 $this->cancelTimer($timer);
@@ -248,11 +248,11 @@ final class ExtEventLoop implements LoopInterface
             $key = (int) $stream;
 
             if (Event::READ === (Event::READ & $flags) && isset($read[$key])) {
-                call_user_func($read[$key], $stream);
+                \call_user_func($read[$key], $stream);
             }
 
             if (Event::WRITE === (Event::WRITE & $flags) && isset($write[$key])) {
-                call_user_func($write[$key], $stream);
+                \call_user_func($write[$key], $stream);
             }
         };
     }

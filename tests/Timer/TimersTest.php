@@ -24,4 +24,17 @@ class TimersTest extends TestCase
 
         $this->assertTrue(true);
     }
+
+    public function testContains()
+    {
+        $timers = new Timers();
+
+        $timer1 = new Timer(0.1, function () {});
+        $timer2 = new Timer(0.1, function () {});
+
+        $timers->add($timer1);
+
+        self::assertTrue($timers->contains($timer1));
+        self::assertFalse($timers->contains($timer2));
+    }
 }

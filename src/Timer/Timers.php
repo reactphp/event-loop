@@ -21,7 +21,7 @@ final class Timers
 
     public function updateTime()
     {
-        return $this->time = microtime(true);
+        return $this->time = \microtime(true);
     }
 
     public function getTime()
@@ -31,20 +31,20 @@ final class Timers
 
     public function add(TimerInterface $timer)
     {
-        $id = spl_object_hash($timer);
+        $id = \spl_object_hash($timer);
         $this->timers[$id] = $timer;
-        $this->schedule[$id] = $timer->getInterval() + microtime(true);
+        $this->schedule[$id] = $timer->getInterval() + \microtime(true);
         $this->sorted = false;
     }
 
     public function contains(TimerInterface $timer)
     {
-        return isset($this->timers[spl_oject_hash($timer)]);
+        return isset($this->timers[\spl_object_hash($timer)]);
     }
 
     public function cancel(TimerInterface $timer)
     {
-        $id = spl_object_hash($timer);
+        $id = \spl_object_hash($timer);
         unset($this->timers[$id], $this->schedule[$id]);
     }
 
@@ -53,15 +53,15 @@ final class Timers
         // ensure timers are sorted to simply accessing next (first) one
         if (!$this->sorted) {
             $this->sorted = true;
-            asort($this->schedule);
+            \asort($this->schedule);
         }
 
-        return reset($this->schedule);
+        return \reset($this->schedule);
     }
 
     public function isEmpty()
     {
-        return count($this->timers) === 0;
+        return \count($this->timers) === 0;
     }
 
     public function tick()
@@ -69,7 +69,7 @@ final class Timers
         // ensure timers are sorted so we can execute in order
         if (!$this->sorted) {
             $this->sorted = true;
-            asort($this->schedule);
+            \asort($this->schedule);
         }
 
         $time = $this->updateTime();
@@ -86,7 +86,7 @@ final class Timers
             }
 
             $timer = $this->timers[$id];
-            call_user_func($timer->getCallback(), $timer);
+            \call_user_func($timer->getCallback(), $timer);
 
             // re-schedule if this is a periodic timer and it has not been cancelled explicitly already
             if ($timer->isPeriodic() && isset($this->timers[$id])) {

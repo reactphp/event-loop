@@ -68,7 +68,7 @@ final class StreamSelectLoop implements LoopInterface
     {
         $this->futureTickQueue = new FutureTickQueue();
         $this->timers = new Timers();
-        $this->pcntl = extension_loaded('pcntl');
+        $this->pcntl = \extension_loaded('pcntl');
         $this->signals = new SignalsHandler();
     }
 
@@ -163,7 +163,7 @@ final class StreamSelectLoop implements LoopInterface
         $this->signals->remove($signal, $listener);
 
         if ($this->signals->count($signal) === 0) {
-            \pcntl_signal($signal, SIG_DFL);
+            \pcntl_signal($signal, \SIG_DFL);
         }
     }
 
@@ -190,7 +190,7 @@ final class StreamSelectLoop implements LoopInterface
                     // Ensure we do not exceed maximum integer size, which may
                     // cause the loop to tick once every ~35min on 32bit systems.
                     $timeout *= self::MICROSECONDS_PER_SECOND;
-                    $timeout = $timeout > PHP_INT_MAX ? PHP_INT_MAX : (int)$timeout;
+                    $timeout = $timeout > \PHP_INT_MAX ? \PHP_INT_MAX : (int)$timeout;
                 }
 
             // The only possible event is stream or signal activity, so wait forever ...
@@ -235,7 +235,7 @@ final class StreamSelectLoop implements LoopInterface
             $key = (int) $stream;
 
             if (isset($this->readListeners[$key])) {
-                call_user_func($this->readListeners[$key], $stream);
+                \call_user_func($this->readListeners[$key], $stream);
             }
         }
 
@@ -243,7 +243,7 @@ final class StreamSelectLoop implements LoopInterface
             $key = (int) $stream;
 
             if (isset($this->writeListeners[$key])) {
-                call_user_func($this->writeListeners[$key], $stream);
+                \call_user_func($this->writeListeners[$key], $stream);
             }
         }
     }
@@ -265,10 +265,10 @@ final class StreamSelectLoop implements LoopInterface
             $except = null;
 
             // suppress warnings that occur, when stream_select is interrupted by a signal
-            return @stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+            return @\stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
         }
 
-        $timeout && usleep($timeout);
+        $timeout && \usleep($timeout);
 
         return 0;
     }
