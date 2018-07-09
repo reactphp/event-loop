@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.3 (2018-07-09)
+
+*   Improve performance by importing global functions.
+    (#167 by @Ocramius)
+
+*   Improve test suite by simplifying test bootstrap by using dev autoloader.
+    (#169 by @lcobucci)
+
+*   Minor internal changes to improved backward compatibility with PHP 5.3.
+    (#166 by @Donatello-za)
+
 ## 0.5.2 (2018-04-24)
 
 *   Feature: Improve memory consumption and runtime performance for `StreamSelectLoop` timers.
