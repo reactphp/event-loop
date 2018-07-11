@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0 (2018-07-11)
+
+*   First stable LTS release, now following [SemVer](https://semver.org/).
+    We'd like to emphasize that this component is production ready and battle-tested.
+    We plan to support all long-term support (LTS) releases for at least 24 months,
+    so you have a rock-solid foundation to build on top of.
+
+>   Contains no other changes, so it's actually fully compatible with the v0.5.3 release.
+
 ## 0.5.3 (2018-07-09)
 
 *   Improve performance by importing global functions.
