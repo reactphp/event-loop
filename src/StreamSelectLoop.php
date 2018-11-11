@@ -2,7 +2,6 @@
 
 namespace React\EventLoop;
 
-use React\EventLoop\Signal\Pcntl;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\Timers;
@@ -258,12 +257,12 @@ final class StreamSelectLoop implements LoopInterface
      * Emulate a stream_select() implementation that does not break when passed
      * empty stream arrays.
      *
-     * @param array        &$read   An array of read streams to select upon.
-     * @param array        &$write  An array of write streams to select upon.
-     * @param integer|null $timeout Activity timeout in microseconds, or null to wait forever.
+     * @param array    $read    An array of read streams to select upon.
+     * @param array    $write   An array of write streams to select upon.
+     * @param int|null $timeout Activity timeout in microseconds, or null to wait forever.
      *
-     * @return integer|false The total number of streams that are ready for read/write.
-     * Can return false if stream_select() is interrupted by a signal.
+     * @return int|false The total number of streams that are ready for read/write.
+     *     Can return false if stream_select() is interrupted by a signal.
      */
     private function streamSelect(array &$read, array &$write, $timeout)
     {
@@ -274,7 +273,13 @@ final class StreamSelectLoop implements LoopInterface
             return @\stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
         }
 
-        $timeout && \usleep($timeout);
+        if ($timeout > 0) {
+            \usleep($timeout);
+        } elseif ($timeout === null) {
+            // wait forever (we only reach this if we're only awaiting signals)
+            // this may be interrupted and return earlier when a signal is received
+            \sleep(PHP_INT_MAX);
+        }
 
         return 0;
     }
