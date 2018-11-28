@@ -9,8 +9,8 @@ if (!defined('SIGINT')) {
 
 $loop = React\EventLoop\Factory::create();
 
-$loop->addSignal(SIGINT, $func = function ($signal) use ($loop, &$func) {
-    echo 'Signal: ', (string)$signal, PHP_EOL;
+$loop->addSignal(SIGINT, $func = function ($signal, $signinfo) use ($loop, &$func) {
+    echo 'Signal: ', (string)$signal, ', siginfo: ', var_export($signinfo, true), PHP_EOL;
     $loop->removeSignal(SIGINT, $func);
 });
 

@@ -174,7 +174,8 @@ dozens or a few hundred streams at once, then this event loop implementation
 performs really well.
 
 If you want to use signal handling (see also [`addSignal()`](#addsignal) below),
-this event loop implementation requires `ext-pcntl`.
+this event loop implementation requires `ext-pcntl`. It allows you to get 
+information about the signal (siginfo_t).
 This extension is only available for Unix-like platforms and does not support
 Windows.
 It is commonly installed as part of many PHP distributions.
@@ -504,9 +505,10 @@ register a listener to be notified when a signal has been caught by this process
 This is useful to catch user interrupt signals or shutdown signals from
 tools like `supervisor` or `systemd`.
 
-The listener callback function MUST be able to accept a single parameter,
-the signal added by this method or you MAY use a function which
-has no parameters at all.
+The listener callback function MUST be able to accept two parameters.
+The first parameter is a signal number. The second parameter is a information 
+about signal (if using StreamSelectLoop and pcntl). Or you MAY use a function 
+which has no parameters at all.
 
 The listener callback function MUST NOT throw an `Exception`.
 The return value of the listener callback function will be ignored and has
@@ -514,7 +516,7 @@ no effect, so for performance reasons you're recommended to not return
 any excessive data structures.
 
 ```php
-$loop->addSignal(SIGINT, function (int $signal) {
+$loop->addSignal(SIGINT, function (int $signal, array $signinfo) {
     echo 'Caught user interrupt signal' . PHP_EOL;
 });
 ```

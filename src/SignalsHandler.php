@@ -36,14 +36,18 @@ final class SignalsHandler
         }
     }
 
-    public function call($signal)
+    public function call($signal, $signinfo = array())
     {
         if (!isset($this->signals[$signal])) {
             return;
         }
 
+        if (!isset($signinfo['signo'])) {
+            $signinfo = array();
+        }
+
         foreach ($this->signals[$signal] as $listener) {
-            \call_user_func($listener, $signal);
+            \call_user_func($listener, $signal, $signinfo);
         }
     }
 
