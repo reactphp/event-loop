@@ -491,10 +491,13 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveSignalNotRegisteredIsNoOp()
     {
-        $this->loop->removeSignal(SIGINT, function () { });
+        $this->loop->removeSignal(2, function () { });
         $this->assertTrue(true);
     }
 
+    /**
+     * @requires extension pcntl
+     */
     public function testSignal()
     {
         if (!function_exists('posix_kill') || !function_exists('posix_getpid')) {
@@ -528,6 +531,9 @@ abstract class AbstractLoopTest extends TestCase
         $this->assertTrue($calledShouldNot);
     }
 
+    /**
+     * @requires extension pcntl
+     */
     public function testSignalMultipleUsagesForTheSameListener()
     {
         $funcCallCount = 0;
@@ -552,6 +558,9 @@ abstract class AbstractLoopTest extends TestCase
         $this->assertSame(1, $funcCallCount);
     }
 
+    /**
+     * @requires extension pcntl
+     */
     public function testSignalsKeepTheLoopRunning()
     {
         $loop = $this->loop;
@@ -565,6 +574,9 @@ abstract class AbstractLoopTest extends TestCase
         $this->assertRunSlowerThan(1.5);
     }
 
+    /**
+     * @requires extension pcntl
+     */
     public function testSignalsKeepTheLoopRunningAndRemovingItStopsTheLoop()
     {
         $loop = $this->loop;

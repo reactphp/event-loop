@@ -49,13 +49,10 @@ class StreamSelectLoopTest extends AbstractLoopTest
     /**
      * Test signal interrupt when no stream is attached to the loop
      * @dataProvider signalProvider
+     * @requires extension pcntl
      */
     public function testSignalInterruptNoStream($signal)
     {
-        if (!extension_loaded('pcntl')) {
-            $this->markTestSkipped('"pcntl" extension is required to run this test.');
-        }
-
         // dispatch signal handler every 10ms for 0.1s
         $check = $this->loop->addPeriodicTimer(0.01, function() {
             pcntl_signal_dispatch();
@@ -80,13 +77,10 @@ class StreamSelectLoopTest extends AbstractLoopTest
     /**
      * Test signal interrupt when a stream is attached to the loop
      * @dataProvider signalProvider
+     * @requires extension pcntl
      */
     public function testSignalInterruptWithStream($signal)
     {
-        if (!extension_loaded('pcntl')) {
-            $this->markTestSkipped('"pcntl" extension is required to run this test.');
-        }
-
         // dispatch signal handler every 10ms
         $this->loop->addPeriodicTimer(0.01, function() {
             pcntl_signal_dispatch();

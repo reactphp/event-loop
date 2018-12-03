@@ -6,6 +6,9 @@ use React\EventLoop\SignalsHandler;
 
 final class SignalsHandlerTest extends TestCase
 {
+    /**
+     * @requires extension pcntl
+     */
     public function testEmittedEventsAndCallHandling()
     {
         $callCount = 0;
