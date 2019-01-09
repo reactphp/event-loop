@@ -21,7 +21,12 @@ final class Timers
 
     public function updateTime()
     {
-        return $this->time = \microtime(true);
+        // prefer high-resolution timer, available as of PHP 7.3+
+        if (\function_exists('hrtime')) {
+            return $this->time = \hrtime(true) * 1e-9;
+        }
+
+        return $this->time = \microtime(true) + 1000;
     }
 
     public function getTime()
@@ -33,7 +38,7 @@ final class Timers
     {
         $id = \spl_object_hash($timer);
         $this->timers[$id] = $timer;
-        $this->schedule[$id] = $timer->getInterval() + \microtime(true);
+        $this->schedule[$id] = $timer->getInterval() + $this->updateTime();
         $this->sorted = false;
     }
 

@@ -185,8 +185,8 @@ interface LoopInterface
      *
      * This interface suggests that event loop implementations SHOULD use a
      * monotonic time source if available. Given that a monotonic time source is
-     * not available on PHP by default, event loop implementations MAY fall back
-     * to using wall-clock time.
+     * only available as of PHP 7.3 by default, event loop implementations MAY
+     * fall back to using wall-clock time.
      * While this does not affect many common use cases, this is an important
      * distinction for programs that rely on a high time precision or on systems
      * that are subject to discontinuous time adjustments (time jumps).
@@ -263,8 +263,8 @@ interface LoopInterface
      *
      * This interface suggests that event loop implementations SHOULD use a
      * monotonic time source if available. Given that a monotonic time source is
-     * not available on PHP by default, event loop implementations MAY fall back
-     * to using wall-clock time.
+     * only available as of PHP 7.3 by default, event loop implementations MAY
+     * fall back to using wall-clock time.
      * While this does not affect many common use cases, this is an important
      * distinction for programs that rely on a high time precision or on systems
      * that are subject to discontinuous time adjustments (time jumps).
