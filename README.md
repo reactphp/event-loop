@@ -21,6 +21,7 @@ single [`run()`](#run) call that is controlled by the user.
     * [ExtLibeventLoop](#extlibeventloop)
     * [ExtLibevLoop](#extlibevloop)
     * [ExtEvLoop](#extevloop)
+    * [ExtUvLoop](#extuvloop)
   * [LoopInterface](#loopinterface)
     * [run()](#run)
     * [stop()](#stop)
@@ -208,6 +209,14 @@ provides an interface to `libev` library.
 
 This loop is known to work with PHP 5.4 through PHP 7+.
 
+#### ExtUvLoop
+
+An `ext-uv` based event loop.
+
+This loop uses the [`uv` PECL extension](https://pecl.php.net/package/uv), that
+provides an interface to `libuv` library.
+
+This loop is known to work with PHP 7+.
 
 #### ExtLibeventLoop
 
