@@ -2,10 +2,12 @@
 
 namespace React\Tests\EventLoop;
 
+use React\EventLoop\Timer\Timer;
+
 abstract class AbstractLoopTest extends TestCase
 {
     /**
-     * @var \React\EventLoop\LoopInterface
+     * @var \React\EventLoop\ExtLoopInterface
      */
     protected $loop;
 
@@ -491,6 +493,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveSignalNotRegisteredIsNoOp()
     {
+        if (!defined('SIGINT')) {
+            return $this->markTestSkipped('Signal test skipped because "SIGINT" is not defined.');
+        }
+
         $this->loop->removeSignal(SIGINT, function () { });
         $this->assertTrue(true);
     }
@@ -498,7 +504,7 @@ abstract class AbstractLoopTest extends TestCase
     public function testSignal()
     {
         if (!function_exists('posix_kill') || !function_exists('posix_getpid')) {
-            $this->markTestSkipped('Signal test skipped because functions "posix_kill" and "posix_getpid" are missing.');
+            return $this->markTestSkipped('Signal test skipped because functions "posix_kill" and "posix_getpid" are missing.');
         }
 
         $called = false;
@@ -588,6 +594,144 @@ abstract class AbstractLoopTest extends TestCase
         });
 
         $this->assertRunFasterThan($this->tickTimeout);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testReferenceUnknownTimer()
+    {
+        $timer = new Timer(0.1, function () { }, false);
+        $this->loop->reference($timer);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testDereferenceUnknownTimer()
+    {
+        $timer = new Timer(0.1, function () { }, false);
+        $this->loop->dereference($timer);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testReferenceUnknownStream()
+    {
+        list ($stream) = $this->createSocketPair();
+        $this->loop->reference($stream);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testDereferenceUnknownStream()
+    {
+        list ($stream) = $this->createSocketPair();
+        $this->loop->dereference($stream);
+    }
+
+    public function testDereferenceTimer()
+    {
+        $timer = $this->loop->addTimer(0.01, $this->expectCallableNever());
+        $this->loop->dereference($timer);
+
+        $this->assertRunFasterThan(0.01);
+    }
+
+    public function testDereferenceReferenceTimer()
+    {
+        $timer = $this->loop->addTimer(0.010001, $this->expectCallableOnce());
+        $this->loop->dereference($timer);
+        $this->loop->reference($timer);
+
+        $this->assertRunSlowerThan(0.01);
+    }
+
+    public function testDereferenceTimerPlusNormalTimer()
+    {
+        $timer = $this->loop->addTimer(0.1, $this->expectCallableNever());
+        $this->loop->dereference($timer);
+
+        $this->loop->addTimer(0.03, $this->expectCallableOnce());
+        $this->assertRunSlowerThan($this->tickTimeout);
+    }
+
+    public function testDereferenceStreamInput()
+    {
+        list ($input) = $this->createSocketPair();
+
+        $this->loop->addWriteStream($input, $this->expectCallableNever());
+        $this->loop->dereference($input);
+
+        $this->assertRunFasterThan(0.01);
+    }
+
+    public function testDereferenceReferenceStreamInput()
+    {
+        list ($input) = $this->createSocketPair();
+        $call = $this->expectCallableOnce();
+        $loop = $this->loop;
+
+        $this->loop->addWriteStream($input, function () use (&$call, $input, $loop) {
+            $call && ($call() || $call = null);
+            $loop->removeWriteStream($input);
+        });
+        $this->loop->dereference($input);
+        $this->loop->reference($input);
+
+        $this->assertRunFasterThan(0.01);
+    }
+
+    public function testDereferenceStreamOutput()
+    {
+        list ($input, $output) = $this->createSocketPair();
+
+        $this->loop->addReadStream($output, $this->expectCallableNever());
+        $this->loop->dereference($output);
+
+        $this->assertRunFasterThan(0.01);
+    }
+
+    public function testDereferenceReferenceStreamOutput()
+    {
+        list ($input, $output) = $this->createSocketPair();
+        $call = $this->expectCallableOnce();
+        $loop = $this->loop;
+
+        $this->loop->addReadStream($output, function () use (&$call, $output, $loop) {
+            $call && ($call() || $call = null);
+            $loop->removeReadStream($output);
+        });
+        $this->loop->dereference($output);
+        $this->loop->reference($output);
+
+        \fwrite($input, 'hello_world');
+        $this->assertRunFasterThan(0.01);
+    }
+
+    public function testDereferenceStreamInputPlusNormalStream()
+    {
+        list ($input, $output) = $this->createSocketPair();
+        $read = $this->expectCallableOnce();
+        $write = $this->expectCallableOnce();
+        $loop = $this->loop;
+
+        $this->loop->addWriteStream($input, function () use ($input, &$read) {
+            $read && ($read() || $read = null);
+            usleep(10); // we would be too fast for the timing
+            fwrite($input, 'hello_world');
+        });
+        $this->loop->dereference($input);
+
+        $this->loop->addReadStream($output, function () use ($input, $output, $loop, &$write) {
+            $write && ($write() || $write = null);
+            $loop->removeWriteStream($input);
+            $loop->removeReadStream($output);
+        });
+
+        $this->assertRunSlowerThan(0.00001);
     }
 
     private function assertRunSlowerThan($minInterval)

@@ -20,7 +20,7 @@ use SplObjectStorage;
  * @see http://php.net/manual/en/book.ev.php
  * @see https://bitbucket.org/osmanov/pecl-ev/overview
  */
-class ExtEvLoop implements LoopInterface
+class ExtEvLoop implements ExtLoopInterface
 {
     /**
      * @var EvLoop
@@ -48,6 +48,11 @@ class ExtEvLoop implements LoopInterface
     private $writeStreams = array();
 
     /**
+     * @var bool[]
+     */
+    private $allStreams = array();
+
+    /**
      * @var bool
      */
     private $running;
@@ -61,6 +66,10 @@ class ExtEvLoop implements LoopInterface
      * @var \EvSignal[]
      */
     private $signalEvents = array();
+
+    private $dereferences = array();
+    private $derefTimers = 0;
+    private $derefStreams = 0;
 
     public function __construct()
     {
@@ -81,6 +90,7 @@ class ExtEvLoop implements LoopInterface
         $callback = $this->getStreamListenerClosure($stream, $listener);
         $event = $this->loop->io($stream, Ev::READ, $callback);
         $this->readStreams[$key] = $event;
+        $this->allStreams[$key] = true;
     }
 
     /**
@@ -107,6 +117,7 @@ class ExtEvLoop implements LoopInterface
         $callback = $this->getStreamListenerClosure($stream, $listener);
         $event = $this->loop->io($stream, Ev::WRITE, $callback);
         $this->writeStreams[$key] = $event;
+        $this->allStreams[$key] = true;
     }
 
     public function removeReadStream($stream)
@@ -118,7 +129,7 @@ class ExtEvLoop implements LoopInterface
         }
 
         $this->readStreams[$key]->stop();
-        unset($this->readStreams[$key]);
+        unset($this->readStreams[$key], $this->allStreams[$key]);
     }
 
     public function removeWriteStream($stream)
@@ -130,7 +141,7 @@ class ExtEvLoop implements LoopInterface
         }
 
         $this->writeStreams[$key]->stop();
-        unset($this->writeStreams[$key]);
+        unset($this->writeStreams[$key], $this->allStreams[$key]);
     }
 
     public function addTimer($interval, $callback)
@@ -183,6 +194,60 @@ class ExtEvLoop implements LoopInterface
         $this->futureTickQueue->add($listener);
     }
 
+    public function reference($streamOrTimer)
+    {
+        if ($streamOrTimer instanceof \React\EventLoop\TimerInterface) {
+            if (!$this->timers->contains($streamOrTimer)) {
+                throw new \InvalidArgumentException('Given timer is not part of this loop');
+            }
+
+            $key = \spl_object_hash($streamOrTimer);
+
+            if (isset($this->dereferences[$key])) {
+                unset($this->dereferences[$key]);
+                $this->derefTimers--;
+            }
+        } else {
+            $key = (int) $streamOrTimer;
+
+            if (!isset($this->allStreams[$key])) {
+                throw new \InvalidArgumentException('Given stream is not part of a read or write session of this loop');
+            }
+            
+            if (isset($this->dereferences[$key])) {
+                unset($this->dereferences[$key]);
+                $this->derefStreams--;
+            }
+        }
+    }
+    
+    public function dereference($streamOrTimer)
+    {
+        if ($streamOrTimer instanceof \React\EventLoop\TimerInterface) {
+            if (!$this->timers->contains($streamOrTimer)) {
+                throw new \InvalidArgumentException('Given timer is not part of this loop');
+            }
+
+            $key = \spl_object_hash($streamOrTimer);
+
+            if (!isset($this->dereferences[$key])) {
+                $this->dereferences[$key] = true;
+                $this->derefTimers++;
+            }
+        } else {
+            $key = (int) $streamOrTimer;
+
+            if (!isset($this->allStreams[$key])) {
+                throw new \InvalidArgumentException('Given stream is not part of a read or write session of this loop');
+            }
+
+            if (!isset($this->dereferences[$key])) {
+                $this->dereferences[$key] = true;
+                $this->derefStreams++;
+            }
+        }
+    }
+
     public function run()
     {
         $this->running = true;
@@ -191,16 +256,15 @@ class ExtEvLoop implements LoopInterface
             $this->futureTickQueue->tick();
 
             $hasPendingCallbacks = !$this->futureTickQueue->isEmpty();
+            $hasStreams = \count($this->allStreams) > $this->derefStreams;
+            $hasTimers = $this->timers->count() > $this->derefTimers;
+
             $wasJustStopped = !$this->running;
-            $nothingLeftToDo = !$this->readStreams
-                && !$this->writeStreams
-                && !$this->timers->count()
-                && $this->signals->isEmpty();
 
             $flags = Ev::RUN_ONCE;
             if ($wasJustStopped || $hasPendingCallbacks) {
                 $flags |= Ev::RUN_NOWAIT;
-            } elseif ($nothingLeftToDo) {
+            } elseif (!$hasStreams && !$hasTimers) {
                 break;
             }
 

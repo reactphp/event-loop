@@ -24,16 +24,21 @@ use SplObjectStorage;
  * @see https://github.com/m4rw3r/php-libev
  * @see https://gist.github.com/1688204
  */
-final class ExtLibevLoop implements LoopInterface
+final class ExtLibevLoop implements ExtLoopInterface
 {
     private $loop;
     private $futureTickQueue;
     private $timerEvents;
     private $readEvents = array();
     private $writeEvents = array();
+    private $allStreams = array();
     private $running;
     private $signals;
     private $signalEvents = array();
+
+    private $dereferences = array();
+    private $derefTimers = 0;
+    private $derefStreams = 0;
 
     public function __construct()
     {
@@ -61,6 +66,7 @@ final class ExtLibevLoop implements LoopInterface
         $this->loop->add($event);
 
         $this->readEvents[(int) $stream] = $event;
+        $this->allStreams[(int) $stream] = true;
     }
 
     public function addWriteStream($stream, $listener)
@@ -77,6 +83,7 @@ final class ExtLibevLoop implements LoopInterface
         $this->loop->add($event);
 
         $this->writeEvents[(int) $stream] = $event;
+        $this->allStreams[(int) $stream] = true;
     }
 
     public function removeReadStream($stream)
@@ -86,7 +93,7 @@ final class ExtLibevLoop implements LoopInterface
         if (isset($this->readEvents[$key])) {
             $this->readEvents[$key]->stop();
             $this->loop->remove($this->readEvents[$key]);
-            unset($this->readEvents[$key]);
+            unset($this->readEvents[$key], $this->allStreams[$key]);
         }
     }
 
@@ -97,7 +104,7 @@ final class ExtLibevLoop implements LoopInterface
         if (isset($this->writeEvents[$key])) {
             $this->writeEvents[$key]->stop();
             $this->loop->remove($this->writeEvents[$key]);
-            unset($this->writeEvents[$key]);
+            unset($this->writeEvents[$key], $this->allStreams[$key]);
         }
     }
 
@@ -174,6 +181,60 @@ final class ExtLibevLoop implements LoopInterface
         }
     }
 
+    public function reference($streamOrTimer)
+    {
+        if ($streamOrTimer instanceof \React\EventLoop\TimerInterface) {
+            if (!$this->timerEvents->contains($streamOrTimer)) {
+                throw new \InvalidArgumentException('Given timer is not part of this loop');
+            }
+
+            $key = \spl_object_hash($streamOrTimer);
+
+            if (isset($this->dereferences[$key])) {
+                unset($this->dereferences[$key]);
+                $this->derefTimers--;
+            }
+        } else {
+            $key = (int) $streamOrTimer;
+
+            if (!isset($this->allStreams[$key])) {
+                throw new \InvalidArgumentException('Given stream is not part of a read or write session of this loop');
+            }
+            
+            if (isset($this->dereferences[$key])) {
+                unset($this->dereferences[$key]);
+                $this->derefStreams--;
+            }
+        }
+    }
+    
+    public function dereference($streamOrTimer)
+    {
+        if ($streamOrTimer instanceof \React\EventLoop\TimerInterface) {
+            if (!$this->timerEvents->contains($streamOrTimer)) {
+                throw new \InvalidArgumentException('Given timer is not part of this loop');
+            }
+
+            $key = \spl_object_hash($streamOrTimer);
+
+            if (!isset($this->dereferences[$key])) {
+                $this->dereferences[$key] = true;
+                $this->derefTimers++;
+            }
+        } else {
+            $key = (int) $streamOrTimer;
+
+            if (!isset($this->allStreams[$key])) {
+                throw new \InvalidArgumentException('Given stream is not part of a read or write session of this loop');
+            }
+
+            if (!isset($this->dereferences[$key])) {
+                $this->dereferences[$key] = true;
+                $this->derefStreams++;
+            }
+        }
+    }
+
     public function run()
     {
         $this->running = true;
@@ -181,10 +242,13 @@ final class ExtLibevLoop implements LoopInterface
         while ($this->running) {
             $this->futureTickQueue->tick();
 
+            $hasStreams = \count($this->allStreams) > $this->derefStreams;
+            $hasTimers = $this->timerEvents->count() > $this->derefTimers;
+
             $flags = EventLoop::RUN_ONCE;
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= EventLoop::RUN_NOWAIT;
-            } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count() && $this->signals->isEmpty()) {
+            } elseif (!$hasStreams && !$hasTimers) {
                 break;
             }
 

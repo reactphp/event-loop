@@ -2,7 +2,6 @@
 
 namespace React\EventLoop;
 
-use React\EventLoop\Signal\Pcntl;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
 use React\EventLoop\Timer\Timers;
@@ -49,7 +48,7 @@ use React\EventLoop\Timer\Timers;
  *
  * @link http://php.net/manual/en/function.stream-select.php
  */
-final class StreamSelectLoop implements LoopInterface
+final class StreamSelectLoop implements ExtLoopInterface
 {
     /** @internal */
     const MICROSECONDS_PER_SECOND = 1000000;
@@ -60,10 +59,15 @@ final class StreamSelectLoop implements LoopInterface
     private $readListeners = array();
     private $writeStreams = array();
     private $writeListeners = array();
+    private $allStreams = array();
     private $running;
     private $pcntl = false;
     private $pcntlActive = false;
     private $signals;
+
+    private $dereferences = array();
+    private $derefTimers = 0;
+    private $derefStreams = 0;
 
     public function __construct()
     {
@@ -83,6 +87,7 @@ final class StreamSelectLoop implements LoopInterface
         $key = (int) $stream;
 
         if (!isset($this->readStreams[$key])) {
+            $this->allStreams[$key] = true;
             $this->readStreams[$key] = $stream;
             $this->readListeners[$key] = $listener;
         }
@@ -93,6 +98,7 @@ final class StreamSelectLoop implements LoopInterface
         $key = (int) $stream;
 
         if (!isset($this->writeStreams[$key])) {
+            $this->allStreams[$key] = true;
             $this->writeStreams[$key] = $stream;
             $this->writeListeners[$key] = $listener;
         }
@@ -104,7 +110,8 @@ final class StreamSelectLoop implements LoopInterface
 
         unset(
             $this->readStreams[$key],
-            $this->readListeners[$key]
+            $this->readListeners[$key],
+            $this->allStreams[$key]
         );
     }
 
@@ -114,7 +121,8 @@ final class StreamSelectLoop implements LoopInterface
 
         unset(
             $this->writeStreams[$key],
-            $this->writeListeners[$key]
+            $this->writeListeners[$key],
+            $this->allStreams[$key]
         );
     }
 
@@ -173,6 +181,60 @@ final class StreamSelectLoop implements LoopInterface
         }
     }
 
+    public function reference($streamOrTimer)
+    {
+        if ($streamOrTimer instanceof \React\EventLoop\TimerInterface) {
+            if (!$this->timers->contains($streamOrTimer)) {
+                throw new \InvalidArgumentException('Given timer is not part of this loop');
+            }
+
+            $key = \spl_object_hash($streamOrTimer);
+
+            if (isset($this->dereferences[$key])) {
+                unset($this->dereferences[$key]);
+                $this->derefTimers--;
+            }
+        } else {
+            $key = (int) $streamOrTimer;
+
+            if (!isset($this->allStreams[$key])) {
+                throw new \InvalidArgumentException('Given stream is not part of a read or write session of this loop');
+            }
+            
+            if (isset($this->dereferences[$key])) {
+                unset($this->dereferences[$key]);
+                $this->derefStreams--;
+            }
+        }
+    }
+    
+    public function dereference($streamOrTimer)
+    {
+        if ($streamOrTimer instanceof \React\EventLoop\TimerInterface) {
+            if (!$this->timers->contains($streamOrTimer)) {
+                throw new \InvalidArgumentException('Given timer is not part of this loop');
+            }
+
+            $key = \spl_object_hash($streamOrTimer);
+
+            if (!isset($this->dereferences[$key])) {
+                $this->dereferences[$key] = true;
+                $this->derefTimers++;
+            }
+        } else {
+            $key = (int) $streamOrTimer;
+
+            if (!isset($this->allStreams[$key])) {
+                throw new \InvalidArgumentException('Given stream is not part of a read or write session of this loop');
+            }
+
+            if (!isset($this->dereferences[$key])) {
+                $this->dereferences[$key] = true;
+                $this->derefStreams++;
+            }
+        }
+    }
+
     public function run()
     {
         $this->running = true;
@@ -182,12 +244,15 @@ final class StreamSelectLoop implements LoopInterface
 
             $this->timers->tick();
 
+            $hasStreams = \count($this->allStreams) > $this->derefStreams;
+            $hasTimers = $this->timers->count() > $this->derefTimers;
+
             // Future-tick queue has pending callbacks ...
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $timeout = 0;
 
             // There is a pending timer, only block until it is due ...
-            } elseif ($scheduledAt = $this->timers->getFirst()) {
+            } elseif ($hasTimers && $scheduledAt = $this->timers->getFirst()) {
                 $timeout = $scheduledAt - $this->timers->getTime();
                 if ($timeout < 0) {
                     $timeout = 0;
@@ -199,8 +264,8 @@ final class StreamSelectLoop implements LoopInterface
                     $timeout = $timeout > \PHP_INT_MAX ? \PHP_INT_MAX : (int)$timeout;
                 }
 
-            // The only possible event is stream or signal activity, so wait forever ...
-            } elseif ($this->readStreams || $this->writeStreams || !$this->signals->isEmpty()) {
+            // The only possible event is stream activity, so wait forever ...
+            } elseif ($hasStreams) {
                 $timeout = null;
 
             // There's nothing left to do ...
@@ -220,7 +285,7 @@ final class StreamSelectLoop implements LoopInterface
     /**
      * Wait/check for stream activity, or until the next timer is due.
      *
-     * @param integer|null $timeout Activity timeout in microseconds, or null to wait forever.
+     * @param int|null $timeout Activity timeout in microseconds, or null to wait forever.
      */
     private function waitForStreamActivity($timeout)
     {
@@ -260,9 +325,9 @@ final class StreamSelectLoop implements LoopInterface
      *
      * @param array        &$read   An array of read streams to select upon.
      * @param array        &$write  An array of write streams to select upon.
-     * @param integer|null $timeout Activity timeout in microseconds, or null to wait forever.
+     * @param int|null     $timeout Activity timeout in microseconds, or null to wait forever.
      *
-     * @return integer|false The total number of streams that are ready for read/write.
+     * @return int|false The total number of streams that are ready for read/write.
      * Can return false if stream_select() is interrupted by a signal.
      */
     private function streamSelect(array &$read, array &$write, $timeout)

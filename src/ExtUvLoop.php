@@ -16,7 +16,7 @@ use SplObjectStorage;
  *
  * @see https://github.com/bwoebi/php-uv
  */
-final class ExtUvLoop implements LoopInterface
+final class ExtUvLoop implements ExtLoopInterface
 {
     private $uv;
     private $futureTickQueue;
@@ -24,10 +24,15 @@ final class ExtUvLoop implements LoopInterface
     private $streamEvents = array();
     private $readStreams = array();
     private $writeStreams = array();
+    private $allStreams = array();
     private $running;
     private $signals;
     private $signalEvents = array();
     private $streamListener;
+
+    private $dereferences = array();
+    private $derefTimers = 0;
+    private $derefStreams = 0;
 
     public function __construct()
     {
@@ -200,6 +205,60 @@ final class ExtUvLoop implements LoopInterface
         }
     }
 
+    public function reference($streamOrTimer)
+    {
+        if ($streamOrTimer instanceof \React\EventLoop\TimerInterface) {
+            if (!$this->timers->contains($streamOrTimer)) {
+                throw new \InvalidArgumentException('Given timer is not part of this loop');
+            }
+
+            $key = \spl_object_hash($streamOrTimer);
+
+            if (isset($this->dereferences[$key])) {
+                unset($this->dereferences[$key]);
+                $this->derefTimers--;
+            }
+        } else {
+            $key = (int) $streamOrTimer;
+
+            if (!isset($this->allStreams[$key])) {
+                throw new \InvalidArgumentException('Given stream is not part of a read or write session of this loop');
+            }
+            
+            if (isset($this->dereferences[$key])) {
+                unset($this->dereferences[$key]);
+                $this->derefStreams--;
+            }
+        }
+    }
+    
+    public function dereference($streamOrTimer)
+    {
+        if ($streamOrTimer instanceof \React\EventLoop\TimerInterface) {
+            if (!$this->timers->contains($streamOrTimer)) {
+                throw new \InvalidArgumentException('Given timer is not part of this loop');
+            }
+
+            $key = \spl_object_hash($streamOrTimer);
+
+            if (!isset($this->dereferences[$key])) {
+                $this->dereferences[$key] = true;
+                $this->derefTimers++;
+            }
+        } else {
+            $key = (int) $streamOrTimer;
+
+            if (!isset($this->allStreams[$key])) {
+                throw new \InvalidArgumentException('Given stream is not part of a read or write session of this loop');
+            }
+
+            if (!isset($this->dereferences[$key])) {
+                $this->dereferences[$key] = true;
+                $this->derefStreams++;
+            }
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -211,11 +270,10 @@ final class ExtUvLoop implements LoopInterface
             $this->futureTickQueue->tick();
 
             $hasPendingCallbacks = !$this->futureTickQueue->isEmpty();
+            $hasStreams = \count($this->allStreams) > $this->derefStreams;
+            $hasTimers = $this->timers->count() > $this->derefTimers;
+
             $wasJustStopped = !$this->running;
-            $nothingLeftToDo = !$this->readStreams
-                && !$this->writeStreams
-                && !$this->timers->count()
-                && $this->signals->isEmpty();
 
             // Use UV::RUN_ONCE when there are only I/O events active in the loop and block until one of those triggers,
             // otherwise use UV::RUN_NOWAIT.
@@ -223,7 +281,7 @@ final class ExtUvLoop implements LoopInterface
             $flags = \UV::RUN_ONCE;
             if ($wasJustStopped || $hasPendingCallbacks) {
                 $flags = \UV::RUN_NOWAIT;
-            } elseif ($nothingLeftToDo) {
+            } elseif (!$hasStreams && !$hasTimers) {
                 break;
             }
 
@@ -241,6 +299,8 @@ final class ExtUvLoop implements LoopInterface
 
     private function addStream($stream)
     {
+        $this->allStreams[(int) $stream] = true;
+
         if (!isset($this->streamEvents[(int) $stream])) {
             $this->streamEvents[(int)$stream] = \uv_poll_init_socket($this->uv, $stream);
         }
@@ -252,6 +312,8 @@ final class ExtUvLoop implements LoopInterface
 
     private function removeStream($stream)
     {
+        unset($this->allStreams[(int) $stream]);
+
         if (!isset($this->streamEvents[(int) $stream])) {
             return;
         }

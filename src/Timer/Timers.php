@@ -61,7 +61,12 @@ final class Timers
 
     public function isEmpty()
     {
-        return \count($this->timers) === 0;
+        return $this->count() === 0;
+    }
+
+    public function count()
+    {
+        return \count($this->timers);
     }
 
     public function tick()
