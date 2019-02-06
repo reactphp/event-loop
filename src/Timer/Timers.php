@@ -18,10 +18,17 @@ final class Timers
     private $timers = array();
     private $schedule = array();
     private $sorted = true;
+    private $useHighResolution;
+
+    public function __construct()
+    {
+        // prefer high-resolution timer, available as of PHP 7.3+
+        $this->useHighResolution = \function_exists('hrtime');
+    }
 
     public function updateTime()
     {
-        return $this->time = \microtime(true);
+        return $this->time = $this->useHighResolution ? \hrtime(true) * 1e-9 : \microtime(true);
     }
 
     public function getTime()
@@ -33,7 +40,7 @@ final class Timers
     {
         $id = \spl_object_hash($timer);
         $this->timers[$id] = $timer;
-        $this->schedule[$id] = $timer->getInterval() + \microtime(true);
+        $this->schedule[$id] = $timer->getInterval() + $this->updateTime();
         $this->sorted = false;
     }
 
