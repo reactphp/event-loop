@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.1.0 (2019-02-07)
+
+*   New UV based event loop (ext-uv).
+    (#112 by @WyriHaximus)
+
+*   Use high resolution timer on PHP 7.3+. 
+    (#182 by @clue)
+
+*   Improve PCNTL signals by using async signal dispatching if available. 
+    (#179 by @CharlotteDunois)
+
+*   Improve test suite and test suite set up.
+    (#174 by @WyriHaximus, #181 by @clue)
+
+*   Fix PCNTL signals edge case. 
+    (#183 by @clue)
+
 ## 1.0.0 (2018-07-11)
 
 *   First stable LTS release, now following [SemVer](https://semver.org/).
