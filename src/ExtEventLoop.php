@@ -20,15 +20,27 @@ use SplObjectStorage;
  *
  * @link https://pecl.php.net/package/event
  */
-final class ExtEventLoop implements LoopInterface
+final class ExtEventLoop implements ForkableLoopInterface
 {
+    /**
+     * @var EventBase
+     */
     private $eventBase;
     private $futureTickQueue;
     private $timerCallback;
     private $timerEvents;
     private $streamCallback;
+
+    /**
+     * @var Event[]
+     */
     private $readEvents = array();
+
+    /**
+     * @var Event[]
+     */
     private $writeEvents = array();
+
     private $readListeners = array();
     private $writeListeners = array();
     private $readRefs = array();
@@ -196,6 +208,25 @@ final class ExtEventLoop implements LoopInterface
     }
 
     /**
+     * @inheritdoc
+     * @return ExtEventLoop|ForkableLoopInterface
+     */
+    public function recreateForChildProcess()
+    {
+        $this->eventBase->reInit();
+
+        $this->running = false;
+        $this->dispose();
+
+        return new self();
+    }
+
+    public function reuseForChildProcess()
+    {
+        $this->eventBase->reInit();
+    }
+
+    /**
      * Schedule a timer for execution.
      *
      * @param TimerInterface $timer
@@ -255,5 +286,32 @@ final class ExtEventLoop implements LoopInterface
                 \call_user_func($write[$key], $stream);
             }
         };
+    }
+
+    private function dispose()
+    {
+        $freeEvent = function(Event $event) {
+            $event->free();
+        };
+
+        array_walk($this->readEvents, $freeEvent);
+        array_walk($this->writeEvents, $freeEvent);
+
+        $this->timerEvents->rewind();
+
+        while ($this->timerEvents->valid()) {
+            $this->timerEvents->getInfo()->free();
+            $this->timerEvents->next();
+        }
+
+        $this->futureTickQueue = new FutureTickQueue();
+        $this->timerEvents = new SplObjectStorage();
+        $this->signals = new SignalsHandler();
+        $this->readEvents = array();
+        $this->writeEvents = array();
+        $this->readListeners = array();
+        $this->writeListeners = array();
+        $this->readRefs = array();
+        $this->writeRefs = array();
     }
 }

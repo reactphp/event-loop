@@ -4,7 +4,12 @@ namespace React\Tests\EventLoop;
 
 use React\EventLoop\ExtEventLoop;
 
-class ExtEventLoopTest extends AbstractLoopTest
+/**
+ * @requires OS Linux
+ * @requires extension event
+ * @requires extension posix
+ */
+class ExtEventLoopTest extends AbstractForkableLoopTest
 {
     public function createLoop($readStreamCompatible = false)
     {
@@ -57,9 +62,6 @@ class ExtEventLoopTest extends AbstractLoopTest
         fwrite($stream, $content);
     }
 
-    /**
-     * @group epoll-readable-error
-     */
     public function testCanUseReadableStreamWithFeatureFds()
     {
         if (PHP_VERSION_ID > 70000) {
