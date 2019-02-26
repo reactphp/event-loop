@@ -49,7 +49,7 @@ use React\EventLoop\Timer\Timers;
  *
  * @link http://php.net/manual/en/function.stream-select.php
  */
-final class StreamSelectLoop implements LoopInterface
+final class StreamSelectLoop implements ForkableLoopInterface
 {
     /** @internal */
     const MICROSECONDS_PER_SECOND = 1000000;
@@ -215,6 +215,26 @@ final class StreamSelectLoop implements LoopInterface
     public function stop()
     {
         $this->running = false;
+    }
+
+    public function recreateForChildProcess()
+    {
+        $this->stop();
+
+        $this->futureTickQueue = new FutureTickQueue();
+        $this->timers = new Timers();
+        $this->signals = new SignalsHandler();
+        $this->readStreams = array();
+        $this->readListeners = array();
+        $this->writeStreams = array();
+        $this->writeListeners = array();
+
+        return new self();
+    }
+
+    public function reuseForChildProcess()
+    {
+        // Do we need to reinitialize signal handling?
     }
 
     /**
