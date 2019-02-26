@@ -62,6 +62,9 @@ class ExtEventLoopTest extends AbstractForkableLoopTest
         fwrite($stream, $content);
     }
 
+    /**
+     * @group epoll-readable-error
+     */
     public function testCanUseReadableStreamWithFeatureFds()
     {
         if (PHP_VERSION_ID > 70000) {
