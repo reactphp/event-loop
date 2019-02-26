@@ -5,7 +5,7 @@ namespace React\Tests\EventLoop;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\StreamSelectLoop;
 
-class StreamSelectLoopTest extends AbstractLoopTest
+class StreamSelectLoopTest extends AbstractForkableLoopTest
 {
     protected function tearDown()
     {
