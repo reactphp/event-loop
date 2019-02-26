@@ -19,13 +19,15 @@ abstract class AbstractForkableLoopTest extends AbstractLoopTest
 
     public function testShouldDisposeTheLoopOnRecreateForChild()
     {
-        $read = fopen('/dev/urandom', 'r');
-        $write = fopen('/dev/null', 'w');
+        list($readIn, $readOut) = $this->createSocketPair();
+        list($writeIn) = $this->createSocketPair();
         $loop = $this->createLoop();
         $never = $this->expectCallableNever();
 
-        $loop->addReadStream($read, $never);
-        $loop->addWriteStream($write, $never);
+        fwrite($readIn, 'Test');
+
+        $loop->addReadStream($readOut, $never);
+        $loop->addWriteStream($writeIn, $never);
         $loop->addTimer(0.1, $never);
         $loop->futureTick($never);
 
@@ -36,17 +38,23 @@ abstract class AbstractForkableLoopTest extends AbstractLoopTest
     public function testShouldStopTheExistingLoopOnRecreateForChildProcess()
     {
         $loop = $this->createLoop();
-        $futureTickCalled = false;
+        $never = $this->expectCallableNever();
+        $result = null;
 
-        $loop->futureTick(function() use ($loop, &$futureTickCalled) {
-            $loop->recreateForChildProcess();
+        $loop->futureTick(function() use ($loop, $never, &$result) {
+            $result = $loop->recreateForChildProcess();
 
-            $loop->futureTick(function() use ($loop, &$futureTickCalled) {
-                $futureTickCalled = true;
-                $loop->stop();
-            });
+            $loop->futureTick($never);
+            $loop->futureTick(array($loop, 'stop'));
         });
 
-        $this->assertFalse($futureTickCalled);
+        $loop->run();
+
+        $this->assertInstanceOf(
+            'React\EventLoop\ForkableLoopInterface',
+            $result
+        );
+
+        $this->assertNotSame($loop, $result);
     }
 }
