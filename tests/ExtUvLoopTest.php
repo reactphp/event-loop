@@ -4,7 +4,10 @@ namespace React\Tests\EventLoop;
 
 use React\EventLoop\ExtUvLoop;
 
-class ExtUvLoopTest extends AbstractLoopTest
+/**
+ * @requires extension uv
+ */
+class ExtUvLoopTest extends AbstractForkableLoopTest
 {
     public function createLoop()
     {
