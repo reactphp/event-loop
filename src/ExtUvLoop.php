@@ -16,7 +16,7 @@ use SplObjectStorage;
  *
  * @see https://github.com/bwoebi/php-uv
  */
-final class ExtUvLoop implements LoopInterface
+final class ExtUvLoop implements ForkableLoopInterface
 {
     private $uv;
     private $futureTickQueue;
@@ -237,6 +237,38 @@ final class ExtUvLoop implements LoopInterface
     public function stop()
     {
         $this->running = false;
+    }
+
+    public function recreateForChildProcess()
+    {
+        $this->stop();
+
+        array_walk($this->streamEvents, function ($handle) {
+            \uv_poll_stop($handle);
+            \uv_close($handle);
+        });
+
+        array_walk($this->signalEvents, function ($handle) {
+            \uv_signal_stop($handle);
+        });
+
+        foreach ($this->timers as $timer) {
+            $this->cancelTimer($timer);
+        }
+
+        $this->readStreams = array();
+        $this->writeStreams = array();
+        $this->streamEvents = array();
+        $this->signalEvents = array();
+        $this->timers = new SplObjectStorage();
+        $this->signals = new SignalsHandler();
+        $this->futureTickQueue = new FutureTickQueue();
+
+        return new self();
+    }
+
+    public function reuseForChildProcess()
+    {
     }
 
     private function addStream($stream)
