@@ -44,7 +44,11 @@ final class ExtEventLoop implements LoopInterface
         }
 
         $config = new EventBaseConfig();
-        $config->requireFeatures(EventBaseConfig::FEATURE_FDS);
+        if ('WIN' === strtoupper(substr(PHP_OS, 0, 3))) {
+            // Skip `EventBaseConfig::FEATURE_FDS` due an issue https://github.com/reactphp/event-loop/issues/189
+        }else {
+            $config->requireFeatures(EventBaseConfig::FEATURE_FDS);
+        }
 
         $this->eventBase = new EventBase($config);
         $this->futureTickQueue = new FutureTickQueue();
