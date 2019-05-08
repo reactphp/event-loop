@@ -62,18 +62,19 @@ final class StreamSelectLoop implements LoopInterface
     private $writeListeners = array();
     private $running;
     private $pcntl = false;
-    private $pcntlActive = false;
+    private $pcntlPoll = false;
     private $signals;
 
     public function __construct()
     {
         $this->futureTickQueue = new FutureTickQueue();
         $this->timers = new Timers();
-        $this->pcntl = \extension_loaded('pcntl');
-        $this->pcntlActive  = $this->pcntl && !\function_exists('pcntl_async_signals');
+        $this->pcntl = \function_exists('pcntl_signal') && \function_exists('pcntl_signal_dispatch');
+        $this->pcntlPoll = $this->pcntl && !\function_exists('pcntl_async_signals');
         $this->signals = new SignalsHandler();
 
-        if ($this->pcntl && !$this->pcntlActive) {
+        // prefer async signals if available (PHP 7.1+) or fall back to dispatching on each tick
+        if ($this->pcntl && !$this->pcntlPoll) {
             \pcntl_async_signals(true);
         }
     }
@@ -228,7 +229,7 @@ final class StreamSelectLoop implements LoopInterface
         $write = $this->writeStreams;
 
         $available = $this->streamSelect($read, $write, $timeout);
-        if ($this->pcntlActive) {
+        if ($this->pcntlPoll) {
             \pcntl_signal_dispatch();
         }
         if (false === $available) {
