@@ -2,8 +2,8 @@ language: php
 
 php:
 # - 5.3 # requires old distro, see below
-  - 5.4
-  - 5.5
+# - 5.4 # requires old distro, see below
+# - 5.5 # requires old distro, see below
   - 5.6
   - 7.0
   - 7.1
@@ -12,12 +12,16 @@ php:
 # - hhvm # requires legacy phpunit & ignore errors, see below
 
 # lock distro so new future defaults will not break the build
-dist: trusty
+dist: xenial
 
 matrix:
   include:
     - php: 5.3
       dist: precise
+    - php: 5.4
+      dist: trusty
+    - php: 5.5
+      dist: trusty
     - php: hhvm
       install: composer require phpunit/phpunit:^5 --dev --no-interaction
   allow_failures:
