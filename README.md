@@ -38,6 +38,7 @@ single [`run()`](#run) call that is controlled by the user.
 * [Install](#install)
 * [Tests](#tests)
 * [License](#license)
+* [Known issues](#known-issues)
 * [More](#more)
 
 ## Quickstart example
@@ -703,6 +704,10 @@ $ php vendor/bin/phpunit
 ## License
 
 MIT, see [LICENSE file](LICENSE).
+
+## Known Issues
+* _*pecl-event*_ on Windows is not capable of accepting arbitrary file descriptor types (`EventBaseConfig::FEATURE_FDS`).
+  Instead if an user requires this feature, _*libuv*_ should be used. [Related issue](https://github.com/reactphp/event-loop/issues/189)
 
 ## More
 
