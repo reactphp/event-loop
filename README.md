@@ -706,7 +706,7 @@ $ php vendor/bin/phpunit
 MIT, see [LICENSE file](LICENSE).
 
 ## Known Issues
-* _*pecl-event*_ on Windows is not capable of accepting arbitrary file descriptor types (`EventBaseConfig::FEATURE_FDS`).
+* _*pecl-event*_ on Windows is not capable of accepting arbitrary file descriptor types (`EventConfig::FEATURE_FDS`).
   Instead if an user requires this feature, _*libuv*_ should be used. [Related issue](https://github.com/reactphp/event-loop/issues/189)
 
 ## More
