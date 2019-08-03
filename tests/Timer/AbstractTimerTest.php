@@ -137,4 +137,22 @@ abstract class AbstractTimerTest extends TestCase
 
         $this->assertEquals(0.000001, $timer->getInterval());
     }
+
+    public function testTimerIntervalBelowZeroRunsImmediately()
+    {
+        $loop = $this->createLoop();
+        $start = 0;
+        $loop->addTimer(
+            -1,
+            function () use (&$start) {
+                $start = \microtime(true);
+            }
+        );
+
+        $loop->run();
+        $end = \microtime(true);
+
+        // 1ms should be enough even on slow machines
+        $this->assertLessThan(0.001, $end - $start);
+    }
 }

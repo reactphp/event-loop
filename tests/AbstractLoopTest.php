@@ -589,13 +589,6 @@ abstract class AbstractLoopTest extends TestCase
         $this->assertRunFasterThan(1.6);
     }
 
-    public function testTimerIntervalBelowZeroRunsImmediately()
-    {
-        $this->loop->addTimer(-1, function () {});
-
-        $this->assertRunFasterThan(0.002);
-    }
-
     public function testTimerIntervalCanBeFarInFuture()
     {
         // Maximum interval for ExtUvLoop implementation
