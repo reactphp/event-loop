@@ -18,12 +18,16 @@ matrix:
   include:
     - php: 5.3
       dist: precise
+      before_install: [] # skip libuv
     - php: 5.4
       dist: trusty
+      before_install: [] # skip libuv
     - php: 5.5
       dist: trusty
+      before_install: [] # skip libuv
     - php: hhvm
       install: composer require phpunit/phpunit:^5 --dev --no-interaction
+      before_install: [] # skip libuv
   allow_failures:
     - php: hhvm
 
@@ -41,7 +45,7 @@ cache:
 before_install:
   - sudo add-apt-repository ppa:ondrej/php -y
   - sudo apt-get update -q
-  - sudo apt-get install libuv1-dev || true
+  - sudo apt-get install libuv1-dev
 
 install:
   - ./travis-init.sh
