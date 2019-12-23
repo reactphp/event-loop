@@ -28,8 +28,18 @@ matrix:
     - php: hhvm
       install: composer require phpunit/phpunit:^5 --dev --no-interaction
       before_install: [] # skip libuv
+    - name: "Windows"
+      os: windows
+      language: shell # no built-in php support
+      before_install:
+        - choco install php
+        - choco install composer
+        - export PATH="$(powershell -Command '("Process", "Machine" | % { [Environment]::GetEnvironmentVariable("PATH", $_) -Split ";" -Replace "\\$", "" } | Select -Unique | % { cygpath $_ }) -Join ":"')"
+      install:
+        - composer install
   allow_failures:
     - php: hhvm
+    - os: windows
 
 sudo: false
 
