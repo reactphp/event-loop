@@ -5,7 +5,6 @@ namespace React\EventLoop;
 use BadMethodCallException;
 use Event;
 use EventBase;
-use EventConfig as EventBaseConfig;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
 use SplObjectStorage;
@@ -43,8 +42,13 @@ final class ExtEventLoop implements LoopInterface
             throw new BadMethodCallException('Cannot create ExtEventLoop, ext-event extension missing');
         }
 
-        $config = new EventBaseConfig();
-        $config->requireFeatures(EventBaseConfig::FEATURE_FDS);
+        // support arbitrary file descriptors and not just sockets
+        // Windows only has limited file descriptor support, so do not require this (will fail otherwise)
+        // @link http://www.wangafu.net/~nickm/libevent-book/Ref2_eventbase.html#_setting_up_a_complicated_event_base
+        $config = new \EventConfig();
+        if (\DIRECTORY_SEPARATOR !== '\\') {
+            $config->requireFeatures(\EventConfig::FEATURE_FDS);
+        }
 
         $this->eventBase = new EventBase($config);
         $this->futureTickQueue = new FutureTickQueue();

@@ -37,6 +37,20 @@ matrix:
         - export PATH="$(powershell -Command '("Process", "Machine" | % { [Environment]::GetEnvironmentVariable("PATH", $_) -Split ";" -Replace "\\$", "" } | Select -Unique | % { cygpath $_ }) -Join ":"')"
       install:
         - composer install
+    - name: "Windows PHP 7.2 with ext-event"
+      os: windows
+      language: shell # no built-in php support
+      before_install:
+        - curl -OL https://windows.php.net/downloads/pecl/releases/event/2.5.3/php_event-2.5.3-7.2-nts-vc15-x64.zip # latest version as of 2019-12-23
+        - choco install php --version=7.2.26 # latest version supported by ext-event as of 2019-12-23
+        - choco install composer
+        - export PATH="$(powershell -Command '("Process", "Machine" | % { [Environment]::GetEnvironmentVariable("PATH", $_) -Split ";" -Replace "\\$", "" } | Select -Unique | % { cygpath $_ }) -Join ":"')"
+        - php -r "\$z=new ZipArchive();\$z->open(glob('php_event*.zip')[0]);\$z->extractTo(dirname(php_ini_loaded_file()).'/ext','php_event.dll');"
+        - php -r "file_put_contents(php_ini_loaded_file(),'extension_dir=ext'.PHP_EOL,FILE_APPEND);"
+        - php -r "file_put_contents(php_ini_loaded_file(),'extension=sockets'.PHP_EOL,FILE_APPEND);" # ext-sockets needs to be loaded before ext-event
+        - php -r "file_put_contents(php_ini_loaded_file(),'extension=event'.PHP_EOL,FILE_APPEND);"
+      install:
+        - composer install
   allow_failures:
     - php: hhvm
     - os: windows
