@@ -3,6 +3,7 @@
 namespace React\Tests\EventLoop;
 
 use React\EventLoop\StreamSelectLoop;
+use React\EventLoop\ExtUvLoop;
 
 abstract class AbstractLoopTest extends TestCase
 {
@@ -144,6 +145,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testAddReadStream()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableExactly(2));
@@ -157,6 +162,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testAddReadStreamIgnoresSecondCallable()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableExactly(2));
@@ -206,6 +215,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testAddWriteStream()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input) = $this->createSocketPair();
 
         $this->loop->addWriteStream($input, $this->expectCallableExactly(2));
@@ -215,6 +228,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testAddWriteStreamIgnoresSecondCallable()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input) = $this->createSocketPair();
 
         $this->loop->addWriteStream($input, $this->expectCallableExactly(2));
@@ -225,6 +242,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveReadStreamInstantly()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableNever());
@@ -236,6 +257,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveReadStreamAfterReading()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableOnce());
@@ -251,6 +276,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveWriteStreamInstantly()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input) = $this->createSocketPair();
 
         $this->loop->addWriteStream($input, $this->expectCallableNever());
@@ -260,6 +289,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveWriteStreamAfterWriting()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input) = $this->createSocketPair();
 
         $this->loop->addWriteStream($input, $this->expectCallableOnce());
@@ -271,6 +304,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveStreamForReadOnly()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableNever());
@@ -283,6 +320,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveStreamForWriteOnly()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         fwrite($output, "foo\n");
@@ -505,6 +546,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testFutureTickFiresBeforeIO()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($stream) = $this->createSocketPair();
 
         $this->loop->addWriteStream(
@@ -525,6 +570,9 @@ abstract class AbstractLoopTest extends TestCase
         $this->tickLoop($this->loop);
     }
 
+    /**
+     * @depends testFutureTickFiresBeforeIO
+     */
     public function testRecursiveFutureTick()
     {
         list ($stream) = $this->createSocketPair();
