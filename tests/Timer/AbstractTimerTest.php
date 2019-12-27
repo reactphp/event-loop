@@ -22,38 +22,21 @@ abstract class AbstractTimerTest extends TestCase
         $this->assertFalse($timer->isPeriodic());
     }
 
-    /**
-     * @depends testPlatformHasHighAccuracy
-     */
     public function testAddTimerWillBeInvokedOnceAndBlocksLoopWhenRunning()
     {
-        // Make no strict assumptions about actual time interval. Common
-        // environments usually provide millisecond accuracy (or better), but
-        // Travis and other CI systems are slow.
-        // We try to compensate for this by skipping accurate tests when the
-        // current platform is known to be inaccurate. We test this by sleeping
-        // 3x1ms and then measure the time for each iteration before running the
-        // actual test.
-        for ($i = 0; $i < 3; ++$i) {
-            $start = microtime(true);
-            usleep(1000);
-            $time = microtime(true) - $start;
-
-            if ($time < 0.001 || $time > 0.002) {
-                $this->markTestSkipped('Platform provides insufficient accuracy (' . $time . ' s)');
-            }
-        }
-
         $loop = $this->createLoop();
 
-        $loop->addTimer(0.001, $this->expectCallableOnce());
+        $loop->addTimer(0.002, $this->expectCallableOnce());
 
         $start = microtime(true);
         $loop->run();
         $end = microtime(true);
 
+        // 1 invocation should take 2ms (± 1ms due to timer inaccuracies)
+        // make no strict assumptions about time interval, must at least take 1ms
+        // and should not take longer than 0.1s for slower loops.
         $this->assertGreaterThanOrEqual(0.001, $end - $start);
-        $this->assertLessThan(0.002, $end - $start);
+        $this->assertLessThan(0.1, $end - $start);
     }
 
     public function testAddPeriodicTimerReturnsPeriodicTimerInstance()
@@ -90,17 +73,17 @@ abstract class AbstractTimerTest extends TestCase
             ++$i;
         });
 
-        $loop->addTimer(0.02, function () use ($loop, $periodic) {
+        $loop->addTimer(0.1, function () use ($loop, $periodic) {
             $loop->cancelTimer($periodic);
         });
 
         $loop->run();
 
         // make no strict assumptions about number of invocations.
-        // we know it must be no more than 20 times and should at least be
-        // invoked twice for really slow loops
-        $this->assertLessThanOrEqual(20, $i);
-        $this->assertGreaterThan(2, $i);
+        // we know it must be no more than 100 times and should at least be
+        // invoked 4 times for really slow loops
+        $this->assertLessThanOrEqual(100, $i);
+        $this->assertGreaterThanOrEqual(4, $i);
     }
 
     public function testAddPeriodicTimerCancelsItself()
@@ -122,11 +105,11 @@ abstract class AbstractTimerTest extends TestCase
 
         $this->assertEquals(5, $i);
 
-        // make no strict assumptions about time interval.
-        // 5 invocations must take at least 0.005s (5ms) and should not take
-        // longer than 0.1s for slower loops.
-        $this->assertGreaterThanOrEqual(0.005, $end - $start);
-        $this->assertLessThan(0.1, $end - $start);
+        // 5 invocations should take 5ms (± 1ms due to timer inaccuracies)
+        // make no strict assumptions about time interval, must at least take 4ms
+        // and should not take longer than 0.2s for slower loops.
+        $this->assertGreaterThanOrEqual(0.004, $end - $start);
+        $this->assertLessThan(0.2, $end - $start);
     }
 
     public function testMinimumIntervalOneMicrosecond()
