@@ -51,8 +51,6 @@ matrix:
         - php -r "file_put_contents(php_ini_loaded_file(),'extension=event'.PHP_EOL,FILE_APPEND);"
       install:
         - composer install
-      script:
-        - vendor/bin/phpunit --coverage-text || ([[ $? = 139 ]] && echo && echo "Ignoring SEGFAULT.." >&2) # ignore unrelated SEGFAULT when all tests pass
   allow_failures:
     - php: hhvm
     - os: windows

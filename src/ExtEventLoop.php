@@ -59,6 +59,17 @@ final class ExtEventLoop implements LoopInterface
         $this->createStreamCallback();
     }
 
+    public function __destruct()
+    {
+        // explicitly clear all references to Event objects to prevent SEGFAULTs on Windows
+        foreach ($this->timerEvents as $timer) {
+            $this->timerEvents->detach($timer);
+        }
+
+        $this->readEvents = array();
+        $this->writeEvents = array();
+    }
+
     public function addReadStream($stream, $listener)
     {
         $key = (int) $stream;
