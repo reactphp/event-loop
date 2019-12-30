@@ -111,16 +111,11 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testAddWriteStreamTriggersWhenSocketConnectionRefused()
     {
-        // @link https://github.com/reactphp/event-loop/issues/206
-        if ($this->loop instanceof StreamSelectLoop && DIRECTORY_SEPARATOR === '\\') {
-            $this->markTestIncomplete('StreamSelectLoop does not currently support detecting connection refused errors on Windows');
-        }
-
         // first verify the operating system actually refuses the connection and no firewall is in place
         // use higher timeout because Windows retires multiple times and has a noticeable delay
         // @link https://stackoverflow.com/questions/19440364/why-do-failed-attempts-of-socket-connect-take-1-sec-on-windows
         $errno = $errstr = null;
-        if (@stream_socket_client('127.0.0.1:1', $errno, $errstr, 10.0) !== false || $errno !== SOCKET_ECONNREFUSED) {
+        if (@stream_socket_client('127.0.0.1:1', $errno, $errstr, 10.0) !== false || (defined('SOCKET_ECONNREFUSED') && $errno !== SOCKET_ECONNREFUSED)) {
             $this->markTestSkipped('Expected host to refuse connection, but got error ' . $errno . ': ' . $errstr);
         }
 
