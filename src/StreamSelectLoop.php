@@ -269,10 +269,30 @@ final class StreamSelectLoop implements LoopInterface
     private function streamSelect(array &$read, array &$write, $timeout)
     {
         if ($read || $write) {
+            // We do not usually use or expose the `exceptfds` parameter passed to the underlying `select`.
+            // However, Windows does not report failed connection attempts in `writefds` passed to `select` like most other platforms.
+            // Instead, it uses `writefds` only for successful connection attempts and `exceptfds` for failed connection attempts.
+            // We work around this by adding all sockets that look like a pending connection attempt to `exceptfds` automatically on Windows and merge it back later.
+            // This ensures the public API matches other loop implementations across all platforms (see also test suite or rather test matrix).
+            // Lacking better APIs, every write-only socket that has not yet read any data is assumed to be in a pending connection attempt state.
+            // @link https://docs.microsoft.com/de-de/windows/win32/api/winsock2/nf-winsock2-select
             $except = null;
+            if (\DIRECTORY_SEPARATOR === '\\') {
+                $except = array();
+                foreach ($write as $key => $socket) {
+                    if (!isset($read[$key]) && @\ftell($socket) === 0) {
+                        $except[$key] = $socket;
+                    }
+                }
+            }
 
             // suppress warnings that occur, when stream_select is interrupted by a signal
-            return @\stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+            $ret = @\stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+
+            if ($except) {
+                $write = \array_merge($write, $except);
+            }
+            return $ret;
         }
 
         if ($timeout > 0) {
