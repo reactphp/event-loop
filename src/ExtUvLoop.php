@@ -294,13 +294,15 @@ final class ExtUvLoop implements LoopInterface
     private function createStreamListener()
     {
         $callback = function ($event, $status, $events, $stream) {
-            if (!isset($this->streamEvents[(int) $stream])) {
-                return;
-            }
+            // libuv automatically stops polling on error, re-enable polling to match other loop implementations
+            if ($status !== 0) {
+                $this->pollStream($stream);
 
-            if (($events | 4) === 4) {
-                // Disconnected
-                return;
+                // libuv may report no events on error, but this should still invoke stream listeners to report closed connections
+                // re-enable both readable and writable, correct listeners will be checked below anyway
+                if ($events === 0) {
+                    $events = \UV::READABLE | \UV::WRITABLE;
+                }
             }
 
             if (isset($this->readStreams[(int) $stream]) && ($events & \UV::READABLE)) {

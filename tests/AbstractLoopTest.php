@@ -2,6 +2,9 @@
 
 namespace React\Tests\EventLoop;
 
+use React\EventLoop\StreamSelectLoop;
+use React\EventLoop\ExtUvLoop;
+
 abstract class AbstractLoopTest extends TestCase
 {
     /**
@@ -36,8 +39,116 @@ abstract class AbstractLoopTest extends TestCase
         return $sockets;
     }
 
+    public function testAddReadStreamTriggersWhenSocketReceivesData()
+    {
+        list ($input, $output) = $this->createSocketPair();
+
+        $loop = $this->loop;
+        $timeout = $loop->addTimer(0.1, function () use ($input, $loop) {
+            $loop->removeReadStream($input);
+        });
+
+        $called = 0;
+        $this->loop->addReadStream($input, function () use (&$called, $loop, $input, $timeout) {
+            ++$called;
+            $loop->removeReadStream($input);
+            $loop->cancelTimer($timeout);
+        });
+
+        fwrite($output, "foo\n");
+
+        $this->loop->run();
+
+        $this->assertEquals(1, $called);
+    }
+
+    public function testAddReadStreamTriggersWhenSocketCloses()
+    {
+        list ($input, $output) = $this->createSocketPair();
+
+        $loop = $this->loop;
+        $timeout = $loop->addTimer(0.1, function () use ($input, $loop) {
+            $loop->removeReadStream($input);
+        });
+
+        $called = 0;
+        $this->loop->addReadStream($input, function () use (&$called, $loop, $input, $timeout) {
+            ++$called;
+            $loop->removeReadStream($input);
+            $loop->cancelTimer($timeout);
+        });
+
+        fclose($output);
+
+        $this->loop->run();
+
+        $this->assertEquals(1, $called);
+    }
+
+    public function testAddWriteStreamTriggersWhenSocketConnectionSucceeds()
+    {
+        $server = stream_socket_server('127.0.0.1:0');
+
+        $errno = $errstr = null;
+        $connecting = stream_socket_client(stream_socket_get_name($server, false), $errno, $errstr, 0, STREAM_CLIENT_CONNECT | STREAM_CLIENT_ASYNC_CONNECT);
+
+        $loop = $this->loop;
+        $timeout = $loop->addTimer(0.1, function () use ($connecting, $loop) {
+            $loop->removeWriteStream($connecting);
+        });
+
+        $called = 0;
+        $this->loop->addWriteStream($connecting, function () use (&$called, $loop, $connecting, $timeout) {
+            ++$called;
+            $loop->removeWriteStream($connecting);
+            $loop->cancelTimer($timeout);
+        });
+
+        $this->loop->run();
+
+        $this->assertEquals(1, $called);
+    }
+
+    public function testAddWriteStreamTriggersWhenSocketConnectionRefused()
+    {
+        // @link https://github.com/reactphp/event-loop/issues/206
+        if ($this->loop instanceof StreamSelectLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('StreamSelectLoop does not currently support detecting connection refused errors on Windows');
+        }
+
+        // first verify the operating system actually refuses the connection and no firewall is in place
+        // use higher timeout because Windows retires multiple times and has a noticeable delay
+        // @link https://stackoverflow.com/questions/19440364/why-do-failed-attempts-of-socket-connect-take-1-sec-on-windows
+        $errno = $errstr = null;
+        if (@stream_socket_client('127.0.0.1:1', $errno, $errstr, 10.0) !== false || $errno !== SOCKET_ECONNREFUSED) {
+            $this->markTestSkipped('Expected host to refuse connection, but got error ' . $errno . ': ' . $errstr);
+        }
+
+        $connecting = stream_socket_client('127.0.0.1:1', $errno, $errstr, 0, STREAM_CLIENT_CONNECT | STREAM_CLIENT_ASYNC_CONNECT);
+
+        $loop = $this->loop;
+        $timeout = $loop->addTimer(10.0, function () use ($connecting, $loop) {
+            $loop->removeWriteStream($connecting);
+        });
+
+        $called = 0;
+        $this->loop->addWriteStream($connecting, function () use (&$called, $loop, $connecting, $timeout) {
+            ++$called;
+            $loop->removeWriteStream($connecting);
+            $loop->cancelTimer($timeout);
+        });
+
+        $this->loop->run();
+
+        $this->assertEquals(1, $called);
+    }
+
     public function testAddReadStream()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableExactly(2));
@@ -51,6 +162,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testAddReadStreamIgnoresSecondCallable()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableExactly(2));
@@ -100,6 +215,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testAddWriteStream()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input) = $this->createSocketPair();
 
         $this->loop->addWriteStream($input, $this->expectCallableExactly(2));
@@ -109,6 +228,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testAddWriteStreamIgnoresSecondCallable()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input) = $this->createSocketPair();
 
         $this->loop->addWriteStream($input, $this->expectCallableExactly(2));
@@ -119,6 +242,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveReadStreamInstantly()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableNever());
@@ -130,6 +257,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveReadStreamAfterReading()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableOnce());
@@ -145,6 +276,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveWriteStreamInstantly()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input) = $this->createSocketPair();
 
         $this->loop->addWriteStream($input, $this->expectCallableNever());
@@ -154,6 +289,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveWriteStreamAfterWriting()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input) = $this->createSocketPair();
 
         $this->loop->addWriteStream($input, $this->expectCallableOnce());
@@ -165,6 +304,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveStreamForReadOnly()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         $this->loop->addReadStream($input, $this->expectCallableNever());
@@ -177,6 +320,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testRemoveStreamForWriteOnly()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($input, $output) = $this->createSocketPair();
 
         fwrite($output, "foo\n");
@@ -399,6 +546,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testFutureTickFiresBeforeIO()
     {
+        if ($this->loop instanceof ExtUvLoop && DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestIncomplete('Ticking ExtUvLoop not supported on Windows');
+        }
+
         list ($stream) = $this->createSocketPair();
 
         $this->loop->addWriteStream(
@@ -419,6 +570,9 @@ abstract class AbstractLoopTest extends TestCase
         $this->tickLoop($this->loop);
     }
 
+    /**
+     * @depends testFutureTickFiresBeforeIO
+     */
     public function testRecursiveFutureTick()
     {
         list ($stream) = $this->createSocketPair();
