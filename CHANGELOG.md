@@ -8,6 +8,9 @@
 *   Fix: Fix unsupported EventConfig and `SEGFAULT` on shutdown with `ExtEventLoop` on Windows.
     (#205 by @clue)
 
+*   Fix: Prevent interval overflow for timers very far in the future with `ExtUvLoop`.
+    (#196 by @PabloKowalczyk)
+
 *   Fix: Check PCNTL functions for signal support instead of PCNTL extension with `StreamSelectLoop`.
     (#195 by @clue)
 
