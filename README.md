@@ -154,7 +154,7 @@ event loop implementation first or they will throw a `BadMethodCallException` on
 
 A `stream_select()` based event loop.
 
-This uses the [`stream_select()`](http://php.net/manual/en/function.stream-select.php)
+This uses the [`stream_select()`](https://www.php.net/manual/en/function.stream-select.php)
 function and is the only implementation which works out of the box with PHP.
 
 This event loop works out of the box on PHP 5.3 through PHP 7+ and HHVM.
@@ -672,7 +672,7 @@ This project follows [SemVer](https://semver.org/).
 This will install the latest supported version:
 
 ```bash
-$ composer require react/event-loop:^1.1
+$ composer require react/event-loop:^1.1.1
 ```
 
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.

@@ -9,7 +9,7 @@ use React\EventLoop\Timer\Timers;
 /**
  * A `stream_select()` based event loop.
  *
- * This uses the [`stream_select()`](http://php.net/manual/en/function.stream-select.php)
+ * This uses the [`stream_select()`](https://www.php.net/manual/en/function.stream-select.php)
  * function and is the only implementation which works out of the box with PHP.
  *
  * This event loop works out of the box on PHP 5.4 through PHP 7+ and HHVM.
@@ -47,7 +47,7 @@ use React\EventLoop\Timer\Timers;
  * then adjust your system time forward by 20s, the timer may trigger in 10s.
  * See also [`addTimer()`](#addtimer) for more details.
  *
- * @link http://php.net/manual/en/function.stream-select.php
+ * @link https://www.php.net/manual/en/function.stream-select.php
  */
 final class StreamSelectLoop implements LoopInterface
 {
