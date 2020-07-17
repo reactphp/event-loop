@@ -21,7 +21,10 @@ class ExtLibeventLoopTest extends AbstractLoopTest
         return new ExtLibeventLoop();
     }
 
-    public function tearDown()
+    /**
+     * @after
+     */
+    public function tearDownFile()
     {
         if (file_exists($this->fifoPath)) {
             unlink($this->fifoPath);

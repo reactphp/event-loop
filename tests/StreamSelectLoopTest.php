@@ -7,7 +7,10 @@ use React\EventLoop\StreamSelectLoop;
 
 class StreamSelectLoopTest extends AbstractLoopTest
 {
-    protected function tearDown()
+    /**
+     * @after
+     */
+    protected function tearDownSignalHandlers()
     {
         parent::tearDown();
         if (strncmp($this->getName(false), 'testSignal', 10) === 0 && extension_loaded('pcntl')) {
