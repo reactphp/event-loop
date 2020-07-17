@@ -3,7 +3,7 @@ language: php
 # lock distro so new future defaults will not break the build
 dist: xenial
 
-matrix:
+jobs:
   include:
     - php: 5.3
       dist: precise
@@ -24,7 +24,7 @@ matrix:
       dist: trusty
       before_install: [] # skip libuv
       install:
-        - composer require phpunit/phpunit:^5 --dev --no-interaction # requires legacy phpunit & skip ./travis-init.sh
+        - composer install # skip ./travis-init.sh
     - name: "Windows"
       os: windows
       language: shell # no built-in php support
@@ -65,8 +65,6 @@ matrix:
   allow_failures:
     - php: hhvm-3.18
     - os: windows
-
-sudo: false
 
 addons:
   apt:
