@@ -280,14 +280,22 @@ final class StreamSelectLoop implements LoopInterface
             if (\DIRECTORY_SEPARATOR === '\\') {
                 $except = array();
                 foreach ($write as $key => $socket) {
-                    if (!isset($read[$key]) && @\ftell($socket) === 0) {
-                        $except[$key] = $socket;
+                    try {
+                        if (!isset($read[$key]) && @\ftell($socket) === 0) {
+                            $except[$key] = $socket;
+                        }
+                    } catch (\ErrorException $e) {
+                        // PHP 8 throws exceptions
                     }
                 }
             }
 
             // suppress warnings that occur, when stream_select is interrupted by a signal
-            $ret = @\stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+            try {
+                $ret = @\stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+            } catch (\ErrorException $e) {
+                $ret = false;
+            }
 
             if ($except) {
                 $write = \array_merge($write, $except);
