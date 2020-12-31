@@ -2,6 +2,7 @@
 
 namespace React\EventLoop\Timer;
 
+
 use React\EventLoop\TimerInterface;
 
 /**
@@ -12,13 +13,14 @@ use React\EventLoop\TimerInterface;
  * @see TimerInterface
  * @internal
  */
-final class Timer implements TimerInterface
+final class CustomTimer implements TimerInterface
 {
     const MIN_INTERVAL = 0.000001;
 
     private $interval;
     private $callback;
     private $periodic;
+    private $userdata;
 
     /**
      * Constructor initializes the fields of the Timer
@@ -27,7 +29,7 @@ final class Timer implements TimerInterface
      * @param callable      $callback The callback that will be executed when this timer elapses
      * @param bool          $periodic Whether the time is periodic
      */
-    public function __construct($interval, $callback, $periodic = false)
+    public function __construct($interval, $callback, $periodic = false, $userdata = null)
     {
         if ($interval < self::MIN_INTERVAL) {
             $interval = self::MIN_INTERVAL;
@@ -36,6 +38,7 @@ final class Timer implements TimerInterface
         $this->interval = (float) $interval;
         $this->callback = $callback;
         $this->periodic = (bool) $periodic;
+        $this->userdata = $userdata;
     }
 
     public function getInterval()
@@ -52,4 +55,11 @@ final class Timer implements TimerInterface
     {
         return $this->periodic;
     }
+
+    public function getUserdata()
+    {
+        return $this->userdata;
+    }
 }
+
+
