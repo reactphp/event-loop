@@ -1,5 +1,7 @@
 <?php
 
+use React\EventLoop\Loop;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 // data can be given as first argument or defaults to "y"
@@ -8,8 +10,6 @@ $data = (isset($argv[1]) ? $argv[1] : 'y') . "\n";
 // repeat data X times in order to fill around 200 KB
 $data = str_repeat($data, round(200000 / strlen($data)));
 
-$loop = React\EventLoop\Factory::create();
-
 if (!defined('STDOUT') || stream_set_blocking(STDOUT, false) !== true) {
     fwrite(STDERR, 'ERROR: Unable to set STDOUT non-blocking (not CLI or Windows?)' . PHP_EOL);
     exit(1);
@@ -17,13 +17,13 @@ if (!defined('STDOUT') || stream_set_blocking(STDOUT, false) !== true) {
 
 // write data to STDOUT whenever its write buffer accepts data
 // for illustrations purpose only, should use react/stream instead
-$loop->addWriteStream(STDOUT, function ($stdout) use ($loop, &$data) {
+Loop::get()->addWriteStream(STDOUT, function ($stdout) use (&$data) {
     // try to write data
     $r = fwrite($stdout, $data);
 
     // nothing could be written despite being writable => closed
     if ($r === 0) {
-        $loop->removeWriteStream($stdout);
+        Loop::get()->removeWriteStream($stdout);
         fclose($stdout);
         stream_set_blocking($stdout, true);
         fwrite(STDERR, 'Stopped because STDOUT closed' . PHP_EOL);
@@ -38,4 +38,4 @@ $loop->addWriteStream(STDOUT, function ($stdout) use ($loop, &$data) {
     }
 });
 
-$loop->run();
+Loop::get()->run();

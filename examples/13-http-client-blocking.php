@@ -1,10 +1,8 @@
 <?php
 
-use React\EventLoop\Factory;
+use React\EventLoop\Loop;
 
 require __DIR__ . '/../vendor/autoload.php';
-
-$loop = Factory::create();
 
 // connect to www.google.com:80 (blocking call!)
 // for illustration purposes only, should use react/socket instead
@@ -18,13 +16,13 @@ stream_set_blocking($stream, false);
 fwrite($stream, "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n");
 
 // wait for HTTP response
-$loop->addReadStream($stream, function ($stream) use ($loop) {
+Loop::get()->addReadStream($stream, function ($stream) {
     $chunk = fread($stream, 64 * 1024);
 
     // reading nothing means we reached EOF
     if ($chunk === '') {
         echo '[END]' . PHP_EOL;
-        $loop->removeReadStream($stream);
+        Loop::get()->removeReadStream($stream);
         fclose($stream);
         return;
     }
@@ -32,4 +30,4 @@ $loop->addReadStream($stream, function ($stream) use ($loop) {
     echo $chunk;
 });
 
-$loop->run();
+Loop::get()->run();

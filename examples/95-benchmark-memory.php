@@ -8,6 +8,7 @@
  */
 
 use React\EventLoop\Factory;
+use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
 
@@ -15,10 +16,10 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $args = getopt('t:l:r:');
 $t  = isset($args['t']) ? (int)$args['t'] : 0;
-$loop = isset($args['l']) && class_exists('React\EventLoop\\' . $args['l'] . 'Loop') ? 'React\EventLoop\\' . $args['l'] . 'Loop' : Factory::create();
+$loop = isset($args['l']) && class_exists('React\EventLoop\\' . $args['l'] . 'Loop') ? 'React\EventLoop\\' . $args['l'] . 'Loop' : Loop::get();
 
 if (!($loop instanceof LoopInterface)) {
-    $loop = new $loop();
+    Loop::set(new $loop());
 }
 
 $r = isset($args['r']) ? (int)$args['r'] : 2;
@@ -26,21 +27,21 @@ $r = isset($args['r']) ? (int)$args['r'] : 2;
 $runs = 0;
 
 if (5 < $t) {
-    $loop->addTimer($t, function () use ($loop) {
-        $loop->stop();
+    Loop::get()->addTimer($t, function () {
+        Loop::get()->stop();
     });
 
 }
 
-$loop->addPeriodicTimer(0.001, function () use (&$runs, $loop) {
+Loop::get()->addPeriodicTimer(0.001, function () use (&$runs) {
     $runs++;
 
-    $loop->addPeriodicTimer(1, function (TimerInterface $timer) use ($loop) {
-        $loop->cancelTimer($timer);
+    Loop::get()->addPeriodicTimer(1, function (TimerInterface $timer) {
+        Loop::get()->cancelTimer($timer);
     });
 });
 
-$loop->addPeriodicTimer($r, function () use (&$runs) {
+Loop::get()->addPeriodicTimer($r, function () use (&$runs) {
     $kmem = round(memory_get_usage() / 1024);
     $kmemReal = round(memory_get_usage(true) / 1024);
     echo "Runs:\t\t\t$runs\n";
@@ -50,18 +51,18 @@ $loop->addPeriodicTimer($r, function () use (&$runs) {
 });
 
 echo "PHP Version:\t\t", phpversion(), "\n";
-echo "Loop\t\t\t", get_class($loop), "\n";
+echo "Loop\t\t\t", get_class(Loop::get()), "\n";
 echo "Time\t\t\t", date('r'), "\n";
 
 echo str_repeat('-', 50), "\n";
 
 $beginTime = time();
-$loop->run();
+Loop::get()->run();
 $endTime = time();
 $timeTaken = $endTime - $beginTime;
 
 echo "PHP Version:\t\t", phpversion(), "\n";
-echo "Loop\t\t\t", get_class($loop), "\n";
+echo "Loop\t\t\t", get_class(Loop::get()), "\n";
 echo "Time\t\t\t", date('r'), "\n";
 echo "Time taken\t\t", $timeTaken, " seconds\n";
 echo "Runs per second\t\t", round($runs / $timeTaken), "\n";

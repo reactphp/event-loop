@@ -1,15 +1,15 @@
 <?php
 
+use React\EventLoop\Loop;
+
 require __DIR__ . '/../vendor/autoload.php';
 
-$loop = React\EventLoop\Factory::create();
-
-$loop->futureTick(function () {
+Loop::get()->futureTick(function () {
     echo 'b';
 });
-$loop->futureTick(function () {
+Loop::get()->futureTick(function () {
     echo 'c';
 });
 echo 'a';
 
-$loop->run();
+Loop::get()->run();

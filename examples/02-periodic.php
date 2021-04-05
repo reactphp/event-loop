@@ -1,16 +1,16 @@
 <?php
 
+use React\EventLoop\Loop;
+
 require __DIR__ . '/../vendor/autoload.php';
 
-$loop = React\EventLoop\Factory::create();
-
-$timer = $loop->addPeriodicTimer(0.1, function () {
+$timer = Loop::get()->addPeriodicTimer(0.1, function () {
     echo 'tick!' . PHP_EOL;
 });
 
-$loop->addTimer(1.0, function () use ($loop, $timer) {
-    $loop->cancelTimer($timer);
+Loop::get()->addTimer(1.0, function () use ($timer) {
+    Loop::get()->cancelTimer($timer);
     echo 'Done' . PHP_EOL;
 });
 
-$loop->run();
+Loop::get()->run();

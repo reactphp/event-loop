@@ -1,6 +1,6 @@
 <?php
 
-use React\EventLoop\Factory;
+use React\EventLoop\Loop;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -9,16 +9,14 @@ if (!defined('STDIN') || stream_set_blocking(STDIN, false) !== true) {
     exit(1);
 }
 
-$loop = Factory::create();
-
 // read everything from STDIN and report number of bytes
 // for illustration purposes only, should use react/stream instead
-$loop->addReadStream(STDIN, function ($stream) use ($loop) {
+Loop::get()->addReadStream(STDIN, function ($stream) {
     $chunk = fread($stream, 64 * 1024);
 
     // reading nothing means we reached EOF
     if ($chunk === '') {
-        $loop->removeReadStream($stream);
+        Loop::get()->removeReadStream($stream);
         stream_set_blocking($stream, true);
         fclose($stream);
         return;
@@ -27,4 +25,4 @@ $loop->addReadStream(STDIN, function ($stream) use ($loop) {
     echo strlen($chunk) . ' bytes' . PHP_EOL;
 });
 
-$loop->run();
+Loop::get()->run();

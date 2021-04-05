@@ -1,10 +1,9 @@
 <?php
 
 use React\EventLoop\Factory;
+use React\EventLoop\Loop;
 
 require __DIR__ . '/../vendor/autoload.php';
-
-$loop = Factory::create();
 
 // resolve hostname before establishing TCP/IP connection (resolving DNS is still blocking here)
 // for illustration purposes only, should use react/socket or react/dns instead!
@@ -24,14 +23,14 @@ stream_set_blocking($stream, false);
 
 // print progress every 10ms
 echo 'Connecting';
-$timer = $loop->addPeriodicTimer(0.01, function () {
+$timer = Loop::get()->addPeriodicTimer(0.01, function () {
     echo '.';
 });
 
 // wait for connection success/error
-$loop->addWriteStream($stream, function ($stream) use ($loop, $timer) {
-    $loop->removeWriteStream($stream);
-    $loop->cancelTimer($timer);
+Loop::get()->addWriteStream($stream, function ($stream) use ($timer) {
+    Loop::get()->removeWriteStream($stream);
+    Loop::get()->cancelTimer($timer);
 
     // check for socket error (connection rejected)
     if (stream_socket_get_name($stream, true) === false) {
@@ -45,13 +44,13 @@ $loop->addWriteStream($stream, function ($stream) use ($loop, $timer) {
     fwrite($stream, "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n");
 
     // wait for HTTP response
-    $loop->addReadStream($stream, function ($stream) use ($loop) {
+    Loop::get()->addReadStream($stream, function ($stream) {
         $chunk = fread($stream, 64 * 1024);
 
         // reading nothing means we reached EOF
         if ($chunk === '') {
             echo '[END]' . PHP_EOL;
-            $loop->removeReadStream($stream);
+            Loop::get()->removeReadStream($stream);
             fclose($stream);
             return;
         }
@@ -60,4 +59,4 @@ $loop->addWriteStream($stream, function ($stream) use ($loop, $timer) {
     });
 });
 
-$loop->run();
+Loop::get()->run();

@@ -1,5 +1,7 @@
 <?php
 
+use React\EventLoop\Loop;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 if (!defined('SIGINT')) {
@@ -7,13 +9,11 @@ if (!defined('SIGINT')) {
     exit(1);
 }
 
-$loop = React\EventLoop\Factory::create();
-
-$loop->addSignal(SIGINT, $func = function ($signal) use ($loop, &$func) {
+Loop::get()->addSignal(SIGINT, $func = function ($signal) use (&$func) {
     echo 'Signal: ', (string)$signal, PHP_EOL;
-    $loop->removeSignal(SIGINT, $func);
+    Loop::get()->removeSignal(SIGINT, $func);
 });
 
 echo 'Listening for SIGINT. Use "kill -SIGINT ' . getmypid() . '" or CTRL+C' . PHP_EOL;
 
-$loop->run();
+Loop::get()->run();

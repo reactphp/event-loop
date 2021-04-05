@@ -1,15 +1,13 @@
 <?php
 
-use React\EventLoop\Factory;
+use React\EventLoop\Loop;
 
 require __DIR__ . '/../vendor/autoload.php';
-
-$loop = Factory::create();
 
 $n = isset($argv[1]) ? (int)$argv[1] : 1000 * 100;
 
 for ($i = 0; $i < $n; ++$i) {
-    $loop->futureTick(function () { });
+    Loop::get()->futureTick(function () { });
 }
 
-$loop->run();
+Loop::get()->run();
