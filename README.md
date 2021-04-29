@@ -384,9 +384,9 @@ The return value of the timer callback function will be ignored and has
 no effect, so for performance reasons you're recommended to not return
 any excessive data structures.
 
-Unlike [`addTimer()`](#addtimer), this method will ensure the the
-callback will be invoked infinitely after the given interval or until you
-invoke [`cancelTimer`](#canceltimer).
+Unlike [`addTimer()`](#addtimer), this method will ensure the callback 
+will be invoked infinitely after the given interval or until you invoke 
+[`cancelTimer`](#canceltimer).
 
 ```php
 $timer = $loop->addPeriodicTimer(0.1, function () {
