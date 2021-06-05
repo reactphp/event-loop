@@ -58,5 +58,3 @@ Loop::addWriteStream($stream, function ($stream) use ($timer) {
         echo $chunk;
     });
 });
-
-Loop::run();

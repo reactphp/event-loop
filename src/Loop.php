@@ -12,7 +12,6 @@ final class Loop
      */
     private static $instance;
 
-
     /**
      * Returns the event loop.
      * When no loop is set it will it will call the factory to create one.
@@ -31,7 +30,22 @@ final class Loop
             return self::$instance;
         }
 
-        self::$instance = Factory::create();
+        self::$instance = $loop = Factory::create();
+
+        // Automatically run loop at end of program, unless already started explicitly.
+        // This is tested using child processes, so coverage is actually 100%, see BinTest.
+        // @codeCoverageIgnoreStart
+        $hasRun = false;
+        $loop->futureTick(function () use (&$hasRun) {
+            $hasRun = true;
+        });
+
+        register_shutdown_function(function () use ($loop, &$hasRun) {
+            if (!$hasRun) {
+                $loop->run();
+            }
+        });
+        // @codeCoverageIgnoreEnd
 
         return self::$instance;
     }

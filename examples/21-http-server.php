@@ -32,5 +32,3 @@ Loop::addPeriodicTimer(5, function () {
     $formatted = number_format($memory, 3).'K';
     echo "Current memory usage: {$formatted}\n";
 });
-
-Loop::run();

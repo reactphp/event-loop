@@ -15,5 +15,3 @@ Loop::addSignal(SIGINT, $func = function ($signal) use (&$func) {
 });
 
 echo 'Listening for SIGINT. Use "kill -SIGINT ' . getmypid() . '" or CTRL+C' . PHP_EOL;
-
-Loop::run();

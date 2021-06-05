@@ -24,5 +24,3 @@ Loop::addReadStream(STDIN, function ($stream) {
 
     echo strlen($chunk) . ' bytes' . PHP_EOL;
 });
-
-Loop::run();

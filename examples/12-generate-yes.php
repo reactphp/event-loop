@@ -37,5 +37,3 @@ Loop::addWriteStream(STDOUT, function ($stdout) use (&$data) {
         $data = substr($data, $r) . substr($data, 0, $r);
     }
 });
-
-Loop::run();

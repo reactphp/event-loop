@@ -16,5 +16,3 @@ $tick = function () use (&$tick, &$ticks) {
 };
 
 $tick();
-
-Loop::run();

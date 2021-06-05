@@ -29,5 +29,3 @@ Loop::addReadStream($stream, function ($stream) {
 
     echo $chunk;
 });
-
-Loop::run();
