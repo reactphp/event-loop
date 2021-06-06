@@ -1,8 +1,8 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+use React\EventLoop\Loop;
 
-$loop = React\EventLoop\Factory::create();
+require __DIR__ . '/../vendor/autoload.php';
 
 // start TCP/IP server on localhost:8080
 // for illustration purposes only, should use react/socket instead
@@ -13,24 +13,24 @@ if (!$server) {
 stream_set_blocking($server, false);
 
 // wait for incoming connections on server socket
-$loop->addReadStream($server, function ($server) use ($loop) {
+Loop::get()->addReadStream($server, function ($server) {
     $conn = stream_socket_accept($server);
     $data = "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nHi\n";
-    $loop->addWriteStream($conn, function ($conn) use (&$data, $loop) {
+    Loop::get()->addWriteStream($conn, function ($conn) use (&$data) {
         $written = fwrite($conn, $data);
         if ($written === strlen($data)) {
             fclose($conn);
-            $loop->removeWriteStream($conn);
+            Loop::get()->removeWriteStream($conn);
         } else {
             $data = substr($data, $written);
         }
     });
 });
 
-$loop->addPeriodicTimer(5, function () {
+Loop::get()->addPeriodicTimer(5, function () {
     $memory = memory_get_usage() / 1024;
     $formatted = number_format($memory, 3).'K';
     echo "Current memory usage: {$formatted}\n";
 });
 
-$loop->run();
+Loop::get()->run();

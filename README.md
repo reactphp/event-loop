@@ -13,6 +13,8 @@ single [`run()`](#run) call that is controlled by the user.
 
 * [Quickstart example](#quickstart-example)
 * [Usage](#usage)
+  * [Loop](#loop)
+    * [get()](#get)
   * [Factory](#factory)
     * [create()](#create)
   * [Loop implementations](#loop-implementations)
@@ -45,32 +47,32 @@ single [`run()`](#run) call that is controlled by the user.
 Here is an async HTTP server built with just the event loop.
 
 ```php
-$loop = React\EventLoop\Factory::create();
+use React\EventLoop\Loop;
 
 $server = stream_socket_server('tcp://127.0.0.1:8080');
 stream_set_blocking($server, false);
 
-$loop->addReadStream($server, function ($server) use ($loop) {
+Loop::get()->addReadStream($server, function ($server) {
     $conn = stream_socket_accept($server);
     $data = "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nHi\n";
-    $loop->addWriteStream($conn, function ($conn) use (&$data, $loop) {
+    Loop::get()->addWriteStream($conn, function ($conn) use (&$data) {
         $written = fwrite($conn, $data);
         if ($written === strlen($data)) {
             fclose($conn);
-            $loop->removeWriteStream($conn);
+            Loop::get()->removeWriteStream($conn);
         } else {
             $data = substr($data, $written);
         }
     });
 });
 
-$loop->addPeriodicTimer(5, function () {
+Loop::get()->addPeriodicTimer(5, function () {
     $memory = memory_get_usage() / 1024;
     $formatted = number_format($memory, 3).'K';
     echo "Current memory usage: {$formatted}\n";
 });
 
-$loop->run();
+Loop::get()->run();
 ```
 
 See also the [examples](examples).
@@ -109,6 +111,28 @@ $loop->run();
    [stream component](https://github.com/reactphp/stream) for demonstration
    purposes.
 3. The loop is run with a single [`$loop->run()`](#run) call at the end of the program.
+
+### Loop
+
+The `Loop` class exists as a convenient global accessor for the event loop.
+
+#### get()
+
+The `get(): LoopInterface` method is the preferred way to get and use the event loop. With 
+it there is no need to always pass the loop around anymore. 
+
+```php
+use React\EventLoop\Loop;
+
+Loop::get()->addTimer(0.02, function () {
+    echo 'World!';
+});
+Loop::get()->addTimer(0.01, function () {
+    echo 'Hello ';
+});
+
+Loop::get()->run();
+```
 
 ### Factory
 
