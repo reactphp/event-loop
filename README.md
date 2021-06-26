@@ -13,31 +13,31 @@ single [`run()`](#run) call that is controlled by the user.
 
 * [Quickstart example](#quickstart-example)
 * [Usage](#usage)
-  * [Loop](#loop)
-    * [Loop methods](#loop-methods)
-    * [get()](#get)
-  * [Factory](#factory)
-    * [create()](#create)
-  * [Loop implementations](#loop-implementations)
-    * [StreamSelectLoop](#streamselectloop)
-    * [ExtEventLoop](#exteventloop)
-    * [ExtLibeventLoop](#extlibeventloop)
-    * [ExtLibevLoop](#extlibevloop)
-    * [ExtEvLoop](#extevloop)
-    * [ExtUvLoop](#extuvloop)
-  * [LoopInterface](#loopinterface)
-    * [run()](#run)
-    * [stop()](#stop)
-    * [addTimer()](#addtimer)
-    * [addPeriodicTimer()](#addperiodictimer)
-    * [cancelTimer()](#canceltimer)
-    * [futureTick()](#futuretick)
-    * [addSignal()](#addsignal)
-    * [removeSignal()](#removesignal)
-    * [addReadStream()](#addreadstream)
-    * [addWriteStream()](#addwritestream)
-    * [removeReadStream()](#removereadstream)
-    * [removeWriteStream()](#removewritestream)
+    * [Loop](#loop)
+        * [Loop methods](#loop-methods)
+        * [get()](#get)
+    * [~~Factory~~](#factory)
+        * [~~create()~~](#create)
+    * [Loop implementations](#loop-implementations)
+        * [StreamSelectLoop](#streamselectloop)
+        * [ExtEventLoop](#exteventloop)
+        * [ExtLibeventLoop](#extlibeventloop)
+        * [ExtLibevLoop](#extlibevloop)
+        * [ExtEvLoop](#extevloop)
+        * [ExtUvLoop](#extuvloop)
+    * [LoopInterface](#loopinterface)
+        * [run()](#run)
+        * [stop()](#stop)
+        * [addTimer()](#addtimer)
+        * [addPeriodicTimer()](#addperiodictimer)
+        * [cancelTimer()](#canceltimer)
+        * [futureTick()](#futuretick)
+        * [addSignal()](#addsignal)
+        * [removeSignal()](#removesignal)
+        * [addReadStream()](#addreadstream)
+        * [addWriteStream()](#addwritestream)
+        * [removeReadStream()](#removereadstream)
+        * [removeWriteStream()](#removewritestream)
 * [Install](#install)
 * [Tests](#tests)
 * [License](#license)
@@ -262,18 +262,26 @@ Loop::run();
 
 See [`LoopInterface`](#loopinterface) for more details about available methods.
 
-### Factory
+### ~~Factory~~
 
-The `Factory` class exists as a convenient way to pick the best available
+> Deprecated since v1.2.0, see [`Loop` class](#loop) instead.
+
+The deprecated `Factory` class exists as a convenient way to pick the best available
 [event loop implementation](#loop-implementations).
 
-#### create()
+#### ~~create()~~
 
-The `create(): LoopInterface` method can be used to create a new event loop
-instance:
+> Deprecated since v1.2.0, see [`Loop::get()`](#get) instead.
+
+The deprecated `create(): LoopInterface` method can be used to
+create a new event loop instance:
 
 ```php
+// deprecated
 $loop = React\EventLoop\Factory::create();
+
+// new
+$loop = React\EventLoop\Loop::get();
 ```
 
 This method always returns an instance implementing [`LoopInterface`](#loopinterface),
