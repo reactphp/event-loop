@@ -36,4 +36,22 @@ class BinTest extends TestCase
 
         $this->assertEquals('abc', $output);
     }
+
+    public function testExecuteExampleWithUncaughtExceptionShouldNotRunLoop()
+    {
+        $time = microtime(true);
+        exec(escapeshellarg(PHP_BINARY) . ' 11-uncaught.php 2>/dev/null');
+        $time = microtime(true) - $time;
+
+        $this->assertLessThan(1.0, $time);
+    }
+
+    public function testExecuteExampleWithUndefinedVariableShouldNotRunLoop()
+    {
+        $time = microtime(true);
+        exec(escapeshellarg(PHP_BINARY) . ' 12-undefined.php 2>/dev/null');
+        $time = microtime(true) - $time;
+
+        $this->assertLessThan(1.0, $time);
+    }
 }
