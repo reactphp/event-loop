@@ -13,24 +13,24 @@ if (!$server) {
 stream_set_blocking($server, false);
 
 // wait for incoming connections on server socket
-Loop::get()->addReadStream($server, function ($server) {
+Loop::addReadStream($server, function ($server) {
     $conn = stream_socket_accept($server);
     $data = "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nHi\n";
-    Loop::get()->addWriteStream($conn, function ($conn) use (&$data) {
+    Loop::addWriteStream($conn, function ($conn) use (&$data) {
         $written = fwrite($conn, $data);
         if ($written === strlen($data)) {
             fclose($conn);
-            Loop::get()->removeWriteStream($conn);
+            Loop::removeWriteStream($conn);
         } else {
             $data = substr($data, $written);
         }
     });
 });
 
-Loop::get()->addPeriodicTimer(5, function () {
+Loop::addPeriodicTimer(5, function () {
     $memory = memory_get_usage() / 1024;
     $formatted = number_format($memory, 3).'K';
     echo "Current memory usage: {$formatted}\n";
 });
 
-Loop::get()->run();
+Loop::run();

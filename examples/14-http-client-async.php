@@ -23,14 +23,14 @@ stream_set_blocking($stream, false);
 
 // print progress every 10ms
 echo 'Connecting';
-$timer = Loop::get()->addPeriodicTimer(0.01, function () {
+$timer = Loop::addPeriodicTimer(0.01, function () {
     echo '.';
 });
 
 // wait for connection success/error
-Loop::get()->addWriteStream($stream, function ($stream) use ($timer) {
-    Loop::get()->removeWriteStream($stream);
-    Loop::get()->cancelTimer($timer);
+Loop::addWriteStream($stream, function ($stream) use ($timer) {
+    Loop::removeWriteStream($stream);
+    Loop::cancelTimer($timer);
 
     // check for socket error (connection rejected)
     if (stream_socket_get_name($stream, true) === false) {
@@ -44,13 +44,13 @@ Loop::get()->addWriteStream($stream, function ($stream) use ($timer) {
     fwrite($stream, "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n");
 
     // wait for HTTP response
-    Loop::get()->addReadStream($stream, function ($stream) {
+    Loop::addReadStream($stream, function ($stream) {
         $chunk = fread($stream, 64 * 1024);
 
         // reading nothing means we reached EOF
         if ($chunk === '') {
             echo '[END]' . PHP_EOL;
-            Loop::get()->removeReadStream($stream);
+            Loop::removeReadStream($stream);
             fclose($stream);
             return;
         }
@@ -59,4 +59,4 @@ Loop::get()->addWriteStream($stream, function ($stream) use ($timer) {
     });
 });
 
-Loop::get()->run();
+Loop::run();

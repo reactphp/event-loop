@@ -14,6 +14,7 @@ single [`run()`](#run) call that is controlled by the user.
 * [Quickstart example](#quickstart-example)
 * [Usage](#usage)
   * [Loop](#loop)
+    * [Loop methods](#loop-methods)
     * [get()](#get)
   * [Factory](#factory)
     * [create()](#create)
@@ -52,87 +53,214 @@ use React\EventLoop\Loop;
 $server = stream_socket_server('tcp://127.0.0.1:8080');
 stream_set_blocking($server, false);
 
-Loop::get()->addReadStream($server, function ($server) {
+Loop::addReadStream($server, function ($server) {
     $conn = stream_socket_accept($server);
     $data = "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nHi\n";
-    Loop::get()->addWriteStream($conn, function ($conn) use (&$data) {
+    Loop::addWriteStream($conn, function ($conn) use (&$data) {
         $written = fwrite($conn, $data);
         if ($written === strlen($data)) {
             fclose($conn);
-            Loop::get()->removeWriteStream($conn);
+            Loop::removeWriteStream($conn);
         } else {
             $data = substr($data, $written);
         }
     });
 });
 
-Loop::get()->addPeriodicTimer(5, function () {
+Loop::addPeriodicTimer(5, function () {
     $memory = memory_get_usage() / 1024;
     $formatted = number_format($memory, 3).'K';
     echo "Current memory usage: {$formatted}\n";
 });
 
-Loop::get()->run();
+Loop::run();
 ```
 
 See also the [examples](examples).
 
 ## Usage
 
-Typical applications use a single event loop which is created at the beginning
-and run at the end of the program.
+As of `v1.2.0`, typical applications would use the [`Loop` object](#loop)
+to use the currently active event loop instance like this:
 
 ```php
-// [1]
-$loop = React\EventLoop\Factory::create();
+use React\EventLoop\Loop;
 
-// [2]
-$loop->addPeriodicTimer(1, function () {
-    echo "Tick\n";
+$timer = Loop::addPeriodicTimer(0.1, function () {
+    echo "Tick" . PHP_EOL;
+});
+Loop::addTimer(1.0, function () use ($timer) {
+    Loop::cancelTimer($timer);
+    echo 'Done' . PHP_EOL;
 });
 
-$stream = new React\Stream\ReadableResourceStream(
-    fopen('file.txt', 'r'),
-    $loop
-);
+Loop::run();
+```
 
-// [3]
+As an alternative, you can also explicitly create an event loop instance at the
+beginning, reuse it throughout your program and finally run it at the end of the
+program like this:
+
+```php
+$loop = React\EventLoop\Loop::get(); // or deprecated React\EventLoop\Factory::create();
+
+$timer = $loop->addPeriodicTimer(0.1, function () {
+    echo "Tick" . PHP_EOL;
+});
+$loop->addTimer(1.0, function () use ($loop, $timer) {
+    $loop->cancelTimer($timer);
+    echo 'Done' . PHP_EOL;
+});
+
 $loop->run();
 ```
 
-1. The loop instance is created at the beginning of the program. A convenience
-   factory [`React\EventLoop\Factory::create()`](#create) is provided by this library which
-   picks the best available [loop implementation](#loop-implementations).
-2. The loop instance is used directly or passed to library and application code.
-   In this example, a periodic timer is registered with the event loop which
-   simply outputs `Tick` every second and a
-   [readable stream](https://github.com/reactphp/stream#readableresourcestream)
-   is created by using ReactPHP's
-   [stream component](https://github.com/reactphp/stream) for demonstration
-   purposes.
-3. The loop is run with a single [`$loop->run()`](#run) call at the end of the program.
+While the former is more concise, the latter is more explicit.
+In both cases, the program would perform the exact same steps.
+
+1. The event loop instance is created at the beginning of the program. This is
+   implicitly done the first time you call the [`Loop` class](#loop) or
+   explicitly when using the deprecated [`Factory::create() method`](#create)
+   (or manually instantiating any of the [loop implementation](#loop-implementations)).
+2. The event loop is used directly or passed as an instance to library and
+   application code. In this example, a periodic timer is registered with the
+   event loop which simply outputs `Tick` every fraction of a second until another
+   timer stops the periodic timer after a second.
+3. The event loop is run at the end of the program with a single [`run()`](#run)
+   call at the end of the program.
+
+As of `v1.2.0`, we highly recommend using the [`Loop` class](#loop).
+The explicit loop instructions are still valid and may still be useful in some
+applications, especially for a transition period towards the more concise style.
 
 ### Loop
 
 The `Loop` class exists as a convenient global accessor for the event loop.
 
-#### get()
+#### Loop methods
 
-The `get(): LoopInterface` method is the preferred way to get and use the event loop. With 
-it there is no need to always pass the loop around anymore. 
+The `Loop` class provides all methods that exist on the [`LoopInterface`](#loopinterface)
+as static methods:
+
+* [run()](#run)
+* [stop()](#stop)
+* [addTimer()](#addtimer)
+* [addPeriodicTimer()](#addperiodictimer)
+* [cancelTimer()](#canceltimer)
+* [futureTick()](#futuretick)
+* [addSignal()](#addsignal)
+* [removeSignal()](#removesignal)
+* [addReadStream()](#addreadstream)
+* [addWriteStream()](#addwritestream)
+* [removeReadStream()](#removereadstream)
+* [removeWriteStream()](#removewritestream)
+
+If you're working with the event loop in your application code, it's often
+easiest to directly interface with the static methods defined on the `Loop` class
+like this:
 
 ```php
 use React\EventLoop\Loop;
 
-Loop::get()->addTimer(0.02, function () {
-    echo 'World!';
-});
-Loop::get()->addTimer(0.01, function () {
-    echo 'Hello ';
+$timer = Loop::addPeriodicTimer(0.1, function () {
+    echo 'tick!' . PHP_EOL;
 });
 
-Loop::get()->run();
+Loop::addTimer(1.0, function () use ($timer) {
+    Loop::cancelTimer($timer);
+    echo 'Done' . PHP_EOL;
+});
+
+Loop::run();
 ```
+
+On the other hand, if you're familiar with object-oriented programming (OOP) and
+dependency injection (DI), you may want to inject an event loop instance and
+invoke instance methods on the `LoopInterface` like this:
+
+```php
+use React\EventLoop\Loop;
+use React\EventLoop\LoopInterface;
+
+class Greeter
+{
+    private $loop;
+
+    public function __construct(LoopInterface $loop)
+    {
+        $this->loop = $loop;
+    }
+
+    public function greet(string $name)
+    {
+        $this->loop->addTimer(1.0, function () use ($name) {
+            echo 'Hello ' . $name . '!' . PHP_EOL;
+        });
+    }
+}
+
+$greeter = new Greeter(Loop::get());
+$greeter->greet('Alice');
+$greeter->greet('Bob');
+
+Loop::run();
+```
+
+Each static method call will be forwarded as-is to the underlying event loop
+instance by using the [`Loop::get()`](#get) call internally.
+See [`LoopInterface`](#loopinterface) for more details about available methods.
+
+#### get()
+
+The `get(): LoopInterface` method can be used to
+get the currently active event loop instance.
+
+This method will always return the same event loop instance throughout the
+lifetime of your application.
+
+```php
+use React\EventLoop\Loop;
+use React\EventLoop\LoopInterface;
+
+$loop = Loop::get();
+
+assert($loop instanceof LoopInterface);
+assert($loop === Loop::get());
+```
+
+This is particularly useful if you're using object-oriented programming (OOP)
+and dependency injection (DI). In this case, you may want to inject an event
+loop instance and invoke instance methods on the `LoopInterface` like this:
+
+```php
+use React\EventLoop\Loop;
+use React\EventLoop\LoopInterface;
+
+class Greeter
+{
+    private $loop;
+
+    public function __construct(LoopInterface $loop)
+    {
+        $this->loop = $loop;
+    }
+
+    public function greet(string $name)
+    {
+        $this->loop->addTimer(1.0, function () use ($name) {
+            echo 'Hello ' . $name . '!' . PHP_EOL;
+        });
+    }
+}
+
+$greeter = new Greeter(Loop::get());
+$greeter->greet('Alice');
+$greeter->greet('Bob');
+
+Loop::run();
+```
+
+See [`LoopInterface`](#loopinterface) for more details about available methods.
 
 ### Factory
 

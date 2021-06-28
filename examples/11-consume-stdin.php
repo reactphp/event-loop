@@ -11,12 +11,12 @@ if (!defined('STDIN') || stream_set_blocking(STDIN, false) !== true) {
 
 // read everything from STDIN and report number of bytes
 // for illustration purposes only, should use react/stream instead
-Loop::get()->addReadStream(STDIN, function ($stream) {
+Loop::addReadStream(STDIN, function ($stream) {
     $chunk = fread($stream, 64 * 1024);
 
     // reading nothing means we reached EOF
     if ($chunk === '') {
-        Loop::get()->removeReadStream($stream);
+        Loop::removeReadStream($stream);
         stream_set_blocking($stream, true);
         fclose($stream);
         return;
@@ -25,4 +25,4 @@ Loop::get()->addReadStream(STDIN, function ($stream) {
     echo strlen($chunk) . ' bytes' . PHP_EOL;
 });
 
-Loop::get()->run();
+Loop::run();

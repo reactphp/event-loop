@@ -47,4 +47,154 @@ final class Loop
     {
         self::$instance = $loop;
     }
+
+    /**
+     * [Advanced] Register a listener to be notified when a stream is ready to read.
+     *
+     * @param resource $stream
+     * @param callable $listener
+     * @return void
+     * @throws \Exception
+     * @see LoopInterface::addReadStream()
+     */
+    public static function addReadStream($stream, $listener)
+    {
+        self::get()->addReadStream($stream, $listener);
+    }
+
+    /**
+     * [Advanced] Register a listener to be notified when a stream is ready to write.
+     *
+     * @param resource $stream
+     * @param callable $listener
+     * @return void
+     * @throws \Exception
+     * @see LoopInterface::addWriteStream()
+     */
+    public static function addWriteStream($stream, $listener)
+    {
+        self::get()->addWriteStream($stream, $listener);
+    }
+
+    /**
+     * Remove the read event listener for the given stream.
+     *
+     * @param resource $stream
+     * @return void
+     * @see LoopInterface::removeReadStream()
+     */
+    public static function removeReadStream($stream)
+    {
+        self::get()->removeReadStream($stream);
+    }
+
+    /**
+     * Remove the write event listener for the given stream.
+     *
+     * @param resource $stream
+     * @return void
+     * @see LoopInterface::removeWriteStream()
+     */
+    public static function removeWriteStream($stream)
+    {
+        self::get()->removeWriteStream($stream);
+    }
+
+    /**
+     * Enqueue a callback to be invoked once after the given interval.
+     *
+     * @param float $interval
+     * @param callable $callback
+     * @return TimerInterface
+     * @see LoopInterface::addTimer()
+     */
+    public static function addTimer($interval, $callback)
+    {
+        return self::get()->addTimer($interval, $callback);
+    }
+
+    /**
+     * Enqueue a callback to be invoked repeatedly after the given interval.
+     *
+     * @param float $interval
+     * @param callable $callback
+     * @return TimerInterface
+     * @see LoopInterface::addPeriodicTimer()
+     */
+    public static function addPeriodicTimer($interval, $callback)
+    {
+        return self::get()->addPeriodicTimer($interval, $callback);
+    }
+
+    /**
+     * Cancel a pending timer.
+     *
+     * @param TimerInterface $timer
+     * @return void
+     * @see LoopInterface::cancelTimer()
+     */
+    public static function cancelTimer(TimerInterface $timer)
+    {
+        return self::get()->cancelTimer($timer);
+    }
+
+    /**
+     * Schedule a callback to be invoked on a future tick of the event loop.
+     *
+     * @param callable $listener
+     * @return void
+     * @see LoopInterface::futureTick()
+     */
+    public static function futureTick($listener)
+    {
+        self::get()->futureTick($listener);
+    }
+
+    /**
+     * Register a listener to be notified when a signal has been caught by this process.
+     *
+     * @param int $signal
+     * @param callable $listener
+     * @return void
+     * @see LoopInterface::addSignal()
+     */
+    public static function addSignal($signal, $listener)
+    {
+        self::get()->addSignal($signal, $listener);
+    }
+
+    /**
+     * Removes a previously added signal listener.
+     *
+     * @param int $signal
+     * @param callable $listener
+     * @return void
+     * @see LoopInterface::removeSignal()
+     */
+    public static function removeSignal($signal, $listener)
+    {
+        self::get()->removeSignal($signal, $listener);
+    }
+
+    /**
+     * Run the event loop until there are no more tasks to perform.
+     *
+     * @return void
+     * @see LoopInterface::run()
+     */
+    public static function run()
+    {
+        self::get()->run();
+    }
+
+    /**
+     * Instruct a running event loop to stop.
+     *
+     * @return void
+     * @see LoopInterface::stop()
+     */
+    public static function stop()
+    {
+        self::get()->stop();
+    }
 }
