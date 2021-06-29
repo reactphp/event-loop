@@ -1,6 +1,6 @@
 # EventLoop Component
 
-[![Build Status](https://travis-ci.org/reactphp/event-loop.svg?branch=master)](https://travis-ci.org/reactphp/event-loop)
+[![CI status](https://github.com/reactphp/event-loop/workflows/CI/badge.svg)](https://github.com/reactphp/event-loop/actions)
 
 [ReactPHP](https://reactphp.org/)'s core reactor event loop that libraries can use for evented I/O.
 

@@ -6,6 +6,10 @@ set -o pipefail
 if [[ "$TRAVIS_PHP_VERSION" != "5.3" ]]; then
     echo "yes" | pecl install event
     echo "yes" | pecl install ev
+    if ! [[ "$TRAVIS_PHP_VERSION" < "7.0" ]]; then
+        echo "extension=event.so" >> "$(php -r 'echo php_ini_loaded_file();')"
+        echo "extension=ev.so" >> "$(php -r 'echo php_ini_loaded_file();')"
+    fi
 fi
 
 # install 'libevent' PHP extension on legacy PHP 5 only
@@ -35,4 +39,5 @@ fi
 # install 'libuv' PHP extension on PHP 7+ only
 if ! [[ "$TRAVIS_PHP_VERSION" < "7.0" ]]; then
     echo "yes" | pecl install uv-beta
+    echo "extension=uv.so" >> "$(php -r 'echo php_ini_loaded_file();')"
 fi
