@@ -727,7 +727,7 @@ abstract class AbstractLoopTest extends TestCase
             $loop->stop();
         });
 
-        $this->assertRunSlowerThan(1.5);
+        $this->assertRunSlowerThan(1.4);
     }
 
     /**
