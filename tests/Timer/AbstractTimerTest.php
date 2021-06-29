@@ -26,13 +26,13 @@ abstract class AbstractTimerTest extends TestCase
     {
         $loop = $this->createLoop();
 
-        $loop->addTimer(0.002, $this->expectCallableOnce());
+        $loop->addTimer(0.005, $this->expectCallableOnce());
 
         $start = microtime(true);
         $loop->run();
         $end = microtime(true);
 
-        // 1 invocation should take 2ms (± 1ms due to timer inaccuracies)
+        // 1 invocation should take 5ms (± a few milliseconds due to timer inaccuracies)
         // make no strict assumptions about time interval, must at least take 1ms
         // and should not take longer than 0.1s for slower loops.
         $this->assertGreaterThanOrEqual(0.001, $end - $start);
@@ -57,7 +57,7 @@ abstract class AbstractTimerTest extends TestCase
 
         // make no strict assumptions about actual time interval.
         // leave some room to ensure this ticks exactly 3 times.
-        $loop->addTimer(0.399, function () use ($loop, $periodic) {
+        $loop->addTimer(0.350, function () use ($loop, $periodic) {
             $loop->cancelTimer($periodic);
         });
 
@@ -135,7 +135,7 @@ abstract class AbstractTimerTest extends TestCase
         $loop->run();
         $end = \microtime(true);
 
-        // 1ms should be enough even on slow machines
-        $this->assertLessThan(0.001, $end - $start);
+        // 1ms should be enough even on slow machines (± 1ms due to timer inaccuracies)
+        $this->assertLessThan(0.002, $end - $start);
     }
 }

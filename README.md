@@ -1,6 +1,6 @@
 # EventLoop Component
 
-[![Build Status](https://travis-ci.org/reactphp/event-loop.svg?branch=master)](https://travis-ci.org/reactphp/event-loop)
+[![CI status](https://github.com/reactphp/event-loop/workflows/CI/badge.svg)](https://github.com/reactphp/event-loop/actions)
 
 [ReactPHP](https://reactphp.org/)'s core reactor event loop that libraries can use for evented I/O.
 
@@ -702,7 +702,7 @@ $ composer require react/event-loop:^1.1.1
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
 
 This project aims to run on any platform and thus does not require any PHP
-extensions and supports running on legacy PHP 5.3 through current PHP 7+ and
+extensions and supports running on legacy PHP 5.3 through current PHP 8+ and
 HHVM.
 It's *highly recommended to use PHP 7+* for this project.
 

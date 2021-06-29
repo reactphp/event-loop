@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  PHPUnit:
+    name: PHPUnit (PHP ${{ matrix.php }})
+    runs-on: ubuntu-18.04 # legacy Ubuntu 18.04 for legacy libevent
+    strategy:
+      matrix:
+        php:
+          - 8.0
+          - 7.4
+          - 7.3
+          - 7.2
+          - 7.1
+          - 7.0
+          - 5.6
+          - 5.5
+          - 5.4
+          - 5.3
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+      - run: sudo apt-get update && sudo apt-get install libevent-dev
+      - name: Install ext-event between PHP 5.4 and PHP 7.x
+        run: |
+          echo "yes" | sudo pecl install event
+          # explicitly enable extensions in php.ini on PHP 5.6+
+          php -r 'exit((int)(PHP_VERSION_ID >= 50600));' || echo "extension=event.so" | sudo tee -a "$(php -r 'echo php_ini_loaded_file();')"
+        if: ${{ matrix.php >= 5.4 && matrix.php < 8.0 }}
+      - name: Install ext-ev on PHP >= 5.4
+        run: |
+          echo "yes" | sudo pecl install ev
+          # explicitly enable extensions in php.ini on PHP 5.6+
+          php -r 'exit((int)(PHP_VERSION_ID >= 50600));' || echo "extension=ev.so" | sudo tee -a "$(php -r 'echo php_ini_loaded_file();')"
+        if: ${{ matrix.php >= 5.4 }}
+      - name: Install ext-uv on PHP 7.x
+        run: |
+          sudo add-apt-repository ppa:ondrej/php -y && sudo apt-get update -q && sudo apt-get install libuv1-dev
+          echo "yes" | sudo pecl install uv-beta
+          echo "extension=uv.so" >> "$(php -r 'echo php_ini_loaded_file();')"
+        if: ${{ matrix.php >= 7.0 && matrix.php < 8.0 }}
+      - name: Install legacy ext-libevent on PHP < 7.0
+        run: |
+          curl http://pecl.php.net/get/libevent-0.1.0.tgz | tar -xz
+          pushd libevent-0.1.0
+          phpize
+          ./configure
+          make
+          sudo make install
+          popd
+          echo "extension=libevent.so" | sudo tee -a "$(php -r 'echo php_ini_loaded_file();')"
+        if: ${{ matrix.php < 7.0 }}
+      - name: Install legacy ext-libev on PHP < 7.0
+        run: |
+          git clone --recursive https://github.com/m4rw3r/php-libev
+          pushd php-libev
+          phpize
+          ./configure --with-libev
+          make
+          sudo make install
+          popd
+          echo "extension=libev.so" | sudo tee -a "$(php -r 'echo php_ini_loaded_file();')"
+        if: ${{ matrix.php < 7.0 }}
+      - run: composer install
+      - run: vendor/bin/phpunit --coverage-text
+        if: ${{ matrix.php >= 7.3 }}
+      - run: vendor/bin/phpunit --coverage-text -c phpunit.xml.legacy
+        if: ${{ matrix.php < 7.3 }}
+
+  PHPUnit-Windows:
+    name: PHPUnit (PHP ${{ matrix.php }} on Windows)
+    runs-on: windows-2019
+    continue-on-error: true
+    strategy:
+      matrix:
+        php:
+          - 8.0
+          - 7.4
+          - 7.3
+          - 7.2
+          - 7.1
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+          extensions: sockets,event # future: add uv-beta (installs, but can not load)
+      - run: composer install
+      - run: vendor/bin/phpunit --coverage-text
+        if: ${{ matrix.php >= 7.3 }}
+      - run: vendor/bin/phpunit --coverage-text -c phpunit.xml.legacy
+        if: ${{ matrix.php < 7.3 }}
+
+  PHPUnit-hhvm:
+    name: PHPUnit (HHVM)
+    runs-on: ubuntu-18.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v2
+      - uses: azjezz/setup-hhvm@v1
+        with:
+          version: lts-3.30
+      - run: hhvm $(which composer) install
+      - run: hhvm vendor/bin/phpunit
