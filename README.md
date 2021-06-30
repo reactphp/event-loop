@@ -229,6 +229,25 @@ explicit [`run()`](#run) calls. For BC reasons, the explicit [`run()`](#run)
 method is still valid and may still be useful in some applications, especially
 for a transition period towards the more concise style.
 
+If you don't want the `Loop` to run automatically, you can either explicitly
+[`run()`](#run) or [`stop()`](#stop) it. This can be useful if you're using
+a global exception handler like this:
+
+```php
+use React\EventLoop\Loop;
+
+Loop::addTimer(10.0, function () {
+    echo 'Never happens';
+});
+
+set_exception_handler(function (Throwable $e) {
+    echo 'Error: ' . $e->getMessage() . PHP_EOL;
+    Loop::stop();
+});
+
+throw new RuntimeException('Demo');
+```
+
 #### get()
 
 The `get(): LoopInterface` method can be used to

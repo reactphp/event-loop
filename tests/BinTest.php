@@ -54,4 +54,22 @@ class BinTest extends TestCase
 
         $this->assertLessThan(1.0, $time);
     }
+
+    public function testExecuteExampleWithExplicitStopShouldNotRunLoop()
+    {
+        $time = microtime(true);
+        exec(escapeshellarg(PHP_BINARY) . ' 21-stop.php 2>/dev/null');
+        $time = microtime(true) - $time;
+
+        $this->assertLessThan(1.0, $time);
+    }
+
+    public function testExecuteExampleWithExplicitStopInExceptionHandlerShouldNotRunLoop()
+    {
+        $time = microtime(true);
+        exec(escapeshellarg(PHP_BINARY) . ' 22-uncaught-stop.php 2>/dev/null');
+        $time = microtime(true) - $time;
+
+        $this->assertLessThan(1.0, $time);
+    }
 }
