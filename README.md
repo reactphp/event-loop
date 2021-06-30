@@ -48,7 +48,11 @@ single [`run()`](#run) call that is controlled by the user.
 Here is an async HTTP server built with just the event loop.
 
 ```php
+<?php
+
 use React\EventLoop\Loop;
+
+require __DIR__ . '/vendor/autoload.php';
 
 $server = stream_socket_server('tcp://127.0.0.1:8080');
 stream_set_blocking($server, false);
@@ -81,14 +85,15 @@ See also the [examples](examples).
 ## Usage
 
 As of `v1.2.0`, typical applications would use the [`Loop` object](#loop)
-to use the currently active event loop instance like this:
+to use the currently active event loop like this:
 
 ```php
 use React\EventLoop\Loop;
 
 $timer = Loop::addPeriodicTimer(0.1, function () {
-    echo "Tick" . PHP_EOL;
+    echo 'Tick' . PHP_EOL;
 });
+
 Loop::addTimer(1.0, function () use ($timer) {
     Loop::cancelTimer($timer);
     echo 'Done' . PHP_EOL;
@@ -105,8 +110,9 @@ program like this:
 $loop = React\EventLoop\Loop::get(); // or deprecated React\EventLoop\Factory::create();
 
 $timer = $loop->addPeriodicTimer(0.1, function () {
-    echo "Tick" . PHP_EOL;
+    echo 'Tick' . PHP_EOL;
 });
+
 $loop->addTimer(1.0, function () use ($loop, $timer) {
     $loop->cancelTimer($timer);
     echo 'Done' . PHP_EOL;
@@ -163,7 +169,7 @@ like this:
 use React\EventLoop\Loop;
 
 $timer = Loop::addPeriodicTimer(0.1, function () {
-    echo 'tick!' . PHP_EOL;
+    echo 'Tick' . PHP_EOL;
 });
 
 Loop::addTimer(1.0, function () use ($timer) {
