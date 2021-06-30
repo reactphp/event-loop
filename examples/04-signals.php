@@ -9,11 +9,11 @@ if (!defined('SIGINT')) {
     exit(1);
 }
 
-Loop::get()->addSignal(SIGINT, $func = function ($signal) use (&$func) {
+Loop::addSignal(SIGINT, $func = function ($signal) use (&$func) {
     echo 'Signal: ', (string)$signal, PHP_EOL;
-    Loop::get()->removeSignal(SIGINT, $func);
+    Loop::removeSignal(SIGINT, $func);
 });
 
 echo 'Listening for SIGINT. Use "kill -SIGINT ' . getmypid() . '" or CTRL+C' . PHP_EOL;
 
-Loop::get()->run();
+Loop::run();

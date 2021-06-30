@@ -9,7 +9,7 @@ $tick = function () use (&$tick, &$ticks) {
     if ($ticks > 0) {
         --$ticks;
         //$loop->futureTick($tick);
-        Loop::get()->addTimer(0, $tick);
+        Loop::addTimer(0, $tick);
     } else {
         echo 'done';
     }
@@ -17,4 +17,4 @@ $tick = function () use (&$tick, &$ticks) {
 
 $tick();
 
-Loop::get()->run();
+Loop::run();

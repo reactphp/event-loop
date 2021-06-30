@@ -7,7 +7,6 @@
  * php 95-benchmark-memory.php -t 30 -l StreamSelect -r 10
  */
 
-use React\EventLoop\Factory;
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
@@ -27,21 +26,21 @@ $r = isset($args['r']) ? (int)$args['r'] : 2;
 $runs = 0;
 
 if (5 < $t) {
-    Loop::get()->addTimer($t, function () {
-        Loop::get()->stop();
+    Loop::addTimer($t, function () {
+        Loop::stop();
     });
 
 }
 
-Loop::get()->addPeriodicTimer(0.001, function () use (&$runs) {
+Loop::addPeriodicTimer(0.001, function () use (&$runs) {
     $runs++;
 
-    Loop::get()->addPeriodicTimer(1, function (TimerInterface $timer) {
-        Loop::get()->cancelTimer($timer);
+    Loop::addPeriodicTimer(1, function (TimerInterface $timer) {
+        Loop::cancelTimer($timer);
     });
 });
 
-Loop::get()->addPeriodicTimer($r, function () use (&$runs) {
+Loop::addPeriodicTimer($r, function () use (&$runs) {
     $kmem = round(memory_get_usage() / 1024);
     $kmemReal = round(memory_get_usage(true) / 1024);
     echo "Runs:\t\t\t$runs\n";
@@ -57,7 +56,7 @@ echo "Time\t\t\t", date('r'), "\n";
 echo str_repeat('-', 50), "\n";
 
 $beginTime = time();
-Loop::get()->run();
+Loop::run();
 $endTime = time();
 $timeTaken = $endTime - $beginTime;
 

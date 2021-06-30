@@ -17,13 +17,13 @@ if (!defined('STDOUT') || stream_set_blocking(STDOUT, false) !== true) {
 
 // write data to STDOUT whenever its write buffer accepts data
 // for illustrations purpose only, should use react/stream instead
-Loop::get()->addWriteStream(STDOUT, function ($stdout) use (&$data) {
+Loop::addWriteStream(STDOUT, function ($stdout) use (&$data) {
     // try to write data
     $r = fwrite($stdout, $data);
 
     // nothing could be written despite being writable => closed
     if ($r === 0) {
-        Loop::get()->removeWriteStream($stdout);
+        Loop::removeWriteStream($stdout);
         fclose($stdout);
         stream_set_blocking($stdout, true);
         fwrite(STDERR, 'Stopped because STDOUT closed' . PHP_EOL);
@@ -38,4 +38,4 @@ Loop::get()->addWriteStream(STDOUT, function ($stdout) use (&$data) {
     }
 });
 
-Loop::get()->run();
+Loop::run();
