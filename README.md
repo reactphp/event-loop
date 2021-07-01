@@ -13,31 +13,31 @@ single [`run()`](#run) call that is controlled by the user.
 
 * [Quickstart example](#quickstart-example)
 * [Usage](#usage)
-  * [Loop](#loop)
-    * [Loop methods](#loop-methods)
-    * [get()](#get)
-  * [Factory](#factory)
-    * [create()](#create)
-  * [Loop implementations](#loop-implementations)
-    * [StreamSelectLoop](#streamselectloop)
-    * [ExtEventLoop](#exteventloop)
-    * [ExtLibeventLoop](#extlibeventloop)
-    * [ExtLibevLoop](#extlibevloop)
-    * [ExtEvLoop](#extevloop)
-    * [ExtUvLoop](#extuvloop)
-  * [LoopInterface](#loopinterface)
-    * [run()](#run)
-    * [stop()](#stop)
-    * [addTimer()](#addtimer)
-    * [addPeriodicTimer()](#addperiodictimer)
-    * [cancelTimer()](#canceltimer)
-    * [futureTick()](#futuretick)
-    * [addSignal()](#addsignal)
-    * [removeSignal()](#removesignal)
-    * [addReadStream()](#addreadstream)
-    * [addWriteStream()](#addwritestream)
-    * [removeReadStream()](#removereadstream)
-    * [removeWriteStream()](#removewritestream)
+    * [Loop](#loop)
+        * [Loop methods](#loop-methods)
+        * [get()](#get)
+    * [~~Factory~~](#factory)
+        * [~~create()~~](#create)
+    * [Loop implementations](#loop-implementations)
+        * [StreamSelectLoop](#streamselectloop)
+        * [ExtEventLoop](#exteventloop)
+        * [ExtLibeventLoop](#extlibeventloop)
+        * [ExtLibevLoop](#extlibevloop)
+        * [ExtEvLoop](#extevloop)
+        * [ExtUvLoop](#extuvloop)
+    * [LoopInterface](#loopinterface)
+        * [run()](#run)
+        * [stop()](#stop)
+        * [addTimer()](#addtimer)
+        * [addPeriodicTimer()](#addperiodictimer)
+        * [cancelTimer()](#canceltimer)
+        * [futureTick()](#futuretick)
+        * [addSignal()](#addsignal)
+        * [removeSignal()](#removesignal)
+        * [addReadStream()](#addreadstream)
+        * [addWriteStream()](#addwritestream)
+        * [removeReadStream()](#removereadstream)
+        * [removeWriteStream()](#removewritestream)
 * [Install](#install)
 * [Tests](#tests)
 * [License](#license)
@@ -48,7 +48,11 @@ single [`run()`](#run) call that is controlled by the user.
 Here is an async HTTP server built with just the event loop.
 
 ```php
+<?php
+
 use React\EventLoop\Loop;
+
+require __DIR__ . '/vendor/autoload.php';
 
 $server = stream_socket_server('tcp://127.0.0.1:8080');
 stream_set_blocking($server, false);
@@ -81,14 +85,15 @@ See also the [examples](examples).
 ## Usage
 
 As of `v1.2.0`, typical applications would use the [`Loop` object](#loop)
-to use the currently active event loop instance like this:
+to use the currently active event loop like this:
 
 ```php
 use React\EventLoop\Loop;
 
 $timer = Loop::addPeriodicTimer(0.1, function () {
-    echo "Tick" . PHP_EOL;
+    echo 'Tick' . PHP_EOL;
 });
+
 Loop::addTimer(1.0, function () use ($timer) {
     Loop::cancelTimer($timer);
     echo 'Done' . PHP_EOL;
@@ -105,8 +110,9 @@ program like this:
 $loop = React\EventLoop\Loop::get(); // or deprecated React\EventLoop\Factory::create();
 
 $timer = $loop->addPeriodicTimer(0.1, function () {
-    echo "Tick" . PHP_EOL;
+    echo 'Tick' . PHP_EOL;
 });
+
 $loop->addTimer(1.0, function () use ($loop, $timer) {
     $loop->cancelTimer($timer);
     echo 'Done' . PHP_EOL;
@@ -163,7 +169,7 @@ like this:
 use React\EventLoop\Loop;
 
 $timer = Loop::addPeriodicTimer(0.1, function () {
-    echo 'tick!' . PHP_EOL;
+    echo 'Tick' . PHP_EOL;
 });
 
 Loop::addTimer(1.0, function () use ($timer) {
@@ -262,18 +268,26 @@ Loop::run();
 
 See [`LoopInterface`](#loopinterface) for more details about available methods.
 
-### Factory
+### ~~Factory~~
 
-The `Factory` class exists as a convenient way to pick the best available
+> Deprecated since v1.2.0, see [`Loop` class](#loop) instead.
+
+The deprecated `Factory` class exists as a convenient way to pick the best available
 [event loop implementation](#loop-implementations).
 
-#### create()
+#### ~~create()~~
 
-The `create(): LoopInterface` method can be used to create a new event loop
-instance:
+> Deprecated since v1.2.0, see [`Loop::get()`](#get) instead.
+
+The deprecated `create(): LoopInterface` method can be used to
+create a new event loop instance:
 
 ```php
+// deprecated
 $loop = React\EventLoop\Factory::create();
+
+// new
+$loop = React\EventLoop\Loop::get();
 ```
 
 This method always returns an instance implementing [`LoopInterface`](#loopinterface),

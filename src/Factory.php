@@ -3,15 +3,22 @@
 namespace React\EventLoop;
 
 /**
- * The `Factory` class exists as a convenient way to pick the best available event loop implementation.
+ * [Deprecated] The `Factory` class exists as a convenient way to pick the best available event loop implementation.
+ *
+ * @deprecated 1.2.0 See Loop instead.
+ * @see Loop
  */
 final class Factory
 {
     /**
-     * Creates a new event loop instance
+     * [Deprecated] Creates a new event loop instance
      *
      * ```php
+     * // deprecated
      * $loop = React\EventLoop\Factory::create();
+     *
+     * // new
+     * $loop = React\EventLoop\Loop::get();
      * ```
      *
      * This method always returns an instance implementing `LoopInterface`,
@@ -19,7 +26,8 @@ final class Factory
      *
      * This method should usually only be called once at the beginning of the program.
      *
-     * @deprecated Use Loop::get instead
+     * @deprecated 1.2.0 See Loop::get() instead.
+     * @see Loop::get()
      *
      * @return LoopInterface
      */
