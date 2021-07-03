@@ -2,7 +2,7 @@
 
 use React\EventLoop\Loop;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 Loop::futureTick(function () {
     echo 'b';

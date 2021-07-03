@@ -11,5 +11,3 @@ Loop::addTimer(0.8, function () {
 Loop::addTimer(0.3, function () {
     echo 'hello ';
 });
-
-Loop::run();

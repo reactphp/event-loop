@@ -15,6 +15,7 @@ single [`run()`](#run) call that is controlled by the user.
 * [Usage](#usage)
     * [Loop](#loop)
         * [Loop methods](#loop-methods)
+        * [Loop autorun](#loop-autorun)
         * [get()](#get)
     * [~~Factory~~](#factory)
         * [~~create()~~](#create)
@@ -76,8 +77,6 @@ Loop::addPeriodicTimer(5, function () {
     $formatted = number_format($memory, 3).'K';
     echo "Current memory usage: {$formatted}\n";
 });
-
-Loop::run();
 ```
 
 See also the [examples](examples).
@@ -98,8 +97,6 @@ Loop::addTimer(1.0, function () use ($timer) {
     Loop::cancelTimer($timer);
     echo 'Done' . PHP_EOL;
 });
-
-Loop::run();
 ```
 
 As an alternative, you can also explicitly create an event loop instance at the
@@ -127,12 +124,13 @@ In both cases, the program would perform the exact same steps.
 1. The event loop instance is created at the beginning of the program. This is
    implicitly done the first time you call the [`Loop` class](#loop) or
    explicitly when using the deprecated [`Factory::create() method`](#create)
-   (or manually instantiating any of the [loop implementation](#loop-implementations)).
+   (or manually instantiating any of the [loop implementations](#loop-implementations)).
 2. The event loop is used directly or passed as an instance to library and
    application code. In this example, a periodic timer is registered with the
    event loop which simply outputs `Tick` every fraction of a second until another
    timer stops the periodic timer after a second.
-3. The event loop is run at the end of the program with a single [`run()`](#run)
+3. The event loop is run at the end of the program. This is automatically done
+   when using [`Loop` class](#loop) or explicitly with a single [`run()`](#run)
    call at the end of the program.
 
 As of `v1.2.0`, we highly recommend using the [`Loop` class](#loop).
@@ -176,8 +174,6 @@ Loop::addTimer(1.0, function () use ($timer) {
     Loop::cancelTimer($timer);
     echo 'Done' . PHP_EOL;
 });
-
-Loop::run();
 ```
 
 On the other hand, if you're familiar with object-oriented programming (OOP) and
@@ -208,13 +204,49 @@ class Greeter
 $greeter = new Greeter(Loop::get());
 $greeter->greet('Alice');
 $greeter->greet('Bob');
-
-Loop::run();
 ```
 
 Each static method call will be forwarded as-is to the underlying event loop
 instance by using the [`Loop::get()`](#get) call internally.
 See [`LoopInterface`](#loopinterface) for more details about available methods.
+
+#### Loop autorun
+
+When using the `Loop` class, it will automatically execute the loop at the end of
+the program. This means the following example will schedule a timer and will
+automatically execute the program until the timer event fires:
+
+```php
+use React\EventLoop\Loop;
+
+Loop::addTimer(1.0, function () {
+    echo 'Hello' . PHP_EOL;
+});
+```
+
+As of `v1.2.0`, we highly recommend using the `Loop` class this way and omitting any
+explicit [`run()`](#run) calls. For BC reasons, the explicit [`run()`](#run)
+method is still valid and may still be useful in some applications, especially
+for a transition period towards the more concise style.
+
+If you don't want the `Loop` to run automatically, you can either explicitly
+[`run()`](#run) or [`stop()`](#stop) it. This can be useful if you're using
+a global exception handler like this:
+
+```php
+use React\EventLoop\Loop;
+
+Loop::addTimer(10.0, function () {
+    echo 'Never happens';
+});
+
+set_exception_handler(function (Throwable $e) {
+    echo 'Error: ' . $e->getMessage() . PHP_EOL;
+    Loop::stop();
+});
+
+throw new RuntimeException('Demo');
+```
 
 #### get()
 
@@ -262,8 +294,6 @@ class Greeter
 $greeter = new Greeter(Loop::get());
 $greeter->greet('Alice');
 $greeter->greet('Bob');
-
-Loop::run();
 ```
 
 See [`LoopInterface`](#loopinterface) for more details about available methods.
