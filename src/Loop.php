@@ -17,7 +17,7 @@ final class Loop
 
     /**
      * Returns the event loop.
-     * When no loop is set it will it will call the factory to create one.
+     * When no loop is set, it will call the factory to create one.
      *
      * This method always returns an instance implementing `LoopInterface`,
      * the actual event loop implementation is an implementation detail.
