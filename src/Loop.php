@@ -62,7 +62,7 @@ final class Loop
 
     /**
      * Internal undocumented method, behavior might change or throw in the
-     * future. Use with cation and at your own risk.
+     * future. Use with caution and at your own risk.
      *
      * @internal
      * @return void
