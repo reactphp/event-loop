@@ -14,6 +14,7 @@ use SplObjectStorage;
  *
  * This loop uses the [`ev` PECL extension](https://pecl.php.net/package/ev),
  * that provides an interface to `libev` library.
+ * `libev` itself supports a number of system-specific backends (epoll, kqueue).
  *
  * This loop is known to work with PHP 5.4 through PHP 7+.
  *
