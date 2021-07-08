@@ -5,6 +5,7 @@ namespace React\EventLoop;
 use Ev;
 use EvIo;
 use EvLoop;
+use EvSignal;
 use React\EventLoop\Tick\FutureTickQueue;
 use React\EventLoop\Timer\Timer;
 use SplObjectStorage;
@@ -20,7 +21,7 @@ use SplObjectStorage;
  * @see http://php.net/manual/en/book.ev.php
  * @see https://bitbucket.org/osmanov/pecl-ev/overview
  */
-class ExtEvLoop implements LoopInterface
+class ExtEvLoop implements ForkableLoopInterface
 {
     /**
      * @var EvLoop
@@ -248,5 +249,38 @@ class ExtEvLoop implements LoopInterface
             $this->signalEvents[$signal]->stop();
             unset($this->signalEvents[$signal]);
         }
+    }
+
+    public function recreateForChildProcess()
+    {
+        $this->loop->loopFork();
+        $this->stop();
+
+        $stopEvent = function($event) {
+            assert($event instanceof EvIo || $event instanceof EvSignal);
+            $event->stop();
+        };
+
+        array_walk($this->writeStreams, $stopEvent);
+        array_walk($this->writeStreams, $stopEvent);
+        array_walk($this->signalEvents, $stopEvent);
+
+        foreach ($this->timers as $timer) {
+            $this->cancelTimer($timer);
+        }
+
+        $this->futureTickQueue = new FutureTickQueue();
+        $this->timers = new SplObjectStorage();
+        $this->readStreams = array();
+        $this->writeStreams = array();
+        $this->signals = new SignalsHandler();
+        $this->signalEvents = array();
+
+        return new self();
+    }
+
+    public function reuseForChildProcess()
+    {
+        $this->loop->loopFork();
     }
 }

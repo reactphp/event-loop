@@ -4,7 +4,12 @@ namespace React\Tests\EventLoop;
 
 use React\EventLoop\ExtEventLoop;
 
-class ExtEventLoopTest extends AbstractLoopTest
+/**
+ * @requires OS Linux
+ * @requires extension event
+ * @requires extension posix
+ */
+class ExtEventLoopTest extends AbstractForkableLoopTest
 {
     public function createLoop($readStreamCompatible = false)
     {
