@@ -22,8 +22,8 @@ single [`run()`](#run) call that is controlled by the user.
     * [Loop implementations](#loop-implementations)
         * [StreamSelectLoop](#streamselectloop)
         * [ExtEventLoop](#exteventloop)
-        * [ExtLibeventLoop](#extlibeventloop)
-        * [ExtLibevLoop](#extlibevloop)
+        * [~~ExtLibeventLoop~~](#extlibeventloop)
+        * [~~ExtLibevLoop~~](#extlibevloop)
         * [ExtEvLoop](#extevloop)
         * [ExtUvLoop](#extuvloop)
     * [LoopInterface](#loopinterface)
@@ -392,8 +392,9 @@ See also [`addTimer()`](#addtimer) for more details.
 
 An `ext-event` based event loop.
 
-This uses the [`event` PECL extension](https://pecl.php.net/package/event).
-It supports the same backends as libevent.
+This uses the [`event` PECL extension](https://pecl.php.net/package/event),
+that provides an interface to `libevent` library.
+`libevent` itself supports a number of system-specific backends (epoll, kqueue).
 
 This loop is known to work with PHP 5.4 through PHP 7+.
 
@@ -401,8 +402,10 @@ This loop is known to work with PHP 5.4 through PHP 7+.
 
 An `ext-ev` based event loop.
 
-This loop uses the [`ev` PECL extension](https://pecl.php.net/package/ev), that
-provides an interface to `libev` library.
+This loop uses the [`ev` PECL extension](https://pecl.php.net/package/ev),
+that provides an interface to `libev` library.
+`libev` itself supports a number of system-specific backends (epoll, kqueue).
+
 
 This loop is known to work with PHP 5.4 through PHP 7+.
 
@@ -410,16 +413,20 @@ This loop is known to work with PHP 5.4 through PHP 7+.
 
 An `ext-uv` based event loop.
 
-This loop uses the [`uv` PECL extension](https://pecl.php.net/package/uv), that
-provides an interface to `libuv` library.
+This loop uses the [`uv` PECL extension](https://pecl.php.net/package/uv),
+that provides an interface to `libuv` library.
+`libuv` itself supports a number of system-specific backends (epoll, kqueue).
 
 This loop is known to work with PHP 7+.
 
-#### ExtLibeventLoop
+#### ~~ExtLibeventLoop~~
+
+> Deprecated since v1.2.0, use [`ExtEventLoop`](#exteventloop) instead.
 
 An `ext-libevent` based event loop.
 
-This uses the [`libevent` PECL extension](https://pecl.php.net/package/libevent).
+This uses the [`libevent` PECL extension](https://pecl.php.net/package/libevent),
+that provides an interface to `libevent` library.
 `libevent` itself supports a number of system-specific backends (epoll, kqueue).
 
 This event loop does only work with PHP 5.
@@ -438,12 +445,15 @@ As such, it's recommended to use `stream_set_read_buffer($stream, 0);`
 to disable PHP's internal read buffer in this case.
 See also [`addReadStream()`](#addreadstream) for more details.
 
-#### ExtLibevLoop
+#### ~~ExtLibevLoop~~
+
+> Deprecated since v1.2.0, use [`ExtEvLoop`](#extevloop) instead.
 
 An `ext-libev` based event loop.
 
-This uses an [unofficial `libev` extension](https://github.com/m4rw3r/php-libev).
-It supports the same backends as libevent.
+This uses an [unofficial `libev` extension](https://github.com/m4rw3r/php-libev),
+that provides an interface to `libev` library.
+`libev` itself supports a number of system-specific backends (epoll, kqueue).
 
 This loop does only work with PHP 5.
 An update for PHP 7 is [unlikely](https://github.com/m4rw3r/php-libev/issues/8)

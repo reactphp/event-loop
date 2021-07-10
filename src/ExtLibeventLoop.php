@@ -10,9 +10,10 @@ use React\EventLoop\Timer\Timer;
 use SplObjectStorage;
 
 /**
- * An `ext-libevent` based event loop.
+ * [Deprecated] An `ext-libevent` based event loop.
  *
- * This uses the [`libevent` PECL extension](https://pecl.php.net/package/libevent).
+ * This uses the [`libevent` PECL extension](https://pecl.php.net/package/libevent),
+ * that provides an interface to `libevent` library.
  * `libevent` itself supports a number of system-specific backends (epoll, kqueue).
  *
  * This event loop does only work with PHP 5.
@@ -32,6 +33,7 @@ use SplObjectStorage;
  * See also [`addReadStream()`](#addreadstream) for more details.
  *
  * @link https://pecl.php.net/package/libevent
+ * @deprecated 1.2.0, use [`ExtEventLoop`](#exteventloop) instead.
  */
 final class ExtLibeventLoop implements LoopInterface
 {

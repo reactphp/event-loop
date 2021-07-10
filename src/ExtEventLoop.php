@@ -12,8 +12,9 @@ use SplObjectStorage;
 /**
  * An `ext-event` based event loop.
  *
- * This uses the [`event` PECL extension](https://pecl.php.net/package/event).
- * It supports the same backends as libevent.
+ * This uses the [`event` PECL extension](https://pecl.php.net/package/event),
+ * that provides an interface to `libevent` library.
+ * `libevent` itself supports a number of system-specific backends (epoll, kqueue).
  *
  * This loop is known to work with PHP 5.4 through PHP 7+.
  *
