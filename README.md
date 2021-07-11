@@ -22,10 +22,10 @@ single [`run()`](#run) call that is controlled by the user.
     * [Loop implementations](#loop-implementations)
         * [StreamSelectLoop](#streamselectloop)
         * [ExtEventLoop](#exteventloop)
-        * [~~ExtLibeventLoop~~](#extlibeventloop)
-        * [~~ExtLibevLoop~~](#extlibevloop)
         * [ExtEvLoop](#extevloop)
         * [ExtUvLoop](#extuvloop)
+        * [~~ExtLibeventLoop~~](#extlibeventloop)
+        * [~~ExtLibevLoop~~](#extlibevloop)
     * [LoopInterface](#loopinterface)
         * [run()](#run)
         * [stop()](#stop)
@@ -878,7 +878,7 @@ This project follows [SemVer](https://semver.org/).
 This will install the latest supported version:
 
 ```bash
-$ composer require react/event-loop:^1.1.1
+$ composer require react/event-loop:^1.2
 ```
 
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
