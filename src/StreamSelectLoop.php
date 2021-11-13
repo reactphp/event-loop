@@ -15,8 +15,9 @@ use React\EventLoop\Timer\Timers;
  * This event loop works out of the box on PHP 5.4 through PHP 7+ and HHVM.
  * This means that no installation is required and this library works on all
  * platforms and supported PHP versions.
- * Accordingly, the [`Factory`](#factory) will use this event loop by default if
- * you do not install any of the event loop extensions listed below.
+ * Accordingly, the [`Loop` class](#loop) and the deprecated [`Factory`](#factory)
+ * will use this event loop by default if you do not install any of the event loop
+ * extensions listed below.
  *
  * Under the hood, it does a simple `select` system call.
  * This system call is limited to the maximum file descriptor number of

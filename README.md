@@ -339,7 +339,7 @@ All of the event loops support these features:
 
 For most consumers of this package, the underlying event loop implementation is
 an implementation detail.
-You should use the [`Factory`](#factory) to automatically create a new instance.
+You should use the [`Loop` class](#loop) to automatically create a new instance.
 
 Advanced! If you explicitly need a certain event loop implementation, you can
 manually instantiate one of the following classes.
@@ -356,8 +356,9 @@ function and is the only implementation which works out of the box with PHP.
 This event loop works out of the box on PHP 5.3 through PHP 7+ and HHVM.
 This means that no installation is required and this library works on all
 platforms and supported PHP versions.
-Accordingly, the [`Factory`](#factory) will use this event loop by default if
-you do not install any of the event loop extensions listed below.
+Accordingly, the [`Loop` class](#loop) and the deprecated [`Factory`](#factory)
+will use this event loop by default if you do not install any of the event loop
+extensions listed below.
 
 Under the hood, it does a simple `select` system call.
 This system call is limited to the maximum file descriptor number of
@@ -433,8 +434,8 @@ This event loop does only work with PHP 5.
 An [unofficial update](https://github.com/php/pecl-event-libevent/pull/2) for
 PHP 7 does exist, but it is known to cause regular crashes due to `SEGFAULT`s.
 To reiterate: Using this event loop on PHP 7 is not recommended.
-Accordingly, the [`Factory`](#factory) will not try to use this event loop on
-PHP 7.
+Accordingly, neither the [`Loop` object](#loop) nor the deprecated
+[`Factory`](#factory) will try to use this event loop on PHP 7.
 
 This event loop is known to trigger a readable listener only if
 the stream *becomes* readable (edge-triggered) and may not trigger if the
