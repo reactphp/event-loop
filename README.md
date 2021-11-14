@@ -351,7 +351,7 @@ event loop implementation first or they will throw a `BadMethodCallException` on
 A `stream_select()` based event loop.
 
 This uses the [`stream_select()`](https://www.php.net/manual/en/function.stream-select.php)
-function and is the only implementation which works out of the box with PHP.
+function and is the only implementation that works out of the box with PHP.
 
 This event loop works out of the box on PHP 5.3 through PHP 7+ and HHVM.
 This means that no installation is required and this library works on all
@@ -469,7 +469,7 @@ run the event loop until there are no more tasks to perform.
 
 For many applications, this method is the only directly visible
 invocation on the event loop.
-As a rule of thumb, it is usally recommended to attach everything to the
+As a rule of thumb, it is usually recommended to attach everything to the
 same loop instance and then run the loop once at the bottom end of the
 application.
 
@@ -487,7 +487,7 @@ run it will result in the application exiting without actually waiting
 for any of the attached listeners.
 
 This method MUST NOT be called while the loop is already running.
-This method MAY be called more than once after it has explicity been
+This method MAY be called more than once after it has explicitly been
 [`stop()`ped](#stop) or after it automatically stopped because it
 previously did no longer have anything to do.
 
@@ -516,18 +516,21 @@ on a loop instance that has already been stopped has no effect.
 The `addTimer(float $interval, callable $callback): TimerInterface` method can be used to
 enqueue a callback to be invoked once after the given interval.
 
-The timer callback function MUST be able to accept a single parameter,
-the timer instance as also returned by this method or you MAY use a
-function which has no parameters at all.
+The second parameter MUST be a timer callback function that accepts
+the timer instance as its only parameter.
+If you don't use the timer instance inside your timer callback function
+you MAY use a function which has no parameters at all.
 
 The timer callback function MUST NOT throw an `Exception`.
 The return value of the timer callback function will be ignored and has
 no effect, so for performance reasons you're recommended to not return
 any excessive data structures.
 
+This method returns a timer instance. The same timer instance will also be 
+passed into the timer callback function as described above.
+You can invoke [`cancelTimer`](#canceltimer) to cancel a pending timer.
 Unlike [`addPeriodicTimer()`](#addperiodictimer), this method will ensure
 the callback will be invoked only once after the given interval.
-You can invoke [`cancelTimer`](#canceltimer) to cancel a pending timer.
 
 ```php
 $loop->addTimer(0.8, function () {
@@ -582,18 +585,21 @@ See also [event loop implementations](#loop-implementations) for more details.
 The `addPeriodicTimer(float $interval, callable $callback): TimerInterface` method can be used to
 enqueue a callback to be invoked repeatedly after the given interval.
 
-The timer callback function MUST be able to accept a single parameter,
-the timer instance as also returned by this method or you MAY use a
-function which has no parameters at all.
+The second parameter MUST be a timer callback function that accepts
+the timer instance as its only parameter.
+If you don't use the timer instance inside your timer callback function
+you MAY use a function which has no parameters at all.
 
 The timer callback function MUST NOT throw an `Exception`.
 The return value of the timer callback function will be ignored and has
 no effect, so for performance reasons you're recommended to not return
 any excessive data structures.
 
-Unlike [`addTimer()`](#addtimer), this method will ensure the the
-callback will be invoked infinitely after the given interval or until you
-invoke [`cancelTimer`](#canceltimer).
+This method returns a timer instance. The same timer instance will also be 
+passed into the timer callback function as described above.
+Unlike [`addTimer()`](#addtimer), this method will ensure the callback 
+will be invoked infinitely after the given interval or until you invoke 
+[`cancelTimer`](#canceltimer).
 
 ```php
 $timer = $loop->addPeriodicTimer(0.1, function () {
@@ -721,9 +727,10 @@ register a listener to be notified when a signal has been caught by this process
 This is useful to catch user interrupt signals or shutdown signals from
 tools like `supervisor` or `systemd`.
 
-The listener callback function MUST be able to accept a single parameter,
-the signal added by this method or you MAY use a function which
-has no parameters at all.
+The second parameter MUST be a listener callback function that accepts
+the signal as its only parameter.
+If you don't use the signal inside your listener callback function
+you MAY use a function which has no parameters at all.
 
 The listener callback function MUST NOT throw an `Exception`.
 The return value of the listener callback function will be ignored and has
@@ -738,14 +745,14 @@ $loop->addSignal(SIGINT, function (int $signal) {
 
 See also [example #4](examples).
 
-Signaling is only available on Unix-like platform, Windows isn't
+Signaling is only available on Unix-like platforms, Windows isn't
 supported due to operating system limitations.
 This method may throw a `BadMethodCallException` if signals aren't
 supported on this platform, for example when required extensions are
 missing.
 
 **Note: A listener can only be added once to the same signal, any
-attempts to add it more then once will be ignored.**
+attempts to add it more than once will be ignored.**
 
 #### removeSignal()
 
@@ -776,9 +783,10 @@ react to this event with a single listener and then dispatch from this
 listener. This method MAY throw an `Exception` if the given resource type
 is not supported by this loop implementation.
 
-The listener callback function MUST be able to accept a single parameter,
-the stream resource added by this method or you MAY use a function which
-has no parameters at all.
+The second parameter MUST be a listener callback function that accepts
+the stream resource as its only parameter.
+If you don't use the stream resource inside your listener callback function
+you MAY use a function which has no parameters at all.
 
 The listener callback function MUST NOT throw an `Exception`.
 The return value of the listener callback function will be ignored and has
@@ -828,9 +836,10 @@ react to this event with a single listener and then dispatch from this
 listener. This method MAY throw an `Exception` if the given resource type
 is not supported by this loop implementation.
 
-The listener callback function MUST be able to accept a single parameter,
-the stream resource added by this method or you MAY use a function which
-has no parameters at all.
+The second parameter MUST be a listener callback function that accepts
+the stream resource as its only parameter.
+If you don't use the stream resource inside your listener callback function
+you MAY use a function which has no parameters at all.
 
 The listener callback function MUST NOT throw an `Exception`.
 The return value of the listener callback function will be ignored and has
@@ -872,7 +881,7 @@ to remove a stream that was never added or is invalid has no effect.
 
 ## Install
 
-The recommended way to install this library is [through Composer](https://getcomposer.org).
+The recommended way to install this library is [through Composer](https://getcomposer.org/).
 [New to Composer?](https://getcomposer.org/doc/00-intro.md)
 
 This project follows [SemVer](https://semver.org/).
@@ -895,7 +904,7 @@ See also [event loop implementations](#loop-implementations) for more details.
 ## Tests
 
 To run the test suite, you first need to clone this repo and then install all
-dependencies [through Composer](https://getcomposer.org):
+dependencies [through Composer](https://getcomposer.org/):
 
 ```bash
 $ composer install
@@ -904,7 +913,7 @@ $ composer install
 To run the test suite, go to the project root and run:
 
 ```bash
-$ php vendor/bin/phpunit
+$ vendor/bin/phpunit
 ```
 
 ## License
