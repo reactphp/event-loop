@@ -6,6 +6,7 @@ use React\EventLoop\ExtLibeventLoop;
 
 class ExtLibeventLoopTest extends AbstractLoopTest
 {
+    /** @var ?string */
     private $fifoPath;
 
     public function createLoop()
@@ -26,7 +27,7 @@ class ExtLibeventLoopTest extends AbstractLoopTest
      */
     public function tearDownFile()
     {
-        if (file_exists($this->fifoPath)) {
+        if ($this->fifoPath !== null && file_exists($this->fifoPath)) {
             unlink($this->fifoPath);
         }
     }
@@ -38,6 +39,7 @@ class ExtLibeventLoopTest extends AbstractLoopTest
         }
 
         $this->fifoPath = tempnam(sys_get_temp_dir(), 'react-');
+        assert(is_string($this->fifoPath));
 
         unlink($this->fifoPath);
 
