@@ -12,7 +12,11 @@ abstract class AbstractLoopTest extends TestCase
      */
     protected $loop;
 
+    /** @var float */
     private $tickTimeout;
+
+    /** @var ?string */
+    private $received;
 
     const PHP_DEFAULT_CHUNK_SIZE = 8192;
 

@@ -6,6 +6,9 @@ use React\EventLoop\ExtEventLoop;
 
 class ExtEventLoopTest extends AbstractLoopTest
 {
+    /** @var ?string */
+    private $fifoPath;
+
     public function createLoop($readStreamCompatible = false)
     {
         if ('Linux' === PHP_OS && !extension_loaded('posix')) {
@@ -19,12 +22,23 @@ class ExtEventLoopTest extends AbstractLoopTest
         return new ExtEventLoop();
     }
 
+    /**
+     * @after
+     */
+    public function tearDownFile()
+    {
+        if ($this->fifoPath !== null && file_exists($this->fifoPath)) {
+            unlink($this->fifoPath);
+        }
+    }
+
     public function createStream()
     {
         // Use a FIFO on linux to get around lack of support for disk-based file
         // descriptors when using the EPOLL back-end.
         if ('Linux' === PHP_OS) {
             $this->fifoPath = tempnam(sys_get_temp_dir(), 'react-');
+            assert(is_string($this->fifoPath));
 
             unlink($this->fifoPath);
 
