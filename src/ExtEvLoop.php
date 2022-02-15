@@ -162,7 +162,7 @@ class ExtEvLoop implements LoopInterface
             \call_user_func($timer->getCallback(), $timer);
         };
 
-        $event = $this->loop->timer($interval, $interval, $callback);
+        $event = $this->loop->timer($timer->getInterval(), $timer->getInterval(), $callback);
         $this->timers->attach($timer, $event);
 
         return $timer;
