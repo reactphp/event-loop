@@ -287,8 +287,15 @@ final class StreamSelectLoop implements LoopInterface
                 }
             }
 
-            // suppress warnings that occur, when stream_select is interrupted by a signal
-            $ret = @\stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+            // suppress warnings that occur when `stream_select()` is interrupted by a signal
+            \set_error_handler(function ($errno, $errstr) {
+                $eintr = \defined('SOCKET_EINTR') ? \SOCKET_EINTR : 4;
+                return ($errno === \E_WARNING && \strpos($errstr, '[' . $eintr .']: ') !== false);
+            });
+
+            $ret = \stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+
+            \restore_error_handler();
 
             if ($except) {
                 $write = \array_merge($write, $except);
