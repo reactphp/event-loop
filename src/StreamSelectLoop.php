@@ -287,15 +287,28 @@ final class StreamSelectLoop implements LoopInterface
                 }
             }
 
-            // suppress warnings that occur when `stream_select()` is interrupted by a signal
-            \set_error_handler(function ($errno, $errstr) {
+            /** @var ?callable $previous */
+            $previous = \set_error_handler(function ($errno, $errstr) use (&$previous) {
+                // suppress warnings that occur when `stream_select()` is interrupted by a signal
                 $eintr = \defined('SOCKET_EINTR') ? \SOCKET_EINTR : 4;
-                return ($errno === \E_WARNING && \strpos($errstr, '[' . $eintr .']: ') !== false);
+                if ($errno === \E_WARNING && \strpos($errstr, '[' . $eintr .']: ') !== false) {
+                    return;
+                }
+
+                // forward any other error to registered error handler or print warning
+                return ($previous !== null) ? \call_user_func_array($previous, \func_get_args()) : false;
             });
 
-            $ret = \stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
-
-            \restore_error_handler();
+            try {
+                $ret = \stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
+                \restore_error_handler();
+            } catch (\Throwable $e) { // @codeCoverageIgnoreStart
+                \restore_error_handler();
+                throw $e;
+            } catch (\Exception $e) {
+                \restore_error_handler();
+                throw $e;
+            } // @codeCoverageIgnoreEnd
 
             if ($except) {
                 $write = \array_merge($write, $except);
