@@ -58,10 +58,7 @@ final class Timers
     public function getFirst()
     {
         // ensure timers are sorted to simply accessing next (first) one
-        if (!$this->sorted) {
-            $this->sorted = true;
-            \asort($this->schedule);
-        }
+        $this->ensureTimerAreSorted();
 
         return \reset($this->schedule);
     }
@@ -74,10 +71,7 @@ final class Timers
     public function tick()
     {
         // ensure timers are sorted so we can execute in order
-        if (!$this->sorted) {
-            $this->sorted = true;
-            \asort($this->schedule);
-        }
+        $this->ensureTimerAreSorted();
 
         $time = $this->updateTime();
 
@@ -102,6 +96,14 @@ final class Timers
             } else {
                 unset($this->timers[$id], $this->schedule[$id]);
             }
+        }
+    }
+
+    private function ensureTimerAreSorted()
+    {
+        if (!$this->sorted) {
+            $this->sorted = true;
+            \asort($this->schedule);
         }
     }
 }
