@@ -121,6 +121,26 @@ abstract class AbstractTimerTest extends TestCase
         $this->assertEquals(0.000001, $timer->getInterval());
     }
 
+    public function testAddPeriodicTimerWithZeroIntervalWillExecuteCallbackFunctionAtLeastTwice()
+    {
+        $loop = $this->createLoop();
+
+        $timeout = $loop->addTimer(2, $this->expectCallableNever()); //Timeout the test after two seconds if the periodic timer hasn't fired twice
+
+        $i = 0;
+        $loop->addPeriodicTimer(0, function ($timer) use (&$i, $loop, $timeout) {
+            ++$i;
+            if ($i === 2) {
+                $loop->cancelTimer($timer);
+                $loop->cancelTimer($timeout);
+            }
+        });
+
+        $loop->run();
+
+        $this->assertEquals(2, $i);
+    }
+
     public function testTimerIntervalBelowZeroRunsImmediately()
     {
         $loop = $this->createLoop();
