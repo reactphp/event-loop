@@ -40,6 +40,85 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $this->assertGreaterThan(0.04, $interval);
     }
 
+    public function testStreamSelectReportsWarningForStreamWithFilter()
+    {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped('Not supported on legacy HHVM');
+        }
+
+        $stream = tmpfile();
+        stream_filter_append($stream, 'string.rot13');
+
+        $this->loop->addReadStream($stream, $this->expectCallableNever());
+
+        $loop = $this->loop;
+        $this->loop->futureTick(function () use ($loop, $stream) {
+            $loop->futureTick(function () use ($loop, $stream) {
+                $loop->removeReadStream($stream);
+            });
+        });
+
+        $error = null;
+        $previous = set_error_handler(function ($_, $errstr) use (&$error) {
+            $error = $errstr;
+        });
+
+        try {
+            $this->loop->run();
+        } catch (\ValueError $e) {
+            // ignore ValueError for PHP 8+ due to empty stream array
+        }
+
+        restore_error_handler();
+
+        $this->assertNotNull($error);
+
+        $now = set_error_handler(function () { });
+        restore_error_handler();
+        $this->assertEquals($previous, $now);
+    }
+
+    public function testStreamSelectThrowsWhenCustomErrorHandlerThrowsForStreamWithFilter()
+    {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped('Not supported on legacy HHVM');
+        }
+
+        $stream = tmpfile();
+        stream_filter_append($stream, 'string.rot13');
+
+        $this->loop->addReadStream($stream, $this->expectCallableNever());
+
+        $loop = $this->loop;
+        $this->loop->futureTick(function () use ($loop, $stream) {
+            $loop->futureTick(function () use ($loop, $stream) {
+                $loop->removeReadStream($stream);
+            });
+        });
+
+        $previous = set_error_handler(function ($_, $errstr) {
+            throw new \RuntimeException($errstr);
+        });
+
+        $e = null;
+        try {
+            $this->loop->run();
+            restore_error_handler();
+            $this->fail();
+        } catch (\RuntimeException $e) {
+            restore_error_handler();
+        } catch (\ValueError $e) {
+            restore_error_handler(); // PHP 8+
+            $e = $e->getPrevious();
+        }
+
+        $this->assertInstanceOf('RuntimeException', $e);
+
+        $now = set_error_handler(function () { });
+        restore_error_handler();
+        $this->assertEquals($previous, $now);
+    }
+
     public function signalProvider()
     {
         return array(
