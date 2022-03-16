@@ -29,12 +29,12 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: xdebug
       - run: sudo apt-get update && sudo apt-get install libevent-dev
-      - name: Install ext-event between PHP 5.4 and PHP 7.x
+      - name: Install ext-event on PHP >= 5.4
         run: |
           echo "yes" | sudo pecl install event
           # explicitly enable extensions in php.ini on PHP 5.6+
           php -r 'exit((int)(PHP_VERSION_ID >= 50600));' || echo "extension=event.so" | sudo tee -a "$(php -r 'echo php_ini_loaded_file();')"
-        if: ${{ matrix.php >= 5.4 && matrix.php < 8.0 }}
+        if: ${{ matrix.php >= 5.4 }}
       - name: Install ext-ev on PHP >= 5.4
         run: |
           echo "yes" | sudo pecl install ev

@@ -12,7 +12,7 @@ use React\EventLoop\Timer\Timers;
  * This uses the [`stream_select()`](https://www.php.net/manual/en/function.stream-select.php)
  * function and is the only implementation that works out of the box with PHP.
  *
- * This event loop works out of the box on PHP 5.4 through PHP 7+ and HHVM.
+ * This event loop works out of the box on PHP 5.4 through PHP 8+ and HHVM.
  * This means that no installation is required and this library works on all
  * platforms and supported PHP versions.
  * Accordingly, the [`Loop` class](#loop) and the deprecated [`Factory`](#factory)
