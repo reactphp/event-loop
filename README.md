@@ -353,7 +353,7 @@ A `stream_select()` based event loop.
 This uses the [`stream_select()`](https://www.php.net/manual/en/function.stream-select.php)
 function and is the only implementation that works out of the box with PHP.
 
-This event loop works out of the box on PHP 5.3 through PHP 7+ and HHVM.
+This event loop works out of the box on PHP 5.3 through PHP 8+ and HHVM.
 This means that no installation is required and this library works on all
 platforms and supported PHP versions.
 Accordingly, the [`Loop` class](#loop) and the deprecated [`Factory`](#factory)
@@ -397,7 +397,7 @@ This uses the [`event` PECL extension](https://pecl.php.net/package/event),
 that provides an interface to `libevent` library.
 `libevent` itself supports a number of system-specific backends (epoll, kqueue).
 
-This loop is known to work with PHP 5.4 through PHP 7+.
+This loop is known to work with PHP 5.4 through PHP 8+.
 
 #### ExtEvLoop
 
@@ -408,7 +408,7 @@ that provides an interface to `libev` library.
 `libev` itself supports a number of system-specific backends (epoll, kqueue).
 
 
-This loop is known to work with PHP 5.4 through PHP 7+.
+This loop is known to work with PHP 5.4 through PHP 8+.
 
 #### ExtUvLoop
 
@@ -418,7 +418,7 @@ This loop uses the [`uv` PECL extension](https://pecl.php.net/package/uv),
 that provides an interface to `libuv` library.
 `libuv` itself supports a number of system-specific backends (epoll, kqueue).
 
-This loop is known to work with PHP 7+.
+This loop is known to work with PHP 7.x.
 
 #### ~~ExtLibeventLoop~~
 

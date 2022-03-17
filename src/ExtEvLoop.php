@@ -16,7 +16,7 @@ use SplObjectStorage;
  * that provides an interface to `libev` library.
  * `libev` itself supports a number of system-specific backends (epoll, kqueue).
  *
- * This loop is known to work with PHP 5.4 through PHP 7+.
+ * This loop is known to work with PHP 5.4 through PHP 8+.
  *
  * @see http://php.net/manual/en/book.ev.php
  * @see https://bitbucket.org/osmanov/pecl-ev/overview
