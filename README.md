@@ -84,8 +84,8 @@ See also the [examples](examples).
 
 ## Usage
 
-As of `v1.2.0`, typical applications would use the [`Loop` object](#loop)
-to use the currently active event loop like this:
+Typical applications would use the [`Loop` class](#loop) to use the default
+event loop like this:
 
 ```php
 use React\EventLoop\Loop;
@@ -124,14 +124,14 @@ In both cases, the program would perform the exact same steps.
 
 1. The event loop instance is created at the beginning of the program. This is
    implicitly done the first time you call the [`Loop` class](#loop) or
-   explicitly when using the deprecated [`Factory::create() method`](#create)
+   explicitly when using the deprecated [`Factory::create()` method](#create)
    (or manually instantiating any of the [loop implementations](#loop-implementations)).
 2. The event loop is used directly or passed as an instance to library and
    application code. In this example, a periodic timer is registered with the
    event loop which simply outputs `Tick` every fraction of a second until another
    timer stops the periodic timer after a second.
 3. The event loop is run at the end of the program. This is automatically done
-   when using [`Loop` class](#loop) or explicitly with a single [`run()`](#run)
+   when using the [`Loop` class](#loop) or explicitly with a single [`run()`](#run)
    call at the end of the program.
 
 As of `v1.2.0`, we highly recommend using the [`Loop` class](#loop).
@@ -435,8 +435,8 @@ This event loop does only work with PHP 5.
 An [unofficial update](https://github.com/php/pecl-event-libevent/pull/2) for
 PHP 7 does exist, but it is known to cause regular crashes due to `SEGFAULT`s.
 To reiterate: Using this event loop on PHP 7 is not recommended.
-Accordingly, neither the [`Loop` object](#loop) nor the deprecated
-[`Factory`](#factory) will try to use this event loop on PHP 7.
+Accordingly, neither the [`Loop` class](#loop) nor the deprecated
+[`Factory` class](#factory) will try to use this event loop on PHP 7.
 
 This event loop is known to trigger a readable listener only if
 the stream *becomes* readable (edge-triggered) and may not trigger if the
