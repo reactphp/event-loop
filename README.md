@@ -1,6 +1,7 @@
 # EventLoop Component
 
 [![CI status](https://github.com/reactphp/event-loop/workflows/CI/badge.svg)](https://github.com/reactphp/event-loop/actions)
+[![installs on Packagist](https://img.shields.io/packagist/dt/react/event-loop?color=blue&label=installs%20on%20Packagist)](https://packagist.org/packages/react/event-loop)
 
 [ReactPHP](https://reactphp.org/)'s core reactor event loop that libraries can use for evented I/O.
 
