@@ -635,6 +635,32 @@ function hello($name, LoopInterface $loop)
 hello('Tester', $loop);
 ```
 
+If you want to create a timeout rather than limiting the number of executions,
+you can track timers in an array and pass it by reference. This is useful when
+waiting for another method or service to be ready.
+
+```php
+$timers = [];
+$timers[] = Loop::addPeriodicTimer(5, function () use (&$timers) {
+    if (someExternalService()) {
+      foreach ($timers as $timer) {
+        Loop::cancelTimer($timer);
+      }
+      $timers = [];
+      echo 'someExternalService is ready' . PHP_EOL;
+    }
+    echo 'Waiting for someExternalService' . PHP_EOL;
+});
+
+$timers[] = Loop::addTimer(60*45, function () use (&$timers) {
+    foreach ($timers as $timer) {
+      Loop::cancelTimer($timer);
+    }
+    $timers = [];
+    echo 'Timed out waiting for someExternalService' . PHP_EOL;
+});
+```
+
 This interface does not enforce any particular timer resolution, so
 special care may have to be taken if you rely on very high precision with
 millisecond accuracy or below. Event loop implementations SHOULD work on
