@@ -641,22 +641,19 @@ waiting for another method or service to be ready.
 
 ```php
 $timers = [];
-$timers[] = Loop::addPeriodicTimer(5, function () use (&$timers) {
+$cancelTimers = static function (array &$timers) {
+  array_map('\React\EventLoop\Loop::cancelTimer', $timers);
+  $timers = [];
+};
+$timers[] = Loop::addPeriodicTimer(5, function () use (&$timers, $cancelTimers) {
     if (someExternalService()) {
-      foreach ($timers as $timer) {
-        Loop::cancelTimer($timer);
-      }
-      $timers = [];
+      $cancelTimers($timers);
       echo 'someExternalService is ready' . PHP_EOL;
     }
     echo 'Waiting for someExternalService' . PHP_EOL;
 });
-
-$timers[] = Loop::addTimer(60*45, function () use (&$timers) {
-    foreach ($timers as $timer) {
-      Loop::cancelTimer($timer);
-    }
-    $timers = [];
+$timers[] = Loop::addTimer(60*45, function () use (&$timers, $cancelTimers) {
+    $cancelTimers($timers);
     echo 'Timed out waiting for someExternalService' . PHP_EOL;
 });
 ```
