@@ -264,19 +264,19 @@ interface LoopInterface
      *
      * ```php
      * $timers = [];
-     * $cancelTimers = static function (array &$timers) {
+     * $cancelTimers = static function () use (&$timers) {
      *   array_map('\React\EventLoop\Loop::cancelTimer', $timers);
      *   $timers = [];
      * };
-     * $timers[] = Loop::addPeriodicTimer(5, function () use (&$timers, $cancelTimers) {
+     * $timers[] = Loop::addPeriodicTimer(5, function () use ($cancelTimers) {
      *   if (someExternalService()) {
-     *     $cancelTimers($timers);
+     *     $cancelTimers();
      *     echo 'someExternalService is ready' . PHP_EOL;
      *   }
      *   echo 'Waiting for someExternalService' . PHP_EOL;
      * });
-     * $timers[] = Loop::addTimer(60*45, function () use (&$timers, $cancelTimers) {
-     *   $cancelTimers($timers);
+     * $timers[] = Loop::addTimer(60*45, function () use ($cancelTimers) {
+     *   $cancelTimers();
      *   echo 'Timed out waiting for someExternalService' . PHP_EOL;
      * });
      * ```
