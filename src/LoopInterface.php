@@ -273,7 +273,9 @@ interface LoopInterface
      *     $cancelTimers();
      *     echo 'someExternalService is ready' . PHP_EOL;
      *   }
-     *   echo 'Waiting for someExternalService' . PHP_EOL;
+     *   else {
+     *     echo 'Waiting for someExternalService' . PHP_EOL;
+     *   }
      * });
      * $timers[] = Loop::addTimer(60*45, function () use ($cancelTimers) {
      *   $cancelTimers();
