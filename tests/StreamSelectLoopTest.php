@@ -132,6 +132,8 @@ class StreamSelectLoopTest extends AbstractLoopTest
      * Test signal interrupt when no stream is attached to the loop
      * @dataProvider signalProvider
      * @requires extension pcntl
+     * @requires function pcntl_signal()
+     * @requires function pcntl_signal_dispatch()
      */
     public function testSignalInterruptNoStream($signal)
     {
@@ -160,6 +162,8 @@ class StreamSelectLoopTest extends AbstractLoopTest
      * Test signal interrupt when a stream is attached to the loop
      * @dataProvider signalProvider
      * @requires extension pcntl
+     * @requires function pcntl_signal()
+     * @requires function pcntl_signal_dispatch()
      */
     public function testSignalInterruptWithStream($signal)
     {

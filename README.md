@@ -1,4 +1,4 @@
-# EventLoop Component
+# EventLoop
 
 [![CI status](https://github.com/reactphp/event-loop/actions/workflows/ci.yml/badge.svg)](https://github.com/reactphp/event-loop/actions)
 [![installs on Packagist](https://img.shields.io/packagist/dt/react/event-loop?color=blue&label=installs%20on%20Packagist)](https://packagist.org/packages/react/event-loop)
@@ -10,7 +10,7 @@ same event loop. This component provides a common `LoopInterface` that any
 library can target. This allows them to be used in the same loop, with one
 single [`run()`](#run) call that is controlled by the user.
 
-**Table of Contents**
+**Table of contents**
 
 * [Quickstart example](#quickstart-example)
 * [Usage](#usage)
@@ -897,7 +897,7 @@ See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
 This project aims to run on any platform and thus does not require any PHP
 extensions and supports running on legacy PHP 5.3 through current PHP 8+ and
 HHVM.
-It's *highly recommended to use PHP 7+* for this project.
+It's *highly recommended to use the latest supported PHP version* for this project.
 
 Installing any of the event loop extensions is suggested, but entirely optional.
 See also [event loop implementations](#loop-implementations) for more details.

@@ -657,11 +657,13 @@ abstract class AbstractLoopTest extends TestCase
 
     /**
      * @requires extension pcntl
+     * @requires function posix_kill()
+     * @requires function posix_getpid()
      */
     public function testSignal()
     {
-        if (!function_exists('posix_kill') || !function_exists('posix_getpid')) {
-            $this->markTestSkipped('Signal test skipped because functions "posix_kill" and "posix_getpid" are missing.');
+        if ($this->loop instanceof StreamSelectLoop && !(\function_exists('pcntl_signal') && \function_exists('pcntl_signal_dispatch'))) {
+            $this->markTestSkipped('Signal handling with StreamSelectLoop requires pcntl_signal() and pcntl_signal_dispatch(), see also disable_functions');
         }
 
         $called = false;
@@ -696,6 +698,10 @@ abstract class AbstractLoopTest extends TestCase
      */
     public function testSignalMultipleUsagesForTheSameListener()
     {
+        if ($this->loop instanceof StreamSelectLoop && !(\function_exists('pcntl_signal') && \function_exists('pcntl_signal_dispatch'))) {
+            $this->markTestSkipped('Signal handling with StreamSelectLoop requires pcntl_signal() and pcntl_signal_dispatch(), see also disable_functions');
+        }
+
         $funcCallCount = 0;
         $func = function () use (&$funcCallCount) {
             $funcCallCount++;
@@ -723,6 +729,10 @@ abstract class AbstractLoopTest extends TestCase
      */
     public function testSignalsKeepTheLoopRunning()
     {
+        if ($this->loop instanceof StreamSelectLoop && !(\function_exists('pcntl_signal') && \function_exists('pcntl_signal_dispatch'))) {
+            $this->markTestSkipped('Signal handling with StreamSelectLoop requires pcntl_signal() and pcntl_signal_dispatch(), see also disable_functions');
+        }
+
         $loop = $this->loop;
         $function = function () {};
         $this->loop->addSignal(SIGUSR1, $function);
@@ -739,6 +749,10 @@ abstract class AbstractLoopTest extends TestCase
      */
     public function testSignalsKeepTheLoopRunningAndRemovingItStopsTheLoop()
     {
+        if ($this->loop instanceof StreamSelectLoop && !(\function_exists('pcntl_signal') && \function_exists('pcntl_signal_dispatch'))) {
+            $this->markTestSkipped('Signal handling with StreamSelectLoop requires pcntl_signal() and pcntl_signal_dispatch(), see also disable_functions');
+        }
+
         $loop = $this->loop;
         $function = function () {};
         $this->loop->addSignal(SIGUSR1, $function);
