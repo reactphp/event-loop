@@ -1,0 +1,1606 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|false given\\.$#"
+			count: 1
+			path: examples/11-consume-stdin.php
+
+		-
+			message: "#^Parameter \\#2 \\$offset of function substr expects int, int\\<1, max\\>\\|false given\\.$#"
+			count: 1
+			path: examples/12-generate-yes.php
+
+		-
+			message: "#^Parameter \\#2 \\$times of function str_repeat expects int, float given\\.$#"
+			count: 1
+			path: examples/12-generate-yes.php
+
+		-
+			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\<1, max\\>\\|false given\\.$#"
+			count: 1
+			path: examples/12-generate-yes.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of static method React\\\\EventLoop\\\\Loop\\:\\:addWriteStream\\(\\) expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: examples/21-http-server.php
+
+		-
+			message: "#^Parameter \\#2 \\$offset of function substr expects int, int\\<0, max\\>\\|false given\\.$#"
+			count: 1
+			path: examples/21-http-server.php
+
+		-
+			message: "#^Binary operation \"\\.\" between 'React\\\\\\\\EventLoop\\\\\\\\' and array\\<int, mixed\\>\\|string\\|false results in an error\\.$#"
+			count: 2
+			path: examples/95-benchmark-memory.php
+
+		-
+			message: "#^Parameter \\#1 \\$loop of static method React\\\\EventLoop\\\\Loop\\:\\:set\\(\\) expects React\\\\EventLoop\\\\LoopInterface, object given\\.$#"
+			count: 1
+			path: examples/95-benchmark-memory.php
+
+		-
+			message: "#^Cannot call method stop\\(\\) on mixed\\.$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Left side of \\|\\| is always false\\.$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEvLoop\\:\\:addReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEvLoop\\:\\:addWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEvLoop\\:\\:removeReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEvLoop\\:\\:removeWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of method React\\\\EventLoop\\\\ExtEvLoop\\:\\:removeReadStream\\(\\) expects resource, \\(int\\|string\\) given\\.$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of method React\\\\EventLoop\\\\ExtEvLoop\\:\\:removeWriteStream\\(\\) expects resource, \\(int\\|string\\) given\\.$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEvLoop\\:\\:\\$timers with generic class SplObjectStorage does not specify its types\\: TObject, TData$#"
+			count: 1
+			path: src/ExtEvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEventLoop\\:\\:addReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEventLoop\\:\\:addWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEventLoop\\:\\:createStreamCallback\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEventLoop\\:\\:createTimerCallback\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEventLoop\\:\\:removeReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEventLoop\\:\\:removeWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtEventLoop\\:\\:scheduleTimer\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Parameter \\#3 \\$cb of static method Event\\:\\:signal\\(\\) expects callable\\(\\)\\: mixed, array\\{mixed, 'call'\\} given\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$eventBase has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$futureTickQueue has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$readEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$readListeners has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$readRefs has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$running has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$signalEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$signals has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$streamCallback has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$timerCallback has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$timerEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$writeEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$writeListeners has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtEventLoop\\:\\:\\$writeRefs has no type specified\\.$#"
+			count: 1
+			path: src/ExtEventLoop.php
+
+		-
+			message: "#^Access to constant READ on an unknown class libev\\\\IOEvent\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Access to constant RUN_NOWAIT on an unknown class libev\\\\EventLoop\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Access to constant RUN_ONCE on an unknown class libev\\\\EventLoop\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Access to constant WRITE on an unknown class libev\\\\IOEvent\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Instantiated class libev\\\\IOEvent not found\\.$#"
+			count: 2
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Instantiated class libev\\\\SignalEvent not found\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Instantiated class libev\\\\TimerEvent not found\\.$#"
+			count: 2
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibevLoop\\:\\:addReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibevLoop\\:\\:addWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibevLoop\\:\\:removeReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibevLoop\\:\\:removeWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibevLoop\\:\\:\\$futureTickQueue has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibevLoop\\:\\:\\$loop has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibevLoop\\:\\:\\$readEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibevLoop\\:\\:\\$running has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibevLoop\\:\\:\\$signalEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibevLoop\\:\\:\\$signals has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibevLoop\\:\\:\\$timerEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibevLoop\\:\\:\\$writeEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibevLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:addReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:addWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:createStreamCallback\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:createTimerCallback\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:removeReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:removeWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:scheduleTimer\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Parameter \\#1 \\$event of function event_add expects resource, bool\\|resource given\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Parameter \\#1 \\$event of function event_base_set expects resource, bool\\|resource given\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Parameter \\#1 \\$event of function event_timer_set expects resource, bool\\|resource given\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Parameter \\#2 \\$timeout of function event_add expects int, float given\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$eventBase has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$futureTickQueue has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$readEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$readListeners has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$running has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$signalEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$signals has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$streamCallback has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$timerCallback has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$timerEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$writeEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtLibeventLoop\\:\\:\\$writeListeners has no type specified\\.$#"
+			count: 1
+			path: src/ExtLibeventLoop.php
+
+		-
+			message: "#^Function uv_close invoked with 1 parameter, 2 required\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Function uv_poll_init_socket not found\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Function uv_run invoked with 2 parameters, 0\\-1 required\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Function uv_signal_init not found\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Function uv_signal_start not found\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Left side of \\|\\| is always false\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:addReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:addStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:addStream\\(\\) has parameter \\$stream with no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:addWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:pollStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:pollStream\\(\\) has parameter \\$stream with no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:removeReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:removeStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:removeStream\\(\\) has parameter \\$stream with no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\ExtUvLoop\\:\\:removeWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$futureTickQueue has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$readStreams has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$running has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$signalEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$signals has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$streamEvents has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$streamListener has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$timers has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$uv has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\ExtUvLoop\\:\\:\\$writeStreams has no type specified\\.$#"
+			count: 1
+			path: src/ExtUvLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Loop\\:\\:cancelTimer\\(\\) with return type void returns void but should not return anything\\.$#"
+			count: 1
+			path: src/Loop.php
+
+		-
+			message: "#^Result of method React\\\\EventLoop\\\\LoopInterface\\:\\:cancelTimer\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Loop.php
+
+		-
+			message: "#^Static property React\\\\EventLoop\\\\Loop\\:\\:\\$stopped is never read, only written\\.$#"
+			count: 1
+			path: src/Loop.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Loop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\LoopInterface\\:\\:addReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/LoopInterface.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\LoopInterface\\:\\:addWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/LoopInterface.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\LoopInterface\\:\\:removeReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/LoopInterface.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\LoopInterface\\:\\:removeWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/LoopInterface.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:add\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:add\\(\\) has parameter \\$listener with no type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:add\\(\\) has parameter \\$signal with no type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:call\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:call\\(\\) has parameter \\$signal with no type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:count\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:count\\(\\) has parameter \\$signal with no type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:isEmpty\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:remove\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:remove\\(\\) has parameter \\$listener with no type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\SignalsHandler\\:\\:remove\\(\\) has parameter \\$signal with no type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\SignalsHandler\\:\\:\\$signals has no type specified\\.$#"
+			count: 1
+			path: src/SignalsHandler.php
+
+		-
+			message: "#^Dead catch \\- Exception is already caught above\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\StreamSelectLoop\\:\\:addReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\StreamSelectLoop\\:\\:addWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\StreamSelectLoop\\:\\:removeReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\StreamSelectLoop\\:\\:removeWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\StreamSelectLoop\\:\\:streamSelect\\(\\) has parameter \\$read with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\StreamSelectLoop\\:\\:streamSelect\\(\\) has parameter \\$write with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\StreamSelectLoop\\:\\:waitForStreamActivity\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, Closure\\(mixed, mixed\\)\\: mixed given\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Parameter \\#2 \\$handler of function pcntl_signal expects \\(callable\\(\\)\\: mixed\\)\\|int, array\\{mixed, 'call'\\} given\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$futureTickQueue has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$pcntl has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$pcntlPoll has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$readListeners has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$readStreams has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$running has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$signals has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$timers has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$writeListeners has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\StreamSelectLoop\\:\\:\\$writeStreams has no type specified\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 0 will always evaluate to false\\.$#"
+			count: 1
+			path: src/StreamSelectLoop.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Tick\\\\FutureTickQueue\\:\\:add\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Tick/FutureTickQueue.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Tick\\\\FutureTickQueue\\:\\:tick\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Tick/FutureTickQueue.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\Tick\\\\FutureTickQueue\\:\\:\\$queue has no type specified\\.$#"
+			count: 1
+			path: src/Tick/FutureTickQueue.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\Timer\\\\Timer\\:\\:\\$callback has no type specified\\.$#"
+			count: 1
+			path: src/Timer/Timer.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\Timer\\\\Timer\\:\\:\\$interval has no type specified\\.$#"
+			count: 1
+			path: src/Timer/Timer.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\Timer\\\\Timer\\:\\:\\$periodic has no type specified\\.$#"
+			count: 1
+			path: src/Timer/Timer.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:add\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:cancel\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:contains\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:getFirst\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:getTime\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:isEmpty\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:tick\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Method React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:updateTime\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:\\$schedule has no type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:\\$sorted has no type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:\\$time has no type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:\\$timers has no type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Property React\\\\EventLoop\\\\Timer\\\\Timers\\:\\:\\$useHighResolution has no type specified\\.$#"
+			count: 1
+			path: src/Timer/Timers.php
+
+		-
+			message: "#^Argument of an invalid type array\\<resource\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:assertRunFasterThan\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:assertRunFasterThan\\(\\) has parameter \\$maxInterval with no type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:assertRunSlowerThan\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:assertRunSlowerThan\\(\\) has parameter \\$minInterval with no type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:createLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:createSocketPair\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:emptyRunShouldSimplyReturn\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:runShouldReturnWhenNoMoreFds\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:setUpLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:stopShouldStopRunningLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:subAddReadStreamReceivesDataFromStreamReference\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testAddReadStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testAddReadStreamIgnoresSecondCallable\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testAddReadStreamReceivesDataFromStreamReference\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testAddReadStreamTriggersWhenSocketCloses\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testAddReadStreamTriggersWhenSocketReceivesData\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testAddWriteStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testAddWriteStreamIgnoresSecondCallable\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testAddWriteStreamTriggersWhenSocketConnectionRefused\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testAddWriteStreamTriggersWhenSocketConnectionSucceeds\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testFutureTick\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testFutureTickEventGeneratedByFutureTick\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testFutureTickEventGeneratedByTimer\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testFutureTickFiresBeforeIO\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testIgnoreRemovedCallback\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRecursiveFutureTick\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveInvalid\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveReadAndWriteStreamFromLoopOnceResourceClosesEndsLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveReadAndWriteStreamFromLoopOnceResourceClosesOnEndOfFileEndsLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveReadAndWriteStreamFromLoopWithClosingResourceEndsLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveReadStreamAfterReading\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveReadStreamInstantly\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveSignalNotRegisteredIsNoOp\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveStreamForReadOnly\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveStreamForWriteOnly\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveWriteStreamAfterWriting\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRemoveWriteStreamInstantly\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testRunWaitsForFutureTickEvents\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testSignal\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testSignalMultipleUsagesForTheSameListener\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testSignalsKeepTheLoopRunning\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testSignalsKeepTheLoopRunningAndRemovingItStopsTheLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testStopShouldPreventRunFromBlocking\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:testTimerIntervalCanBeFarInFuture\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$address of function stream_socket_client expects string, string\\|false given\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$socket of function stream_socket_get_name expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of method React\\\\EventLoop\\\\LoopInterface\\:\\:addWriteStream\\(\\) expects resource, resource\\|false given\\.$#"
+			count: 2
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of method React\\\\EventLoop\\\\LoopInterface\\:\\:removeWriteStream\\(\\) expects resource, resource\\|false given\\.$#"
+			count: 4
+			path: tests/AbstractLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\BinTest\\:\\:setUpBin\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/BinTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\BinTest\\:\\:testExecuteExampleWithExplicitLoopRunAndStopRunsLoopAndExecutesTicksUntilStopped\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/BinTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\BinTest\\:\\:testExecuteExampleWithExplicitLoopRunRunsLoopAndExecutesTicks\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/BinTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\BinTest\\:\\:testExecuteExampleWithExplicitStopInExceptionHandlerShouldNotRunLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/BinTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\BinTest\\:\\:testExecuteExampleWithExplicitStopShouldNotRunLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/BinTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\BinTest\\:\\:testExecuteExampleWithUncaughtExceptionShouldNotRunLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/BinTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\BinTest\\:\\:testExecuteExampleWithUndefinedVariableShouldNotRunLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/BinTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\BinTest\\:\\:testExecuteExampleWithoutLoopRunRunsLoopAndExecutesTicks\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/BinTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtEvLoopTest\\:\\:createLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtEvLoopTest.php
+
+		-
+			message: "#^Call to an undefined static method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:writeToStream\\(\\)\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtEventLoopTest\\:\\:createLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtEventLoopTest\\:\\:createLoop\\(\\) has parameter \\$readStreamCompatible with no type specified\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtEventLoopTest\\:\\:createStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtEventLoopTest\\:\\:tearDownFile\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtEventLoopTest\\:\\:testCanUseReadableStreamWithFeatureFds\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtEventLoopTest\\:\\:writeToStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtEventLoopTest\\:\\:writeToStream\\(\\) has parameter \\$content with no type specified\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtEventLoopTest\\:\\:writeToStream\\(\\) has parameter \\$stream with no type specified\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function ftruncate expects resource, resource\\|false given\\.$#"
+			count: 2
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fwrite expects resource, resource\\|false given\\.$#"
+			count: 4
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Property React\\\\Tests\\\\EventLoop\\\\ExtEventLoopTest\\:\\:\\$fifoPath \\(string\\|null\\) does not accept string\\|false\\.$#"
+			count: 1
+			path: tests/ExtEventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtLibevLoopTest\\:\\:createLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtLibevLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtLibevLoopTest\\:\\:testLibEvConstructor\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtLibevLoopTest.php
+
+		-
+			message: "#^Call to an undefined static method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:createStream\\(\\)\\.$#"
+			count: 1
+			path: tests/ExtLibeventLoopTest.php
+
+		-
+			message: "#^Call to an undefined static method React\\\\Tests\\\\EventLoop\\\\AbstractLoopTest\\:\\:writeToStream\\(\\)\\.$#"
+			count: 1
+			path: tests/ExtLibeventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtLibeventLoopTest\\:\\:createLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtLibeventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtLibeventLoopTest\\:\\:createStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtLibeventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtLibeventLoopTest\\:\\:tearDownFile\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtLibeventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtLibeventLoopTest\\:\\:writeToStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtLibeventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtLibeventLoopTest\\:\\:writeToStream\\(\\) has parameter \\$content with no type specified\\.$#"
+			count: 1
+			path: tests/ExtLibeventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtLibeventLoopTest\\:\\:writeToStream\\(\\) has parameter \\$stream with no type specified\\.$#"
+			count: 1
+			path: tests/ExtLibeventLoopTest.php
+
+		-
+			message: "#^Property React\\\\Tests\\\\EventLoop\\\\ExtLibeventLoopTest\\:\\:\\$fifoPath \\(string\\|null\\) does not accept string\\|false\\.$#"
+			count: 1
+			path: tests/ExtLibeventLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtUvLoopTest\\:\\:createLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtUvLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtUvLoopTest\\:\\:intervalProvider\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtUvLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtUvLoopTest\\:\\:testTimerInterval\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/ExtUvLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtUvLoopTest\\:\\:testTimerInterval\\(\\) has parameter \\$expectedExceptionMessage with no type specified\\.$#"
+			count: 1
+			path: tests/ExtUvLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\ExtUvLoopTest\\:\\:testTimerInterval\\(\\) has parameter \\$interval with no type specified\\.$#"
+			count: 1
+			path: tests/ExtUvLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:numberOfTests\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testCallingFactoryAfterCallingLoopGetYieldsADifferentInstanceOfTheEventLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testCallingLoopGetShouldAlwaysReturnTheSameEventLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testFactoryCreateSetsEventLoopOnLoopAccessor\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticAddPeriodicTimerCallsAddPeriodicTimerOnLoopInstanceAndReturnsTimerInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticAddReadStreamCallsAddReadStreamOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticAddSignalCallsAddSignalOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticAddTimerCallsAddTimerOnLoopInstanceAndReturnsTimerInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticAddWriteStreamCallsAddWriteStreamOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticCancelTimerCallsCancelTimerOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticFutureTickCallsFutureTickOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticRemoveReadStreamCallsRemoveReadStreamOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticRemoveSignalCallsRemoveSignalOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticRemoveWriteStreamCallsRemoveWriteStreamOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticRunCallsRunOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:testStaticStopCallsStopOnLoopInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\LoopTest\\:\\:unsetLoopFromLoopAccessor\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of static method React\\\\EventLoop\\\\Loop\\:\\:addReadStream\\(\\) expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of static method React\\\\EventLoop\\\\Loop\\:\\:addWriteStream\\(\\) expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of static method React\\\\EventLoop\\\\Loop\\:\\:removeReadStream\\(\\) expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of static method React\\\\EventLoop\\\\Loop\\:\\:removeWriteStream\\(\\) expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/LoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\SignalsHandlerTest\\:\\:testEmittedEventsAndCallHandling\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/SignalsHandlerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:createLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:forkSendSignal\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:forkSendSignal\\(\\) has parameter \\$signal with no type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:resetSignalHandlers\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:signalProvider\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:tearDownSignalHandlers\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:testSignalInterruptNoStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:testSignalInterruptNoStream\\(\\) has parameter \\$signal with no type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:testSignalInterruptWithStream\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:testSignalInterruptWithStream\\(\\) has parameter \\$signal with no type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:testStreamSelectReportsWarningForStreamWithFilter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:testStreamSelectThrowsWhenCustomErrorHandlerThrowsForStreamWithFilter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\StreamSelectLoopTest\\:\\:testStreamSelectTimeoutEmulation\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^PHPDoc tag @var has invalid value \\(\\$loop LoopInterface\\)\\: Unexpected token \"\\$loop\", expected type at offset 9$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, Closure\\(\\)\\: void given\\.$#"
+			count: 2
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, Closure\\(mixed, mixed\\)\\: void given\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$signal of function pcntl_signal expects int, mixed given\\.$#"
+			count: 3
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_filter_append expects resource, resource\\|false given\\.$#"
+			count: 2
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of method React\\\\EventLoop\\\\LoopInterface\\:\\:addReadStream\\(\\) expects resource, resource\\|false given\\.$#"
+			count: 2
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of method React\\\\EventLoop\\\\LoopInterface\\:\\:removeReadStream\\(\\) expects resource, resource\\|false given\\.$#"
+			count: 2
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$signal of function posix_kill expects int, mixed given\\.$#"
+			count: 1
+			path: tests/StreamSelectLoopTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\TestCase\\:\\:createCallableMock\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\TestCase\\:\\:expectCallableExactly\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\TestCase\\:\\:expectCallableExactly\\(\\) has parameter \\$amount with no type specified\\.$#"
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\TestCase\\:\\:expectCallableNever\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\TestCase\\:\\:expectCallableOnce\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\TestCase\\:\\:tickLoop\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\AbstractTimerTest\\:\\:testAddPeriodicTimerCancelsItself\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/AbstractTimerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\AbstractTimerTest\\:\\:testAddPeriodicTimerReturnsPeriodicTimerInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/AbstractTimerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\AbstractTimerTest\\:\\:testAddPeriodicTimerWillBeInvokedUntilItIsCancelled\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/AbstractTimerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\AbstractTimerTest\\:\\:testAddPeriodicTimerWillBeInvokedWithMaximumAccuracyUntilItIsCancelled\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/AbstractTimerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\AbstractTimerTest\\:\\:testAddPeriodicTimerWithZeroIntervalWillExecuteCallbackFunctionAtLeastTwice\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/AbstractTimerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\AbstractTimerTest\\:\\:testAddTimerReturnsNonPeriodicTimerInstance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/AbstractTimerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\AbstractTimerTest\\:\\:testAddTimerWillBeInvokedOnceAndBlocksLoopWhenRunning\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/AbstractTimerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\AbstractTimerTest\\:\\:testMinimumIntervalOneMicrosecond\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/AbstractTimerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\AbstractTimerTest\\:\\:testTimerIntervalBelowZeroRunsImmediately\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/AbstractTimerTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\TimersTest\\:\\:testBlockedTimer\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/TimersTest.php
+
+		-
+			message: "#^Method React\\\\Tests\\\\EventLoop\\\\Timer\\\\TimersTest\\:\\:testContains\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Timer/TimersTest.php
+
+		-
+			message: "#^Variable \\$undefined might not be defined\\.$#"
+			count: 1
+			path: tests/bin/12-undefined.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function set_exception_handler expects \\(callable\\(Throwable\\)\\: void\\)\\|null, Closure\\(Exception\\)\\: void given\\.$#"
+			count: 1
+			path: tests/bin/22-stop-uncaught.php
