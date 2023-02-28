@@ -62,6 +62,19 @@ final class LoopTest extends TestCase
         Loop::addReadStream($stream, $listener);
     }
 
+    public function testStaticAddReadStreamWithNoDefaultLoopCallsAddReadStreamOnNewLoopInstance()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $stream = stream_socket_server('127.0.0.1:0');
+        $listener = function () { };
+        Loop::addReadStream($stream, $listener);
+
+        $this->assertInstanceOf('React\EventLoop\LoopInterface', $ref->getValue());
+    }
+
     public function testStaticAddWriteStreamCallsAddWriteStreamOnLoopInstance()
     {
         $stream = tmpfile();
@@ -73,6 +86,19 @@ final class LoopTest extends TestCase
         Loop::set($loop);
 
         Loop::addWriteStream($stream, $listener);
+    }
+
+    public function testStaticAddWriteStreamWithNoDefaultLoopCallsAddWriteStreamOnNewLoopInstance()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $stream = stream_socket_server('127.0.0.1:0');
+        $listener = function () { };
+        Loop::addWriteStream($stream, $listener);
+
+        $this->assertInstanceOf('React\EventLoop\LoopInterface', $ref->getValue());
     }
 
     public function testStaticRemoveReadStreamCallsRemoveReadStreamOnLoopInstance()
@@ -87,6 +113,18 @@ final class LoopTest extends TestCase
         Loop::removeReadStream($stream);
     }
 
+    public function testStaticRemoveReadStreamWithNoDefaultLoopIsNoOp()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $stream = tmpfile();
+        Loop::removeReadStream($stream);
+
+        $this->assertNull($ref->getValue());
+    }
+
     public function testStaticRemoveWriteStreamCallsRemoveWriteStreamOnLoopInstance()
     {
         $stream = tmpfile();
@@ -97,6 +135,18 @@ final class LoopTest extends TestCase
         Loop::set($loop);
 
         Loop::removeWriteStream($stream);
+    }
+
+    public function testStaticRemoveWriteStreamWithNoDefaultLoopIsNoOp()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $stream = tmpfile();
+        Loop::removeWriteStream($stream);
+
+        $this->assertNull($ref->getValue());
     }
 
     public function testStaticAddTimerCallsAddTimerOnLoopInstanceAndReturnsTimerInstance()
@@ -115,6 +165,20 @@ final class LoopTest extends TestCase
         $this->assertSame($timer, $ret);
     }
 
+    public function testStaticAddTimerWithNoDefaultLoopCallsAddTimerOnNewLoopInstance()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $interval = 1.0;
+        $callback = function () { };
+        $ret = Loop::addTimer($interval, $callback);
+
+        $this->assertInstanceOf('React\EventLoop\TimerInterface', $ret);
+        $this->assertInstanceOf('React\EventLoop\LoopInterface', $ref->getValue());
+    }
+
     public function testStaticAddPeriodicTimerCallsAddPeriodicTimerOnLoopInstanceAndReturnsTimerInstance()
     {
         $interval = 1.0;
@@ -131,6 +195,21 @@ final class LoopTest extends TestCase
         $this->assertSame($timer, $ret);
     }
 
+    public function testStaticAddPeriodicTimerWithNoDefaultLoopCallsAddPeriodicTimerOnNewLoopInstance()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $interval = 1.0;
+        $callback = function () { };
+        $ret = Loop::addPeriodicTimer($interval, $callback);
+
+        $this->assertInstanceOf('React\EventLoop\TimerInterface', $ret);
+        $this->assertInstanceOf('React\EventLoop\LoopInterface', $ref->getValue());
+    }
+
+
     public function testStaticCancelTimerCallsCancelTimerOnLoopInstance()
     {
         $timer = $this->getMockBuilder('React\EventLoop\TimerInterface')->getMock();
@@ -143,6 +222,18 @@ final class LoopTest extends TestCase
         Loop::cancelTimer($timer);
     }
 
+    public function testStaticCancelTimerWithNoDefaultLoopIsNoOp()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $timer = $this->getMockBuilder('React\EventLoop\TimerInterface')->getMock();
+        Loop::cancelTimer($timer);
+
+        $this->assertNull($ref->getValue());
+    }
+
     public function testStaticFutureTickCallsFutureTickOnLoopInstance()
     {
         $listener = function () { };
@@ -153,6 +244,18 @@ final class LoopTest extends TestCase
         Loop::set($loop);
 
         Loop::futureTick($listener);
+    }
+
+    public function testStaticFutureTickWithNoDefaultLoopCallsFutureTickOnNewLoopInstance()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $listener = function () { };
+        Loop::futureTick($listener);
+
+        $this->assertInstanceOf('React\EventLoop\LoopInterface', $ref->getValue());
     }
 
     public function testStaticAddSignalCallsAddSignalOnLoopInstance()
@@ -168,6 +271,27 @@ final class LoopTest extends TestCase
         Loop::addSignal($signal, $listener);
     }
 
+    public function testStaticAddSignalWithNoDefaultLoopCallsAddSignalOnNewLoopInstance()
+    {
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestSkipped('Not supported on Windows');
+        }
+
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $signal = 1;
+        $listener = function () { };
+        try {
+            Loop::addSignal($signal, $listener);
+        } catch (\BadMethodCallException $e) {
+            $this->markTestSkipped('Skipped: ' . $e->getMessage());
+        }
+
+        $this->assertInstanceOf('React\EventLoop\LoopInterface', $ref->getValue());
+    }
+
     public function testStaticRemoveSignalCallsRemoveSignalOnLoopInstance()
     {
         $signal = 1;
@@ -181,6 +305,19 @@ final class LoopTest extends TestCase
         Loop::removeSignal($signal, $listener);
     }
 
+    public function testStaticRemoveSignalWithNoDefaultLoopIsNoOp()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        $signal = 1;
+        $listener = function () { };
+        Loop::removeSignal($signal, $listener);
+
+        $this->assertNull($ref->getValue());
+    }
+
     public function testStaticRunCallsRunOnLoopInstance()
     {
         $loop = $this->getMockBuilder('React\EventLoop\LoopInterface')->getMock();
@@ -191,6 +328,17 @@ final class LoopTest extends TestCase
         Loop::run();
     }
 
+    public function testStaticRunWithNoDefaultLoopCallsRunsOnNewLoopInstance()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        Loop::run();
+
+        $this->assertInstanceOf('React\EventLoop\LoopInterface', $ref->getValue());
+    }
+
     public function testStaticStopCallsStopOnLoopInstance()
     {
         $loop = $this->getMockBuilder('React\EventLoop\LoopInterface')->getMock();
@@ -199,6 +347,17 @@ final class LoopTest extends TestCase
         Loop::set($loop);
 
         Loop::stop();
+    }
+
+    public function testStaticStopCallWithNoDefaultLoopIsNoOp()
+    {
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null);
+
+        Loop::stop();
+
+        $this->assertNull($ref->getValue());
     }
 
     /**
