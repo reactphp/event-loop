@@ -4,16 +4,16 @@ use React\EventLoop\Loop;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-// connect to www.google.com:80 (blocking call!)
+// connect to example.com:80 (blocking call!)
 // for illustration purposes only, should use react/socket instead
-$stream = stream_socket_client('tcp://www.google.com:80');
+$stream = stream_socket_client('tcp://example.com:80');
 if (!$stream) {
     exit(1);
 }
 stream_set_blocking($stream, false);
 
 // send HTTP request
-fwrite($stream, "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n");
+fwrite($stream, "GET / HTTP/1.1\r\nHost: example.com\r\nConnection: close\r\n\r\n");
 
 // wait for HTTP response
 Loop::addReadStream($stream, function ($stream) {

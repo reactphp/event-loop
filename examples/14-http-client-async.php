@@ -7,7 +7,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 // resolve hostname before establishing TCP/IP connection (resolving DNS is still blocking here)
 // for illustration purposes only, should use react/socket or react/dns instead!
-$ip = gethostbyname('www.google.com');
+$ip = gethostbyname('example.com');
 if (ip2long($ip) === false) {
     echo 'Unable to resolve hostname' . PHP_EOL;
     exit(1);
@@ -41,7 +41,7 @@ Loop::addWriteStream($stream, function ($stream) use ($timer) {
     }
 
     // send HTTP request
-    fwrite($stream, "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n");
+    fwrite($stream, "GET / HTTP/1.1\r\nHost: example.com\r\nConnection: close\r\n\r\n");
 
     // wait for HTTP response
     Loop::addReadStream($stream, function ($stream) {
