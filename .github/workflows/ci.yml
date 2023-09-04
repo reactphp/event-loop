@@ -67,7 +67,7 @@ jobs:
       - name: Install ext-uv on PHP 7.x
         run: |
           sudo add-apt-repository ppa:ondrej/php -y && sudo apt-get update -q && sudo apt-get install libuv1-dev
-          echo "yes" | sudo pecl install uv-beta
+          echo "yes" | sudo pecl install uv-0.2.4
           echo "extension=uv.so" >> "$(php -r 'echo php_ini_loaded_file();')"
         if: ${{ matrix.php >= 7.0 && matrix.php < 8.0 }}
       - name: Install legacy ext-libevent on PHP < 7.0
