@@ -4,7 +4,6 @@ namespace React\Tests\EventLoop;
 
 use React\EventLoop\Factory;
 use React\EventLoop\Loop;
-use ReflectionClass;
 
 final class LoopTest extends TestCase
 {
@@ -66,7 +65,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $stream = stream_socket_server('127.0.0.1:0');
         $listener = function () { };
@@ -92,7 +91,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $stream = stream_socket_server('127.0.0.1:0');
         $listener = function () { };
@@ -117,7 +116,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $stream = tmpfile();
         Loop::removeReadStream($stream);
@@ -141,7 +140,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $stream = tmpfile();
         Loop::removeWriteStream($stream);
@@ -169,7 +168,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $interval = 1.0;
         $callback = function () { };
@@ -199,7 +198,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $interval = 1.0;
         $callback = function () { };
@@ -226,7 +225,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $timer = $this->getMockBuilder('React\EventLoop\TimerInterface')->getMock();
         Loop::cancelTimer($timer);
@@ -250,7 +249,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $listener = function () { };
         Loop::futureTick($listener);
@@ -279,7 +278,7 @@ final class LoopTest extends TestCase
 
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $signal = 1;
         $listener = function () { };
@@ -309,7 +308,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         $signal = 1;
         $listener = function () { };
@@ -332,7 +331,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         Loop::run();
 
@@ -353,7 +352,7 @@ final class LoopTest extends TestCase
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
         $ref->setAccessible(true);
-        $ref->setValue(null);
+        $ref->setValue(null, null);
 
         Loop::stop();
 
@@ -366,10 +365,8 @@ final class LoopTest extends TestCase
      */
     public function unsetLoopFromLoopAccessor()
     {
-        $ref = new ReflectionClass('\React\EventLoop\Loop');
-        $prop = $ref->getProperty('instance');
-        $prop->setAccessible(true);
-        $prop->setValue(null);
-        $prop->setAccessible(false);
+        $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null, null);
     }
 }
