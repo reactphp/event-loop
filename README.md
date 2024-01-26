@@ -5,6 +5,14 @@
 
 [ReactPHP](https://reactphp.org/)'s core reactor event loop that libraries can use for evented I/O.
 
+> **Development version:** This branch contains the code for the upcoming v3 
+> release. For the code of the current stable v1 release, check out the 
+> [`1.x` branch](https://github.com/reactphp/event-loop/tree/1.x).
+>
+> The upcoming v3 release will be the way forward for this package. However,
+> we will still actively support v1 for those not yet on the latest version. 
+> See also [installation instructions](#install) for more details.
+
 In order for async based libraries to be interoperable, they need to use the
 same event loop. This component provides a common `LoopInterface` that any
 library can target. This allows them to be used in the same loop, with one
@@ -885,11 +893,11 @@ to remove a stream that was never added or is invalid has no effect.
 The recommended way to install this library is [through Composer](https://getcomposer.org/).
 [New to Composer?](https://getcomposer.org/doc/00-intro.md)
 
-This project follows [SemVer](https://semver.org/).
-This will install the latest supported version:
+Once released, this project will follow [SemVer](https://semver.org/).
+At the moment, this will install the latest development version:
 
 ```bash
-composer require react/event-loop:^1.5
+composer require react/event-loop:^3@dev
 ```
 
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
