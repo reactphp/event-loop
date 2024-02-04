@@ -33,7 +33,7 @@ final class Loop
             return self::$instance;
         }
 
-        self::$instance = $loop = Factory::create();
+        self::$instance = $loop = self::create();
 
         // Automatically run loop at end of program, unless already started or stopped explicitly.
         // This is tested using child processes, so coverage is actually 100%, see BinTest.
@@ -262,5 +262,27 @@ final class Loop
         if (self::$instance !== null) {
             self::$instance->stop();
         }
+    }
+
+    /**
+     * @return LoopInterface
+     */
+    private static function create()
+    {
+        // @codeCoverageIgnoreStart
+        if (\function_exists('uv_loop_new')) {
+            return new ExtUvLoop();
+        }
+
+        if (\class_exists('EvLoop', false)) {
+            return new ExtEvLoop();
+        }
+
+        if (\class_exists('EventBase', false)) {
+            return new ExtEventLoop();
+        }
+
+        return new StreamSelectLoop();
+        // @codeCoverageIgnoreEnd
     }
 }

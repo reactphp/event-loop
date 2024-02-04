@@ -26,8 +26,6 @@ single [`run()`](#run) call that is controlled by the user.
         * [Loop methods](#loop-methods)
         * [Loop autorun](#loop-autorun)
         * [get()](#get)
-    * [~~Factory~~](#factory)
-        * [~~create()~~](#create)
     * [Loop implementations](#loop-implementations)
         * [StreamSelectLoop](#streamselectloop)
         * [ExtEventLoop](#exteventloop)
@@ -111,7 +109,7 @@ beginning, reuse it throughout your program and finally run it at the end of the
 program like this:
 
 ```php
-$loop = React\EventLoop\Loop::get(); // or deprecated React\EventLoop\Factory::create();
+$loop = React\EventLoop\Loop::get();
 
 $timer = $loop->addPeriodicTimer(0.1, function () {
     echo 'Tick' . PHP_EOL;
@@ -129,9 +127,8 @@ While the former is more concise, the latter is more explicit.
 In both cases, the program would perform the exact same steps.
 
 1. The event loop instance is created at the beginning of the program. This is
-   implicitly done the first time you call the [`Loop` class](#loop) or
-   explicitly when using the deprecated [`Factory::create()` method](#create)
-   (or manually instantiating any of the [loop implementations](#loop-implementations)).
+   implicitly done the first time you call the [`Loop` class](#loop)
+   (or by manually instantiating any of the [loop implementations](#loop-implementations)).
 2. The event loop is used directly or passed as an instance to library and
    application code. In this example, a periodic timer is registered with the
    event loop which simply outputs `Tick` every fraction of a second until another
@@ -305,33 +302,6 @@ $greeter->greet('Bob');
 
 See [`LoopInterface`](#loopinterface) for more details about available methods.
 
-### ~~Factory~~
-
-> Deprecated since v1.2.0, see [`Loop` class](#loop) instead.
-
-The deprecated `Factory` class exists as a convenient way to pick the best available
-[event loop implementation](#loop-implementations).
-
-#### ~~create()~~
-
-> Deprecated since v1.2.0, see [`Loop::get()`](#get) instead.
-
-The deprecated `create(): LoopInterface` method can be used to
-create a new event loop instance:
-
-```php
-// deprecated
-$loop = React\EventLoop\Factory::create();
-
-// new
-$loop = React\EventLoop\Loop::get();
-```
-
-This method always returns an instance implementing [`LoopInterface`](#loopinterface),
-the actual [event loop implementation](#loop-implementations) is an implementation detail.
-
-This method should usually only be called once at the beginning of the program.
-
 ### Loop implementations
 
 In addition to the [`LoopInterface`](#loopinterface), there are a number of
@@ -363,9 +333,8 @@ function and is the only implementation that works out of the box with PHP.
 This event loop works out of the box on PHP 5.3 through PHP 8+ and HHVM.
 This means that no installation is required and this library works on all
 platforms and supported PHP versions.
-Accordingly, the [`Loop` class](#loop) and the deprecated [`Factory`](#factory)
-will use this event loop by default if you do not install any of the event loop
-extensions listed below.
+Accordingly, the [`Loop` class](#loop) will use this event loop by default if
+you do not install any of the event loop extensions listed below.
 
 Under the hood, it does a simple `select` system call.
 This system call is limited to the maximum file descriptor number of
