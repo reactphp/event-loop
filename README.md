@@ -33,8 +33,6 @@ single [`run()`](#run) call that is controlled by the user.
         * [ExtEventLoop](#exteventloop)
         * [ExtEvLoop](#extevloop)
         * [ExtUvLoop](#extuvloop)
-        * [~~ExtLibeventLoop~~](#extlibeventloop)
-        * [~~ExtLibevLoop~~](#extlibevloop)
     * [LoopInterface](#loopinterface)
         * [run()](#run)
         * [stop()](#stop)
@@ -428,46 +426,6 @@ that provides an interface to `libuv` library.
 `libuv` itself supports a number of system-specific backends (epoll, kqueue).
 
 This loop is known to work with PHP 7+.
-
-#### ~~ExtLibeventLoop~~
-
-> Deprecated since v1.2.0, use [`ExtEventLoop`](#exteventloop) instead.
-
-An `ext-libevent` based event loop.
-
-This uses the [`libevent` PECL extension](https://pecl.php.net/package/libevent),
-that provides an interface to `libevent` library.
-`libevent` itself supports a number of system-specific backends (epoll, kqueue).
-
-This event loop does only work with PHP 5.
-An [unofficial update](https://github.com/php/pecl-event-libevent/pull/2) for
-PHP 7 does exist, but it is known to cause regular crashes due to `SEGFAULT`s.
-To reiterate: Using this event loop on PHP 7 is not recommended.
-Accordingly, neither the [`Loop` class](#loop) nor the deprecated
-[`Factory` class](#factory) will try to use this event loop on PHP 7.
-
-This event loop is known to trigger a readable listener only if
-the stream *becomes* readable (edge-triggered) and may not trigger if the
-stream has already been readable from the beginning.
-This also implies that a stream may not be recognized as readable when data
-is still left in PHP's internal stream buffers.
-As such, it's recommended to use `stream_set_read_buffer($stream, 0);`
-to disable PHP's internal read buffer in this case.
-See also [`addReadStream()`](#addreadstream) for more details.
-
-#### ~~ExtLibevLoop~~
-
-> Deprecated since v1.2.0, use [`ExtEvLoop`](#extevloop) instead.
-
-An `ext-libev` based event loop.
-
-This uses an [unofficial `libev` extension](https://github.com/m4rw3r/php-libev),
-that provides an interface to `libev` library.
-`libev` itself supports a number of system-specific backends (epoll, kqueue).
-
-This loop does only work with PHP 5.
-An update for PHP 7 is [unlikely](https://github.com/m4rw3r/php-libev/issues/8)
-to happen any time soon.
 
 ### LoopInterface
 
