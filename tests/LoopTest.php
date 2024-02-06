@@ -2,34 +2,10 @@
 
 namespace React\Tests\EventLoop;
 
-use React\EventLoop\Factory;
 use React\EventLoop\Loop;
 
 final class LoopTest extends TestCase
 {
-    /**
-     * @dataProvider numberOfTests
-     */
-    public function testFactoryCreateSetsEventLoopOnLoopAccessor()
-    {
-        $factoryLoop = Factory::create();
-        $accessorLoop = Loop::get();
-
-        self::assertSame($factoryLoop, $accessorLoop);
-    }
-
-    /**
-     * @dataProvider numberOfTests
-     */
-    public function testCallingFactoryAfterCallingLoopGetYieldsADifferentInstanceOfTheEventLoop()
-    {
-        // Note that this behavior isn't wise and highly advised against. Always used Loop::get.
-        $accessorLoop = Loop::get();
-        $factoryLoop = Factory::create();
-
-        self::assertNotSame($factoryLoop, $accessorLoop);
-    }
-
     /**
      * @dataProvider numberOfTests
      */
