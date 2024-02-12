@@ -1,0 +1,10 @@
+parameters:
+    level: max
+
+    paths:
+        - src/
+        - tests/
+
+#    ignoreErrors:
+#        - '#type specified#'
+#        - '#expects resource, resource\|false given#'
