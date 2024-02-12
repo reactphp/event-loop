@@ -29,6 +29,7 @@
         "php": ">=5.3.0"
     },
     "require-dev": {
+        "phpstan/phpstan": "^1",
         "phpunit/phpunit": "^9.6 || ^5.7 || ^4.8.36"
     },
     "suggest": {

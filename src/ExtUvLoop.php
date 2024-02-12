@@ -213,6 +213,10 @@ final class ExtUvLoop implements LoopInterface
             $this->futureTickQueue->tick();
 
             $hasPendingCallbacks = !$this->futureTickQueue->isEmpty();
+            /**
+             * @link https://github.com/phpstan/phpstan/issues/10566
+             * @phpstan-ignore-next-line
+             */
             $wasJustStopped = !$this->running;
             $nothingLeftToDo = !$this->readStreams
                 && !$this->writeStreams
@@ -223,12 +227,20 @@ final class ExtUvLoop implements LoopInterface
             // otherwise use UV::RUN_NOWAIT.
             // @link http://docs.libuv.org/en/v1.x/loop.html#c.uv_run
             $flags = \UV::RUN_ONCE;
+            /**
+             * @link https://github.com/phpstan/phpstan/issues/10566
+             * @phpstan-ignore-next-line
+             */
             if ($wasJustStopped || $hasPendingCallbacks) {
                 $flags = \UV::RUN_NOWAIT;
             } elseif ($nothingLeftToDo) {
                 break;
             }
 
+            /**
+             * @link https://github.com/JetBrains/phpstorm-stubs/pull/1614
+             * @phpstan-ignore-next-line
+             */
             \uv_run($this->uv, $flags);
         }
     }
@@ -261,6 +273,10 @@ final class ExtUvLoop implements LoopInterface
         if (!isset($this->readStreams[(int) $stream])
             && !isset($this->writeStreams[(int) $stream])) {
             \uv_poll_stop($this->streamEvents[(int) $stream]);
+            /**
+             * @link https://github.com/JetBrains/phpstorm-stubs/pull/1615
+             * @phpstan-ignore-next-line
+             */
             \uv_close($this->streamEvents[(int) $stream]);
             unset($this->streamEvents[(int) $stream]);
             return;

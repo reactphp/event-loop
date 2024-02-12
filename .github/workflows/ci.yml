@@ -120,3 +120,36 @@ jobs:
         uses: docker://hhvm/hhvm:3.30-lts-latest
         with:
           args: hhvm vendor/bin/phpunit
+
+  PHPStan:
+    name: PHPStan (PHP ${{ matrix.php }})
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php:
+          - 8.3
+          - 8.2
+          - 8.1
+          - 8.0
+          - 7.4
+          - 7.3
+          - 7.2
+          - 7.1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          ini-file: development
+          ini-values: disable_functions='' # do not disable PCNTL functions on PHP < 8.1
+          extensions: sockets, pcntl ${{ matrix.php >= 5.6 && ', event' || '' }} ${{ matrix.php >= 5.4 && ', ev' || '' }}
+        env:
+          fail-fast: true # fail step if any extension can not be installed
+      - name: Install ext-uv on PHP 7+
+        run: |
+          sudo apt-get update -q && sudo apt-get install libuv1-dev
+          echo "yes" | sudo pecl install ${{ matrix.php >= 8.0 && 'uv-0.3.0' || 'uv-0.2.4' }}
+          php -m | grep -q uv || echo "extension=uv.so" >> "$(php -r 'echo php_ini_loaded_file();')"
+      - run: composer install
+      - run: vendor/bin/phpstan

@@ -61,6 +61,7 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $error = null;
         $previous = set_error_handler(function ($_, $errstr) use (&$error) {
             $error = $errstr;
+            return true;
         });
 
         try {
@@ -73,7 +74,9 @@ class StreamSelectLoopTest extends AbstractLoopTest
 
         $this->assertNotNull($error);
 
-        $now = set_error_handler(function () { });
+        $now = set_error_handler(function () {
+            return true;
+        });
         restore_error_handler();
         $this->assertEquals($previous, $now);
     }
@@ -114,7 +117,9 @@ class StreamSelectLoopTest extends AbstractLoopTest
 
         $this->assertInstanceOf('RuntimeException', $e);
 
-        $now = set_error_handler(function () { });
+        $now = set_error_handler(function () {
+            return true;
+        });
         restore_error_handler();
         $this->assertEquals($previous, $now);
     }
@@ -176,7 +181,6 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $loop = $this->loop;
         list($writeStream, $readStream) = $this->createSocketPair();
         $loop->addReadStream($readStream, function ($stream) use ($loop) {
-            /** @var $loop LoopInterface */
             $read = fgets($stream);
             if ($read === "end loop\n") {
                 $loop->stop();
