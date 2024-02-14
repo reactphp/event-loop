@@ -63,6 +63,9 @@ final class StreamSelectLoop implements LoopInterface
     private $running;
     private $pcntl = false;
     private $pcntlPoll = false;
+    /**
+     * @var SignalsHandler
+     */
     private $signals;
 
     public function __construct()
@@ -183,7 +186,13 @@ final class StreamSelectLoop implements LoopInterface
 
             $this->timers->tick();
 
-            // Future-tick queue has pending callbacks ...
+            /**
+             * Future-tick queue has pending callbacks ...
+             *
+             *
+             * @link https://github.com/phpstan/phpstan/issues/10566
+             * @phpstan-ignore-next-line
+             */
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $timeout = 0;
 
@@ -286,7 +295,7 @@ final class StreamSelectLoop implements LoopInterface
                 }
             }
 
-            /** @var ?callable $previous */
+            /** @var ?(callable(int, string, string, int): bool) $previous */
             $previous = \set_error_handler(function ($errno, $errstr) use (&$previous) {
                 // suppress warnings that occur when `stream_select()` is interrupted by a signal
                 // PHP defines `EINTR` through `ext-sockets` or `ext-pcntl`, otherwise use common default (Linux & Mac)
@@ -305,7 +314,7 @@ final class StreamSelectLoop implements LoopInterface
             } catch (\Throwable $e) { // @codeCoverageIgnoreStart
                 \restore_error_handler();
                 throw $e;
-            } catch (\Exception $e) {
+            } catch (\Exception $e) { /** @phpstan-ignore-line */
                 \restore_error_handler();
                 throw $e;
             } // @codeCoverageIgnoreEnd

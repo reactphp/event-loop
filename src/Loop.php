@@ -87,6 +87,7 @@ final class Loop
         if (self::$instance === null) {
             self::get();
         }
+        assert(self::$instance instanceof LoopInterface);
         self::$instance->addReadStream($stream, $listener);
     }
 
@@ -105,6 +106,9 @@ final class Loop
         if (self::$instance === null) {
             self::get();
         }
+
+        assert(self::$instance instanceof LoopInterface);
+
         self::$instance->addWriteStream($stream, $listener);
     }
 
@@ -150,6 +154,9 @@ final class Loop
         if (self::$instance === null) {
             self::get();
         }
+
+        assert(self::$instance instanceof LoopInterface);
+
         return self::$instance->addTimer($interval, $callback);
     }
 
@@ -167,6 +174,9 @@ final class Loop
         if (self::$instance === null) {
             self::get();
         }
+
+        assert(self::$instance instanceof LoopInterface);
+
         return self::$instance->addPeriodicTimer($interval, $callback);
     }
 
@@ -198,6 +208,8 @@ final class Loop
             self::get();
         }
 
+        assert(self::$instance instanceof LoopInterface);
+
         self::$instance->futureTick($listener);
     }
 
@@ -215,6 +227,8 @@ final class Loop
         if (self::$instance === null) {
             self::get();
         }
+
+        assert(self::$instance instanceof LoopInterface);
 
         self::$instance->addSignal($signal, $listener);
     }
@@ -246,6 +260,8 @@ final class Loop
         if (self::$instance === null) {
             self::get();
         }
+
+        assert(self::$instance instanceof LoopInterface);
 
         self::$instance->run();
     }

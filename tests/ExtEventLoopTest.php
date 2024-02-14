@@ -62,15 +62,6 @@ class ExtEventLoopTest extends AbstractLoopTest
         return $stream;
     }
 
-    public function writeToStream($stream, $content)
-    {
-        if ('Linux' !== PHP_OS) {
-            return parent::writeToStream($stream, $content);
-        }
-
-        fwrite($stream, $content);
-    }
-
     /**
      * @group epoll-readable-error
      */

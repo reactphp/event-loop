@@ -196,6 +196,10 @@ final class ExtEventLoop implements LoopInterface
             $this->futureTickQueue->tick();
 
             $flags = EventBase::LOOP_ONCE;
+            /**
+             * @link https://github.com/phpstan/phpstan/issues/10566
+             * @phpstan-ignore-next-line
+             */
             if (!$this->running || !$this->futureTickQueue->isEmpty()) {
                 $flags |= EventBase::LOOP_NONBLOCK;
             } elseif (!$this->readEvents && !$this->writeEvents && !$this->timerEvents->count() && $this->signals->isEmpty()) {
