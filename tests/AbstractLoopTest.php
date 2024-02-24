@@ -464,11 +464,10 @@ abstract class AbstractLoopTest extends TestCase
 
     public function testStopShouldPreventRunFromBlocking()
     {
-        $that = $this;
         $this->loop->addTimer(
             1,
-            function () use ($that) {
-                $that->fail('Timer was executed.');
+            function () {
+                $this->fail('Timer was executed.');
             }
         );
 
@@ -500,10 +499,9 @@ abstract class AbstractLoopTest extends TestCase
         });
 
         // this callback would have to be called as well, but the first stream already removed us
-        $that = $this;
-        $loop->addReadStream($input2, function () use (& $called, $that) {
+        $loop->addReadStream($input2, function () use (& $called) {
             if ($called) {
-                $that->fail('Callback 2 must not be called after callback 1 was called');
+                $this->fail('Callback 2 must not be called after callback 1 was called');
             }
         });
 
