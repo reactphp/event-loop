@@ -41,10 +41,10 @@ class TestCase extends BaseTestCase
     {
         if (method_exists('PHPUnit\Framework\MockObject\MockBuilder', 'addMethods')) {
             // PHPUnit 9+
-            return $this->getMockBuilder('stdClass')->addMethods(array('__invoke'))->getMock();
+            return $this->getMockBuilder('stdClass')->addMethods(['__invoke'])->getMock();
         } else {
-            // legacy PHPUnit 4 - PHPUnit 9
-            return $this->getMockBuilder('stdClass')->setMethods(array('__invoke'))->getMock();
+            // legacy PHPUnit
+            return $this->getMockBuilder('stdClass')->setMethods(['__invoke'])->getMock();
         }
     }
 

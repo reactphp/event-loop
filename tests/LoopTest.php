@@ -21,7 +21,7 @@ final class LoopTest extends TestCase
      */
     public function numberOfTests()
     {
-        return array(array(), array(), array());
+        return [[], [], []];
     }
 
     public function testStaticAddReadStreamCallsAddReadStreamOnLoopInstance()
