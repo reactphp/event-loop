@@ -19,11 +19,6 @@ jobs:
           - 7.3
           - 7.2
           - 7.1
-          - 7.0
-          - 5.6
-          - 5.5
-          - 5.4
-          - 5.3
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -56,7 +51,6 @@ jobs:
           - 7.3
           - 7.2
           - 7.1
-          - 7.0
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -104,19 +98,3 @@ jobs:
         if: ${{ matrix.php >= 7.3 }}
       - run: vendor/bin/phpunit --coverage-text -c phpunit.xml.legacy
         if: ${{ matrix.php < 7.3 }}
-
-  PHPUnit-hhvm:
-    name: PHPUnit (HHVM)
-    runs-on: ubuntu-22.04
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      - run: cp "$(which composer)" composer.phar && ./composer.phar self-update --2.2 # downgrade Composer for HHVM
-      - name: Run hhvm composer.phar install
-        uses: docker://hhvm/hhvm:3.30-lts-latest
-        with:
-          args: hhvm composer.phar install
-      - name: Run hhvm vendor/bin/phpunit
-        uses: docker://hhvm/hhvm:3.30-lts-latest
-        with:
-          args: hhvm vendor/bin/phpunit
