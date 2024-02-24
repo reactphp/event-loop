@@ -12,7 +12,7 @@ use React\EventLoop\Timer\Timers;
  * This uses the [`stream_select()`](https://www.php.net/manual/en/function.stream-select.php)
  * function and is the only implementation that works out of the box with PHP.
  *
- * This event loop works out of the box on PHP 5.4 through PHP 8+ and HHVM.
+ * This event loop works out of the box on PHP 7.1 through PHP 8+.
  * This means that no installation is required and this library works on all
  * platforms and supported PHP versions.
  * Accordingly, the [`Loop` class](#loop) will use this event loop by default if
@@ -56,10 +56,10 @@ final class StreamSelectLoop implements LoopInterface
 
     private $futureTickQueue;
     private $timers;
-    private $readStreams = array();
-    private $readListeners = array();
-    private $writeStreams = array();
-    private $writeListeners = array();
+    private $readStreams = [];
+    private $readListeners = [];
+    private $writeStreams = [];
+    private $writeListeners = [];
     private $running;
     private $pcntl = false;
     private $pcntlPoll = false;
@@ -157,7 +157,7 @@ final class StreamSelectLoop implements LoopInterface
         $this->signals->add($signal, $listener);
 
         if ($first) {
-            \pcntl_signal($signal, array($this->signals, 'call'));
+            \pcntl_signal($signal, [$this->signals, 'call']);
         }
     }
 
@@ -278,7 +278,7 @@ final class StreamSelectLoop implements LoopInterface
             // @link https://docs.microsoft.com/de-de/windows/win32/api/winsock2/nf-winsock2-select
             $except = null;
             if (\DIRECTORY_SEPARATOR === '\\') {
-                $except = array();
+                $except = [];
                 foreach ($write as $key => $socket) {
                     if (!isset($read[$key]) && @\ftell($socket) === 0) {
                         $except[$key] = $socket;
@@ -303,9 +303,6 @@ final class StreamSelectLoop implements LoopInterface
                 $ret = \stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
                 \restore_error_handler();
             } catch (\Throwable $e) { // @codeCoverageIgnoreStart
-                \restore_error_handler();
-                throw $e;
-            } catch (\Exception $e) {
                 \restore_error_handler();
                 throw $e;
             } // @codeCoverageIgnoreEnd

@@ -13,7 +13,7 @@ use SplObjectStorage;
  * that provides an interface to `libuv` library.
  * `libuv` itself supports a number of system-specific backends (epoll, kqueue).
  *
- * This loop is known to work with PHP 7+.
+ * This loop is known to work with PHP 7.1 through PHP 8+.
  *
  * @see https://github.com/bwoebi/php-uv
  */
@@ -22,12 +22,12 @@ final class ExtUvLoop implements LoopInterface
     private $uv;
     private $futureTickQueue;
     private $timers;
-    private $streamEvents = array();
-    private $readStreams = array();
-    private $writeStreams = array();
+    private $streamEvents = [];
+    private $readStreams = [];
+    private $writeStreams = [];
     private $running;
     private $signals;
-    private $signalEvents = array();
+    private $signalEvents = [];
     private $streamListener;
 
     public function __construct()
@@ -114,13 +114,12 @@ final class ExtUvLoop implements LoopInterface
     {
         $timer = new Timer($interval, $callback, false);
 
-        $that = $this;
         $timers = $this->timers;
-        $callback = function () use ($timer, $timers, $that) {
+        $callback = function () use ($timer, $timers) {
             \call_user_func($timer->getCallback(), $timer);
 
             if ($timers->contains($timer)) {
-                $that->cancelTimer($timer);
+                $this->cancelTimer($timer);
             }
         };
 

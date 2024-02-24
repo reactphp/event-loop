@@ -16,7 +16,7 @@ use SplObjectStorage;
  * that provides an interface to `libevent` library.
  * `libevent` itself supports a number of system-specific backends (epoll, kqueue).
  *
- * This loop is known to work with PHP 5.4 through PHP 8+.
+ * This loop is known to work with PHP 7.1 through PHP 8+.
  *
  * @link https://pecl.php.net/package/event
  */
@@ -27,15 +27,15 @@ final class ExtEventLoop implements LoopInterface
     private $timerCallback;
     private $timerEvents;
     private $streamCallback;
-    private $readEvents = array();
-    private $writeEvents = array();
-    private $readListeners = array();
-    private $writeListeners = array();
-    private $readRefs = array();
-    private $writeRefs = array();
+    private $readEvents = [];
+    private $writeEvents = [];
+    private $readListeners = [];
+    private $writeListeners = [];
+    private $readRefs = [];
+    private $writeRefs = [];
     private $running;
     private $signals;
-    private $signalEvents = array();
+    private $signalEvents = [];
 
     public function __construct()
     {
@@ -67,8 +67,8 @@ final class ExtEventLoop implements LoopInterface
             $this->timerEvents->detach($timer);
         }
 
-        $this->readEvents = array();
-        $this->writeEvents = array();
+        $this->readEvents = [];
+        $this->writeEvents = [];
     }
 
     public function addReadStream($stream, $listener)
@@ -85,9 +85,7 @@ final class ExtEventLoop implements LoopInterface
 
         // ext-event does not increase refcount on stream resources for PHP 7+
         // manually keep track of stream resource to prevent premature garbage collection
-        if (\PHP_VERSION_ID >= 70000) {
-            $this->readRefs[$key] = $stream;
-        }
+        $this->readRefs[$key] = $stream;
     }
 
     public function addWriteStream($stream, $listener)
@@ -104,9 +102,7 @@ final class ExtEventLoop implements LoopInterface
 
         // ext-event does not increase refcount on stream resources for PHP 7+
         // manually keep track of stream resource to prevent premature garbage collection
-        if (\PHP_VERSION_ID >= 70000) {
-            $this->writeRefs[$key] = $stream;
-        }
+        $this->writeRefs[$key] = $stream;
     }
 
     public function removeReadStream($stream)
@@ -173,7 +169,7 @@ final class ExtEventLoop implements LoopInterface
         $this->signals->add($signal, $listener);
 
         if (!isset($this->signalEvents[$signal])) {
-            $this->signalEvents[$signal] = Event::signal($this->eventBase, $signal, array($this->signals, 'call'));
+            $this->signalEvents[$signal] = Event::signal($this->eventBase, $signal, [$this->signals, 'call']);
             $this->signalEvents[$signal]->add();
         }
     }
