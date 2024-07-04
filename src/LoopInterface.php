@@ -52,7 +52,7 @@ interface LoopInterface
      * @throws \Exception if the given resource type is not supported by this loop implementation
      * @see self::removeReadStream()
      */
-    public function addReadStream($stream, $listener);
+    public function addReadStream($stream, callable $listener): void;
 
     /**
      * [Advanced] Register a listener to be notified when a stream is ready to write.
@@ -110,7 +110,7 @@ interface LoopInterface
      * @throws \Exception if the given resource type is not supported by this loop implementation
      * @see self::removeWriteStream()
      */
-    public function addWriteStream($stream, $listener);
+    public function addWriteStream($stream, callable $listener): void;
 
     /**
      * Remove the read event listener for the given stream.
@@ -120,7 +120,7 @@ interface LoopInterface
      *
      * @param resource $stream The PHP stream resource.
      */
-    public function removeReadStream($stream);
+    public function removeReadStream($stream): void;
 
     /**
      * Remove the write event listener for the given stream.
@@ -130,7 +130,7 @@ interface LoopInterface
      *
      * @param resource $stream The PHP stream resource.
      */
-    public function removeWriteStream($stream);
+    public function removeWriteStream($stream): void;
 
     /**
      * Enqueue a callback to be invoked once after the given interval.
@@ -204,7 +204,7 @@ interface LoopInterface
      *
      * @return TimerInterface
      */
-    public function addTimer($interval, $callback);
+    public function addTimer(float $interval, callable $callback): TimerInterface;
 
     /**
      * Enqueue a callback to be invoked repeatedly after the given interval.
@@ -290,7 +290,7 @@ interface LoopInterface
      *
      * @return TimerInterface
      */
-    public function addPeriodicTimer($interval, $callback);
+    public function addPeriodicTimer(float $interval, callable $callback): TimerInterface;
 
     /**
      * Cancel a pending timer.
@@ -304,7 +304,7 @@ interface LoopInterface
      *
      * @return void
      */
-    public function cancelTimer(TimerInterface $timer);
+    public function cancelTimer(TimerInterface $timer): void;
 
     /**
      * Schedule a callback to be invoked on a future tick of the event loop.
@@ -356,7 +356,7 @@ interface LoopInterface
      *
      * @return void
      */
-    public function futureTick($listener);
+    public function futureTick(callable $listener): void;
 
     /**
      * Register a listener to be notified when a signal has been caught by this process.
@@ -399,7 +399,7 @@ interface LoopInterface
      *
      * @return void
      */
-    public function addSignal($signal, $listener);
+    public function addSignal(int $signal, callable $listener): void;
 
     /**
      * Removes a previously added signal listener.
@@ -415,7 +415,7 @@ interface LoopInterface
      *
      * @return void
      */
-    public function removeSignal($signal, $listener);
+    public function removeSignal(int $signal, callable $listener): void;
 
     /**
      * Run the event loop until there are no more tasks to perform.
@@ -446,7 +446,7 @@ interface LoopInterface
      *
      * @return void
      */
-    public function run();
+    public function run(): void;
 
     /**
      * Instruct a running event loop to stop.
@@ -468,5 +468,5 @@ interface LoopInterface
      *
      * @return void
      */
-    public function stop();
+    public function stop(): void;
 }

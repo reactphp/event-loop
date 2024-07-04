@@ -58,7 +58,7 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function addReadStream($stream, $listener)
+    public function addReadStream($stream, callable $listener): void
     {
         if (isset($this->readStreams[(int) $stream])) {
             return;
@@ -71,7 +71,7 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function addWriteStream($stream, $listener)
+    public function addWriteStream($stream, callable $listener): void
     {
         if (isset($this->writeStreams[(int) $stream])) {
             return;
@@ -84,7 +84,7 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function removeReadStream($stream)
+    public function removeReadStream($stream): void
     {
         if (!isset($this->streamEvents[(int) $stream])) {
             return;
@@ -97,7 +97,7 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function removeWriteStream($stream)
+    public function removeWriteStream($stream): void
     {
         if (!isset($this->streamEvents[(int) $stream])) {
             return;
@@ -110,7 +110,7 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function addTimer($interval, $callback)
+    public function addTimer(float $interval, callable $callback): TimerInterface
     {
         $timer = new Timer($interval, $callback, false);
 
@@ -137,7 +137,7 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function addPeriodicTimer($interval, $callback)
+    public function addPeriodicTimer(float $interval, callable $callback): TimerInterface
     {
         $timer = new Timer($interval, $callback, true);
 
@@ -161,7 +161,7 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function cancelTimer(TimerInterface $timer)
+    public function cancelTimer(TimerInterface $timer): void
     {
         if (isset($this->timers[$timer])) {
             @\uv_timer_stop($this->timers[$timer]);
@@ -172,12 +172,12 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function futureTick($listener)
+    public function futureTick(callable $listener): void
     {
         $this->futureTickQueue->add($listener);
     }
 
-    public function addSignal($signal, $listener)
+    public function addSignal(int $signal, callable $listener): void
     {
         $this->signals->add($signal, $listener);
 
@@ -189,7 +189,7 @@ final class ExtUvLoop implements LoopInterface
         }
     }
 
-    public function removeSignal($signal, $listener)
+    public function removeSignal(int $signal, callable $listener): void
     {
         $this->signals->remove($signal, $listener);
 
@@ -202,7 +202,7 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function run()
+    public function run(): void
     {
         $this->running = true;
 
@@ -233,7 +233,7 @@ final class ExtUvLoop implements LoopInterface
     /**
      * {@inheritdoc}
      */
-    public function stop()
+    public function stop(): void
     {
         $this->running = false;
     }

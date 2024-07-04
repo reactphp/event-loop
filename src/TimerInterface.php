@@ -9,19 +9,19 @@ interface TimerInterface
      *
      * @return float
      */
-    public function getInterval();
+    public function getInterval(): float;
 
     /**
      * Get the callback that will be executed when this timer elapses
      *
      * @return callable
      */
-    public function getCallback();
+    public function getCallback(): callable;
 
     /**
      * Determine whether the time is periodic
      *
      * @return bool
      */
-    public function isPeriodic();
+    public function isPeriodic(): bool;
 }
