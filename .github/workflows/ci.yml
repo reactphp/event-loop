@@ -7,10 +7,11 @@ on:
 jobs:
   PHPUnit:
     name: PHPUnit (PHP ${{ matrix.php }})
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         php:
+          - 8.4
           - 8.3
           - 8.2
           - 8.1
@@ -32,7 +33,7 @@ jobs:
           coverage: xdebug
           ini-file: development
           ini-values: disable_functions='' # do not disable PCNTL functions on PHP < 8.1
-          extensions: sockets, pcntl ${{ matrix.php >= 5.6 && ', event' || '' }} ${{ matrix.php >= 5.4 && ', ev' || '' }}
+          extensions: sockets, pcntl ${{ matrix.php >= 5.6 && ', event' || '' }} ${{ matrix.php >= 5.4 && (matrix.php < 8.0 && ', ev-1.1.5' || ', ev') || '' }}
         env:
           fail-fast: true # fail step if any extension can not be installed
       - run: composer install
@@ -43,11 +44,12 @@ jobs:
 
   PHPUnit-Unstable:
     name: PHPUnit (Unstable PHP ${{ matrix.php }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     continue-on-error: true
     strategy:
       matrix:
         php:
+          - 8.4
           - 8.3
           - 8.2
           - 8.1
@@ -77,8 +79,8 @@ jobs:
         if: ${{ matrix.php >= 7.0 }}
       - name: Install legacy ext-libevent on PHP < 7.0
         run: |
-          sudo apt-get update && sudo apt-get install libevent-dev
-          curl http://pecl.php.net/get/libevent-0.1.0.tgz | tar -xz
+          sudo apt-get update && sudo apt --fix-broken install && sudo apt-get install libevent-dev
+          curl https://pecl.php.net/get/libevent-0.1.0.tgz | tar -xz
           pushd libevent-0.1.0
           phpize
           ./configure
@@ -111,6 +113,7 @@ jobs:
     strategy:
       matrix:
         php:
+          - 8.4
           - 8.3
           - 8.2
           - 8.1
