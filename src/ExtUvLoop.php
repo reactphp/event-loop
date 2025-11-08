@@ -329,9 +329,17 @@ final class ExtUvLoop implements LoopInterface
         }
 
         $maxValue = (int) (\PHP_INT_MAX / 1000);
-        $intInterval = (int) $interval;
+        $intervalOverflow = false;
+        if (PHP_VERSION_ID > 80499 && $interval >= \PHP_INT_MAX + 1) {
+            $intervalOverflow = true;
+        } else {
+            $intInterval = (int) $interval;
+            if (($intInterval <= 0 && $interval > 1) || $intInterval >= $maxValue) {
+                $intervalOverflow = true;
+            }
+        }
 
-        if (($intInterval <= 0 && $interval > 1) || $intInterval >= $maxValue) {
+        if ($intervalOverflow) {
             throw new \InvalidArgumentException(
                 "Interval overflow, value must be lower than '{$maxValue}', but '{$interval}' passed."
             );
