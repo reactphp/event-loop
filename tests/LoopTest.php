@@ -64,7 +64,9 @@ final class LoopTest extends TestCase
     public function testStaticAddReadStreamWithNoDefaultLoopCallsAddReadStreamOnNewLoopInstance()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $stream = stream_socket_server('127.0.0.1:0');
@@ -90,7 +92,9 @@ final class LoopTest extends TestCase
     public function testStaticAddWriteStreamWithNoDefaultLoopCallsAddWriteStreamOnNewLoopInstance()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $stream = stream_socket_server('127.0.0.1:0');
@@ -115,7 +119,9 @@ final class LoopTest extends TestCase
     public function testStaticRemoveReadStreamWithNoDefaultLoopIsNoOp()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $stream = tmpfile();
@@ -139,7 +145,9 @@ final class LoopTest extends TestCase
     public function testStaticRemoveWriteStreamWithNoDefaultLoopIsNoOp()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $stream = tmpfile();
@@ -167,7 +175,9 @@ final class LoopTest extends TestCase
     public function testStaticAddTimerWithNoDefaultLoopCallsAddTimerOnNewLoopInstance()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $interval = 1.0;
@@ -197,7 +207,9 @@ final class LoopTest extends TestCase
     public function testStaticAddPeriodicTimerWithNoDefaultLoopCallsAddPeriodicTimerOnNewLoopInstance()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $interval = 1.0;
@@ -224,7 +236,9 @@ final class LoopTest extends TestCase
     public function testStaticCancelTimerWithNoDefaultLoopIsNoOp()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $timer = $this->getMockBuilder('React\EventLoop\TimerInterface')->getMock();
@@ -248,7 +262,9 @@ final class LoopTest extends TestCase
     public function testStaticFutureTickWithNoDefaultLoopCallsFutureTickOnNewLoopInstance()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $listener = function () { };
@@ -277,7 +293,9 @@ final class LoopTest extends TestCase
         }
 
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $signal = 1;
@@ -307,7 +325,9 @@ final class LoopTest extends TestCase
     public function testStaticRemoveSignalWithNoDefaultLoopIsNoOp()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         $signal = 1;
@@ -330,7 +350,9 @@ final class LoopTest extends TestCase
     public function testStaticRunWithNoDefaultLoopCallsRunsOnNewLoopInstance()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         Loop::run();
@@ -351,7 +373,9 @@ final class LoopTest extends TestCase
     public function testStaticStopCallWithNoDefaultLoopIsNoOp()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
 
         Loop::stop();
@@ -366,7 +390,9 @@ final class LoopTest extends TestCase
     public function unsetLoopFromLoopAccessor()
     {
         $ref = new \ReflectionProperty('React\EventLoop\Loop', 'instance');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $ref->setValue(null, null);
     }
 }
