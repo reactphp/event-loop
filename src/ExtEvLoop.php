@@ -34,7 +34,7 @@ class ExtEvLoop implements LoopInterface
     private $futureTickQueue;
 
     /**
-     * @var SplObjectStorage
+     * @var SplObjectStorage<TimerInterface, \EvTimer>
      */
     private $timers;
 
@@ -190,6 +190,10 @@ class ExtEvLoop implements LoopInterface
             $this->futureTickQueue->tick();
 
             $hasPendingCallbacks = !$this->futureTickQueue->isEmpty();
+            /**
+             * @link https://github.com/phpstan/phpstan/issues/10566
+             * @phpstan-ignore-next-line
+             */
             $wasJustStopped = !$this->running;
             $nothingLeftToDo = !$this->readStreams
                 && !$this->writeStreams
@@ -197,6 +201,10 @@ class ExtEvLoop implements LoopInterface
                 && $this->signals->isEmpty();
 
             $flags = Ev::RUN_ONCE;
+            /**
+             * @link https://github.com/phpstan/phpstan/issues/10566
+             * @phpstan-ignore-next-line
+             */
             if ($wasJustStopped || $hasPendingCallbacks) {
                 $flags |= Ev::RUN_NOWAIT;
             } elseif ($nothingLeftToDo) {
@@ -220,11 +228,13 @@ class ExtEvLoop implements LoopInterface
         }
 
         foreach ($this->readStreams as $key => $stream) {
-            $this->removeReadStream($key);
+            $this->readStreams[$key]->stop();
+            unset($this->readStreams[$key]);
         }
 
         foreach ($this->writeStreams as $key => $stream) {
-            $this->removeWriteStream($key);
+            $this->readStreams[$key]->stop();
+            unset($this->readStreams[$key]);
         }
     }
 

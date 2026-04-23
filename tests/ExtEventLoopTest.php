@@ -62,12 +62,28 @@ class ExtEventLoopTest extends AbstractLoopTest
         return $stream;
     }
 
-    public function writeToStream($stream, $content)
+    /**
+     * @group epoll-readable-error
+     */
+    public function testCanUseReadableStreamWithFeatureFds()
     {
-        if ('Linux' !== PHP_OS) {
-            return parent::writeToStream($stream, $content);
+        if (PHP_VERSION_ID > 70000) {
+            $this->markTestSkipped('Memory stream not supported');
         }
 
-        fwrite($stream, $content);
+        $this->loop = $this->createLoop(true);
+
+        $input = fopen('php://temp/maxmemory:0', 'r+');
+
+        fwrite($input, 'x');
+        ftruncate($input, 0);
+
+        $this->loop->addReadStream($input, $this->expectCallableExactly(2));
+
+        fwrite($input, "foo\n");
+        $this->tickLoop($this->loop);
+
+        fwrite($input, "bar\n");
+        $this->tickLoop($this->loop);
     }
 }

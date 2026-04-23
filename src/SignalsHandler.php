@@ -47,6 +47,9 @@ final class SignalsHandler
         }
     }
 
+    /**
+     * @phpstan-impure
+     */
     public function count($signal)
     {
         if (!isset($this->signals[$signal])) {
