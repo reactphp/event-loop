@@ -234,7 +234,7 @@ final class StreamSelectLoop implements LoopInterface
         }
         if (false === $available) {
             // if a system call has been interrupted,
-            // we cannot rely on it's outcome
+            // we cannot rely on its outcome
             return;
         }
 
