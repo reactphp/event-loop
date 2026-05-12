@@ -27,7 +27,7 @@ final class Loop
      *
      * @return LoopInterface
      */
-    public static function get()
+    public static function get(): LoopInterface
     {
         if (self::$instance instanceof LoopInterface) {
             return self::$instance;
@@ -80,7 +80,7 @@ final class Loop
      * @throws \Exception
      * @see LoopInterface::addReadStream()
      */
-    public static function addReadStream($stream, $listener)
+    public static function addReadStream($stream, callable $listener): void
     {
         (self::$instance ?? self::get())->addReadStream($stream, $listener);
     }
@@ -94,7 +94,7 @@ final class Loop
      * @throws \Exception
      * @see LoopInterface::addWriteStream()
      */
-    public static function addWriteStream($stream, $listener)
+    public static function addWriteStream($stream, callable $listener): void
     {
         (self::$instance ?? self::get())->addWriteStream($stream, $listener);
     }
@@ -106,7 +106,7 @@ final class Loop
      * @return void
      * @see LoopInterface::removeReadStream()
      */
-    public static function removeReadStream($stream)
+    public static function removeReadStream($stream): void
     {
         if (self::$instance !== null) {
             self::$instance->removeReadStream($stream);
@@ -120,7 +120,7 @@ final class Loop
      * @return void
      * @see LoopInterface::removeWriteStream()
      */
-    public static function removeWriteStream($stream)
+    public static function removeWriteStream($stream): void
     {
         if (self::$instance !== null) {
             self::$instance->removeWriteStream($stream);
@@ -135,7 +135,7 @@ final class Loop
      * @return TimerInterface
      * @see LoopInterface::addTimer()
      */
-    public static function addTimer($interval, $callback)
+    public static function addTimer(float $interval, callable $callback): TimerInterface
     {
         return (self::$instance ?? self::get())->addTimer($interval, $callback);
     }
@@ -148,7 +148,7 @@ final class Loop
      * @return TimerInterface
      * @see LoopInterface::addPeriodicTimer()
      */
-    public static function addPeriodicTimer($interval, $callback)
+    public static function addPeriodicTimer(float $interval, callable $callback): TimerInterface
     {
         return (self::$instance ?? self::get())->addPeriodicTimer($interval, $callback);
     }
@@ -160,7 +160,7 @@ final class Loop
      * @return void
      * @see LoopInterface::cancelTimer()
      */
-    public static function cancelTimer(TimerInterface $timer)
+    public static function cancelTimer(TimerInterface $timer): void
     {
         if (self::$instance !== null) {
             self::$instance->cancelTimer($timer);
@@ -174,7 +174,7 @@ final class Loop
      * @return void
      * @see LoopInterface::futureTick()
      */
-    public static function futureTick($listener)
+    public static function futureTick(callable $listener): void
     {
         (self::$instance ?? self::get())->futureTick($listener);
     }
@@ -187,7 +187,7 @@ final class Loop
      * @return void
      * @see LoopInterface::addSignal()
      */
-    public static function addSignal($signal, $listener)
+    public static function addSignal(int $signal, callable $listener): void
     {
         (self::$instance ?? self::get())->addSignal($signal, $listener);
     }
@@ -200,7 +200,7 @@ final class Loop
      * @return void
      * @see LoopInterface::removeSignal()
      */
-    public static function removeSignal($signal, $listener)
+    public static function removeSignal(int $signal, callable $listener): void
     {
         if (self::$instance !== null) {
             self::$instance->removeSignal($signal, $listener);
@@ -213,7 +213,7 @@ final class Loop
      * @return void
      * @see LoopInterface::run()
      */
-    public static function run()
+    public static function run(): void
     {
         (self::$instance ?? self::get())->run();
     }
@@ -224,7 +224,7 @@ final class Loop
      * @return void
      * @see LoopInterface::stop()
      */
-    public static function stop()
+    public static function stop(): void
     {
         self::$stopped = true;
         if (self::$instance !== null) {

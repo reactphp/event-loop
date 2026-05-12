@@ -38,17 +38,17 @@ final class Timer implements TimerInterface
         $this->periodic = (bool) $periodic;
     }
 
-    public function getInterval()
+    public function getInterval(): float
     {
         return $this->interval;
     }
 
-    public function getCallback()
+    public function getCallback(): callable
     {
         return $this->callback;
     }
 
-    public function isPeriodic()
+    public function isPeriodic(): bool
     {
         return $this->periodic;
     }
