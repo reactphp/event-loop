@@ -238,16 +238,20 @@ final class Loop
     private static function create()
     {
         // @codeCoverageIgnoreStart
-        if (\function_exists('uv_loop_new')) {
-            return new ExtUvLoop();
-        }
+//        if (\function_exists('uv_loop_new')) {
+//            return new ExtUvLoop();
+//        }
+//
+//        if (\class_exists('EvLoop', false)) {
+//            return new ExtEvLoop();
+//        }
+//
+//        if (\class_exists('EventBase', false)) {
+//            return new ExtEventLoop();
+//        }
 
-        if (\class_exists('EvLoop', false)) {
-            return new ExtEvLoop();
-        }
-
-        if (\class_exists('EventBase', false)) {
-            return new ExtEventLoop();
+        if (\class_exists('Io\Poll\Context', false)) {
+            return new IoPollLoop();
         }
 
         return new StreamSelectLoop();
