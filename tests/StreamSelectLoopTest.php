@@ -40,10 +40,9 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $this->assertGreaterThan(0.04, $interval);
     }
 
-    public function testStreamSelectReportsWarningForStreamWithFilter()
+    public function testStreamSelectReportsWarningForMemoryStream()
     {
-        $stream = tmpfile();
-        stream_filter_append($stream, 'string.rot13');
+        $stream = fopen('php://memory', 'r+');
 
         $this->loop->addReadStream($stream, $this->expectCallableNever());
 
@@ -73,10 +72,9 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $this->assertEquals($previous, $now);
     }
 
-    public function testStreamSelectThrowsWhenCustomErrorHandlerThrowsForStreamWithFilter()
+    public function testStreamSelectThrowsWhenCustomErrorHandlerThrowsForMemoryStream()
     {
-        $stream = tmpfile();
-        stream_filter_append($stream, 'string.rot13');
+        $stream = fopen('php://memory', 'r+');
 
         $this->loop->addReadStream($stream, $this->expectCallableNever());
 
