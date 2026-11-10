@@ -40,14 +40,13 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $this->assertGreaterThan(0.04, $interval);
     }
 
-    public function testStreamSelectReportsWarningForStreamWithFilter()
+    public function testStreamSelectReportsWarningForMemoryStream()
     {
         if (defined('HHVM_VERSION')) {
             $this->markTestSkipped('Not supported on legacy HHVM');
         }
 
-        $stream = tmpfile();
-        stream_filter_append($stream, 'string.rot13');
+        $stream = fopen('php://memory', 'r+');
 
         $this->loop->addReadStream($stream, $this->expectCallableNever());
 
@@ -78,14 +77,13 @@ class StreamSelectLoopTest extends AbstractLoopTest
         $this->assertEquals($previous, $now);
     }
 
-    public function testStreamSelectThrowsWhenCustomErrorHandlerThrowsForStreamWithFilter()
+    public function testStreamSelectThrowsWhenCustomErrorHandlerThrowsForMemoryStream()
     {
         if (defined('HHVM_VERSION')) {
             $this->markTestSkipped('Not supported on legacy HHVM');
         }
 
-        $stream = tmpfile();
-        stream_filter_append($stream, 'string.rot13');
+        $stream = fopen('php://memory', 'r+');
 
         $this->loop->addReadStream($stream, $this->expectCallableNever());
 
