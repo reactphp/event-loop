@@ -9,8 +9,10 @@ jobs:
     name: PHPUnit (PHP ${{ matrix.php }})
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         php:
+          - 8.6
           - 8.5
           - 8.4
           - 8.3
@@ -29,7 +31,8 @@ jobs:
           coverage: ${{ matrix.php < 8.0 && 'xdebug' || 'pcov' }}
           ini-file: development
           ini-values: disable_functions='' # do not disable PCNTL functions on PHP < 8.1
-          extensions: sockets, pcntl, event, ${{ matrix.php < 8.0 && 'ev-1.1.5' || 'ev' }}
+          extensions: sockets, pcntl
+#          extensions: sockets, pcntl, event, ${{ matrix.php < 8.0 && 'ev-1.1.5' || 'ev' }}
         env:
           fail-fast: true # fail step if any extension can not be installed
       - run: composer install
@@ -45,6 +48,7 @@ jobs:
     strategy:
       matrix:
         php:
+          - 8.6
           - 8.5
           - 8.4
           - 8.3
@@ -63,11 +67,11 @@ jobs:
           coverage: ${{ matrix.php < 8.0 && 'xdebug' || 'pcov' }}
           ini-file: development
           extensions: sockets, pcntl
-      - name: Install ext-uv
-        run: |
-          sudo apt-get update -q && sudo apt-get install libuv1-dev
-          echo "yes" | sudo pecl install ${{ matrix.php >= 8.0 && 'uv-0.3.0' || 'uv-0.2.4' }}
-          php -m | grep -q uv || echo "extension=uv.so" >> "$(php -r 'echo php_ini_loaded_file();')"
+#      - name: Install ext-uv
+#        run: |
+#          sudo apt-get update -q && sudo apt-get install libuv1-dev
+#          echo "yes" | sudo pecl install ${{ matrix.php >= 8.0 && 'uv-0.3.0' || 'uv-0.2.4' }}
+#          php -m | grep -q uv || echo "extension=uv.so" >> "$(php -r 'echo php_ini_loaded_file();')"
       - run: composer install
       - run: vendor/bin/phpunit --coverage-text
         if: ${{ matrix.php >= 7.3 }}
@@ -79,8 +83,10 @@ jobs:
     runs-on: windows-2022
     continue-on-error: true
     strategy:
+      fail-fast: false
       matrix:
         php:
+          - 8.6
           - 8.5
           - 8.4
           - 8.3
