@@ -7,10 +7,11 @@ on:
 jobs:
   PHPUnit:
     name: PHPUnit (PHP ${{ matrix.php }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         php:
+          - 8.6
           - 8.5
           - 8.4
           - 8.3
@@ -22,16 +23,17 @@ jobs:
           - 7.2
           - 7.1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           coverage: ${{ matrix.php < 8.0 && 'xdebug' || 'pcov' }}
           ini-file: development
           ini-values: disable_functions='' # do not disable PCNTL functions on PHP < 8.1
-          extensions: sockets, pcntl, event, ${{ matrix.php < 8.0 && 'ev-1.1.5' || 'ev' }}
+          extensions: sockets, pcntl, event, ${{ matrix.php < 8.0 && 'ev-1.1.5' || 'ev-rosmanov/pecl-ev@1.2.4' }}
         env:
           fail-fast: true # fail step if any extension can not be installed
+          EV_PATH: . # needed to build ext-ev from git on Ubuntu 26.04, see https://github.com/shivammathur/setup-php/issues/1146
       - run: composer install
       - run: vendor/bin/phpunit --coverage-text
         if: ${{ matrix.php >= 7.3 }}
@@ -40,11 +42,12 @@ jobs:
 
   PHPUnit-Unstable:
     name: PHPUnit (Unstable PHP ${{ matrix.php }})
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.php >= 8.0 && 'ubuntu-26.04' || 'ubuntu-24.04' }} # legacy extensions do not build on 26.04
     continue-on-error: true
     strategy:
       matrix:
         php:
+          - 8.6
           - 8.5
           - 8.4
           - 8.3
@@ -56,7 +59,7 @@ jobs:
           - 7.2
           - 7.1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
@@ -66,7 +69,7 @@ jobs:
       - name: Install ext-uv
         run: |
           sudo apt-get update -q && sudo apt-get install libuv1-dev
-          echo "yes" | sudo pecl install ${{ matrix.php >= 8.0 && 'uv-0.3.0' || 'uv-0.2.4' }}
+          echo "yes" | sudo pecl install ${{ matrix.php >= 8.0 && 'uv-0.3.1' || 'uv-0.2.4' }}
           php -m | grep -q uv || echo "extension=uv.so" >> "$(php -r 'echo php_ini_loaded_file();')"
       - run: composer install
       - run: vendor/bin/phpunit --coverage-text
@@ -81,6 +84,7 @@ jobs:
     strategy:
       matrix:
         php:
+          - 8.6
           - 8.5
           - 8.4
           - 8.3
@@ -92,7 +96,7 @@ jobs:
           - 7.2
           - 7.1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
