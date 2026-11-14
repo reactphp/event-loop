@@ -69,6 +69,10 @@ final class Factory
             return new ExtLibeventLoop();
         }
 
+        if (\class_exists('Io\Poll\Context', false)) {
+            return new IoPollLoop();
+        }
+
         return new StreamSelectLoop();
         // @codeCoverageIgnoreEnd
     }
